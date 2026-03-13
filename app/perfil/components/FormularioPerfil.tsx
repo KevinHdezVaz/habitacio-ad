@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { actualizarPerfil } from '@/app/actions/perfil'
 import Input from '@/components/ui/Input'
+import PhoneInput from '@/components/ui/PhoneInput'
 import Button from '@/components/ui/Button'
 import type { Profile } from '@/types'
 
@@ -66,12 +67,11 @@ export default function FormularioPerfil({
         className="opacity-60 cursor-not-allowed"
       />
 
-      <Input
+      <PhoneInput
         label="Teléfono (opcional)"
         name="telefono"
-        type="tel"
         defaultValue={profile.telefono ?? ''}
-        placeholder="+376 600 000"
+        placeholder="600 000"
       />
 
       <div className="flex flex-col gap-1.5">

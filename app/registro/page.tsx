@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { registro } from '@/app/actions/auth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import PhoneInput from '@/components/ui/PhoneInput'
 import BotonGoogle from '@/components/auth/BotonGoogle'
 import Link from 'next/link'
 
@@ -90,12 +91,10 @@ export default function RegistroPage() {
 
         {/* Teléfono opcional — útil para arrendadores que quieren recibir llamadas */}
         <div className="flex flex-col gap-1.5">
-          <Input
+          <PhoneInput
             label={t('phone')}
             name="telefono"
-            type="tel"
-            placeholder={t('phonePlaceholder')}
-            autoComplete="tel"
+            placeholder="600 000"
           />
           <p className="text-[11px] text-[#9ca3af] ml-1">{t('phoneHint')}</p>
         </div>
