@@ -1,65 +1,182 @@
-import Image from "next/image";
-
 export default function Home() {
+  const acciones = [
+    {
+      icono: '🔍',
+      titulo: 'Buscar habitación',
+      subtitulo: 'Ver anuncios disponibles',
+      href: '/habitaciones',
+      color: '#2980b9',
+      bg: '#e8f4fd',
+    },
+    {
+      icono: '🏠',
+      titulo: 'Publicar habitación',
+      subtitulo: 'Ofrece tu habitación',
+      href: '/publicar',
+      color: '#0ea5a0',
+      bg: '#e6f7f7',
+    },
+    {
+      icono: '🙋',
+      titulo: 'Encuéntrame habitación',
+      subtitulo: 'Publica tu perfil',
+      href: '/perfil',
+      color: '#2980b9',
+      bg: '#e8f4fd',
+    },
+    {
+      icono: '👥',
+      titulo: 'Ver perfiles',
+      subtitulo: 'Personas interesadas',
+      href: '/perfiles',
+      color: '#1a3c5e',
+      bg: '#e8edf2',
+    },
+  ]
+
+  const ultimasHabitaciones = [
+    { precio: 570, parroquia: 'Andorra la Vella', imagen: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400' },
+    { precio: 680, parroquia: 'Escaldes', imagen: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=400' },
+    { precio: 490, parroquia: 'Encamp', imagen: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?w=400' },
+    { precio: 620, parroquia: 'Sant Julià', imagen: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400' },
+  ]
+
+  const ventajas = [
+    { icono: '✅', titulo: 'Información clara', texto: 'Todos los detalles visibles desde el principio.' },
+    { icono: '🏔️', titulo: 'Para residentes y temporeros', texto: 'Pensado para vivir en Andorra todo el año o por temporada.' },
+    { icono: '💬', titulo: 'Contacto directo', texto: 'Chatea con el anunciante dentro de la plataforma.' },
+    { icono: '📱', titulo: 'Fácil desde el móvil', texto: 'Publica o busca habitación en segundos.' },
+  ]
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col gap-8">
+
+      {/* HERO */}
+      <div className="pt-2">
+        <h1 className="text-3xl font-bold text-[#1a3c5e] leading-tight">
+          Encuentra habitación en{' '}
+          <span className="text-[#0ea5a0]">Andorra</span>
+        </h1>
+        <p className="text-[#6b7280] mt-2 text-base">
+          Habitaciones para todo el año o temporada, con información clara desde el principio.
+        </p>
+        <div className="flex gap-3 mt-4">
+
+          <a href="/habitaciones"
+            className="flex-1 bg-[#1a3c5e] text-white text-center py-3 rounded-xl font-semibold text-sm"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            Buscar habitación
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+          <a href="/publicar"
+            className="flex-1 border-2 border-[#1a3c5e] text-[#1a3c5e] text-center py-3 rounded-xl font-semibold text-sm"
           >
-            Documentation
+            Publicar gratis
           </a>
         </div>
-      </main>
-    </div>
-  );
+      </div >
+
+      {/* 4 ACCIONES */}
+      < div >
+        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
+          ¿Qué necesitas?
+        </h2>
+        <div className="grid grid-cols-2 gap-3">
+          {acciones.map((accion) => (
+            <a
+              key={accion.titulo}
+              href={accion.href}
+              className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow active:scale-95"
+            >
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
+                style={{ backgroundColor: accion.bg }}
+              >
+                {accion.icono}
+              </div>
+              <div>
+                <p className="font-bold text-sm leading-tight" style={{ color: accion.color }}>
+                  {accion.titulo}
+                </p>
+                <p className="text-[#9ca3af] text-xs mt-1">
+                  {accion.subtitulo} &rarr;
+                </p>
+              </div>
+            </a>
+          ))
+          }
+        </div >
+      </div >
+
+      {/* ÚLTIMAS HABITACIONES */}
+      < div >
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-bold text-[#1a3c5e] text-lg">
+            Últimas habitaciones
+          </h2>
+          <a href="/habitaciones" className="text-[#0ea5a0] text-sm font-semibold">
+            Ver todas
+          </a>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {ultimasHabitaciones.map((hab, i) => (
+            <a
+              key={i}
+              href="/habitaciones"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="relative aspect-square">
+                <img
+                  src={hab.imagen}
+                  alt="Habitación"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-white rounded-full px-2 py-1 text-xs font-bold text-[#1a3c5e] shadow">
+                  {hab.precio} €/mes
+                </div>
+              </div>
+              <div className="p-2">
+                <p className="text-xs text-[#6b7280] font-medium">{hab.parroquia}</p>
+              </div>
+            </a>
+          ))}
+        </div >
+      </div >
+
+      {/* VENTAJAS */}
+      < div >
+        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
+          Por qué Habitacio.ad
+        </h2>
+        <div className="flex flex-col gap-3">
+          {ventajas.map((v) => (
+            <div key={v.titulo} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-start">
+              <span className="text-2xl">{v.icono}</span>
+              <div>
+                <p className="font-bold text-[#1a3c5e] text-sm">{v.titulo}</p>
+                <p className="text-[#6b7280] text-xs mt-1">{v.texto}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div >
+
+      {/* CTA FINAL */}
+      < div className="bg-[#1a3c5e] rounded-2xl p-6 text-center" >
+        <h2 className="text-white font-bold text-xl mb-2">
+          ¿Tienes una habitación libre?
+        </h2>
+        <p className="text-[#a8c0d6] text-sm mb-4">
+          Publica gratis y encuentra inquilino rápidamente.
+        </p>
+
+        <a href="/publicar"
+          className="inline-block bg-[#0ea5a0] text-white font-semibold px-6 py-3 rounded-xl text-sm"
+        >
+          Publicar habitación gratis
+        </a>
+      </div>
+
+    </div >
+  )
 }
