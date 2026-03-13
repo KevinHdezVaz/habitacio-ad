@@ -5,6 +5,8 @@ import Footer from '@/components/layout/Footer'
 import PageTransition from '@/components/layout/PageTransition'
 import { createClient } from '@/lib/supabase-server'
 import NextTopLoader from 'nextjs-toploader'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'Habitacio.ad - Habitaciones en alquiler en Andorra',
@@ -19,7 +21,10 @@ export default async function RootLayout({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let isAdmin    = false
+  const locale   = await getLocale()
+  const messages = await getMessages()
+
+  let isAdmin     = false
   let unreadCount = 0
 
   if (user) {
@@ -30,7 +35,7 @@ export default async function RootLayout({
       .single()
     isAdmin = profile?.tipo === 'admin'
 
-    // Mensajes no leídos (enviados por otro en conversaciones del usuario)
+    // Mensajes no leídos
     const { data: convs } = await supabase
       .from('conversaciones')
       .select('id')
@@ -49,19 +54,21 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body>
-        <NextTopLoader
-          color="#0ea5a0"
-          height={3}
-          showSpinner={false}
-          shadow="0 0 10px #0ea5a0,0 0 5px #0ea5a0"
-        />
-        <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} />
-        <main className="max-w-5xl mx-auto px-4 py-6">
-          <PageTransition>{children}</PageTransition>
-        </main>
-        <Footer />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextTopLoader
+            color="#0ea5a0"
+            height={3}
+            showSpinner={false}
+            shadow="0 0 10px #0ea5a0,0 0 5px #0ea5a0"
+          />
+          <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} />
+          <main className="max-w-5xl mx-auto px-4 py-6">
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

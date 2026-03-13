@@ -2,19 +2,24 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { logout } from '@/app/actions/auth'
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import type { User } from '@supabase/supabase-js'
 
 export default function Navbar({
   user,
   isAdmin = false,
   unreadCount = 0,
+  locale = 'es',
 }: {
   user: User | null
   isAdmin?: boolean
   unreadCount?: number
+  locale?: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const t = useTranslations('nav')
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -25,21 +30,21 @@ export default function Navbar({
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
           <Link href="/habitaciones" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            Buscar
+            {t('buscar')}
           </Link>
           <Link href="/perfiles" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            Perfiles
+            {t('perfiles')}
           </Link>
           <Link href="/publicar" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            Publicar
+            {t('publicar')}
           </Link>
 
           {user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-5">
               <Link href="/chat" className="relative text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-                Mensajes
+                {t('mensajes')}
                 {unreadCount > 0 && (
                   <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
                     {unreadCount > 9 ? '9+' : unreadCount}
@@ -47,16 +52,12 @@ export default function Navbar({
                 )}
               </Link>
               <Link href="/perfil" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-                Mi perfil
+                {t('miPerfil')}
               </Link>
 
-              {/* Dashboard — solo admins */}
               {isAdmin && (
-                <Link
-                  href="/admin"
-                  className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors"
-                >
-                  Dashboard
+                <Link href="/admin" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+                  {t('dashboard')}
                 </Link>
               )}
 
@@ -65,7 +66,7 @@ export default function Navbar({
                   type="submit"
                   className="bg-[#f4f5f7] text-[#1a3c5e] font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors"
                 >
-                  Salir
+                  {t('salir')}
                 </button>
               </form>
             </div>
@@ -74,38 +75,44 @@ export default function Navbar({
               href="/login"
               className="bg-[#f4f5f7] text-[#1a3c5e] font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors"
             >
-              Iniciar sesión
+              {t('iniciarSesion')}
             </Link>
           )}
+
+          {/* Selector de idioma — desktop */}
+          <LanguageSwitcher currentLocale={locale} />
         </nav>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-[#1a3c5e] text-2xl"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Menú"
-        >
-          {isOpen ? '✕' : '☰'}
-        </button>
+        {/* Mobile: idioma + toggle */}
+        <div className="md:hidden flex items-center gap-3">
+          <LanguageSwitcher currentLocale={locale} />
+          <button
+            className="text-[#1a3c5e] text-2xl"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Menú"
+          >
+            {isOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 flex flex-col p-4 gap-4 shadow-lg animate-fade-in">
           <Link href="/habitaciones" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            Buscar habitación
+            {t('buscar')}
           </Link>
           <Link href="/perfiles" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            Ver perfiles
+            {t('perfiles')}
           </Link>
           <Link href="/publicar" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            Publicar
+            {t('publicar')}
           </Link>
 
           {user ? (
             <>
               <Link href="/chat" className="relative inline-flex items-center gap-2 font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-                Mensajes
+                {t('mensajes')}
                 {unreadCount > 0 && (
                   <span className="min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
                     {unreadCount > 9 ? '9+' : unreadCount}
@@ -113,26 +120,18 @@ export default function Navbar({
                 )}
               </Link>
               <Link href="/perfil" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-                Mi perfil
+                {t('miPerfil')}
               </Link>
 
-              {/* Dashboard móvil — solo admins */}
               {isAdmin && (
-                <Link
-                  href="/admin"
-                  onClick={() => setIsOpen(false)}
-                  className="font-medium text-[#1a3c5e]"
-                >
-                  Dashboard
+                <Link href="/admin" onClick={() => setIsOpen(false)} className="font-medium text-[#1a3c5e]">
+                  {t('dashboard')}
                 </Link>
               )}
 
               <form action={logout}>
-                <button
-                  type="submit"
-                  className="w-full bg-gray-100 text-[#1a3c5e] text-center py-3 rounded-xl font-bold"
-                >
-                  Cerrar sesión
+                <button type="submit" className="w-full bg-gray-100 text-[#1a3c5e] text-center py-3 rounded-xl font-bold">
+                  {t('cerrarSesion')}
                 </button>
               </form>
             </>
@@ -142,7 +141,7 @@ export default function Navbar({
               className="bg-[#1a3c5e] text-white text-center py-3 rounded-xl font-bold"
               onClick={() => setIsOpen(false)}
             >
-              Iniciar sesión
+              {t('iniciarSesion')}
             </Link>
           )}
         </div>

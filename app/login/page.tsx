@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { login } from '@/app/actions/auth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -14,6 +15,7 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const next = searchParams.get('next') ?? ''
   const oauthError = searchParams.get('error') === 'oauth'
+  const t = useTranslations('auth')
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -23,7 +25,7 @@ function LoginForm() {
     if (result?.error) {
       setError(
         result.error === 'Invalid login credentials'
-          ? 'Email o contraseña incorrectos.'
+          ? t('invalidCredentials')
           : result.error
       )
       setLoading(false)
@@ -32,55 +34,50 @@ function LoginForm() {
 
   return (
     <>
-      {/* Google */}
       <BotonGoogle next={next || '/'} />
 
-      {/* Separador */}
       <div className="flex items-center gap-3 my-1">
         <div className="flex-1 h-px bg-gray-100" />
-        <span className="text-xs text-[#9ca3af] font-medium">o con email</span>
+        <span className="text-xs text-[#9ca3af] font-medium">{t('orWithEmail')}</span>
         <div className="flex-1 h-px bg-gray-100" />
       </div>
 
-      {/* Error OAuth */}
       {oauthError && (
         <p className="text-red-500 text-sm bg-red-50 py-2 px-3 rounded-xl text-center">
-          Error al iniciar sesión con Google. Inténtalo de nuevo.
+          {t('googleError')}
         </p>
       )}
 
       <form action={handleSubmit} className="flex flex-col gap-5">
         <Input
-          label="Email"
+          label={t('email')}
           name="email"
-          placeholder="tu@email.com"
+          placeholder={t('emailPlaceholder')}
           type="email"
           autoComplete="email"
           required
         />
         <Input
-          label="Contraseña"
+          label={t('password')}
           name="password"
-          placeholder="••••••••"
+          placeholder={t('passwordPlaceholder')}
           type="password"
           autoComplete="current-password"
           required
         />
 
         {error && (
-          <p className="text-red-500 text-sm bg-red-50 py-2 px-3 rounded-xl text-center">
-            {error}
-          </p>
+          <p className="text-red-500 text-sm bg-red-50 py-2 px-3 rounded-xl text-center">{error}</p>
         )}
 
         <div className="flex justify-end">
           <Link href="/recuperar" className="text-xs font-semibold text-[#0ea5a0] hover:underline">
-            ¿Olvidaste tu contraseña?
+            {t('forgotPassword')}
           </Link>
         </div>
 
         <Button type="submit" className="w-full" loading={loading}>
-          {loading ? 'Entrando…' : 'Iniciar sesión'}
+          {loading ? t('loggingIn') : t('login')}
         </Button>
       </form>
     </>
@@ -88,11 +85,13 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const t = useTranslations('auth')
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-3xl shadow-sm border border-gray-100">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-[#1a3c5e]">Bienvenido de nuevo</h1>
-        <p className="text-[#6b7280] text-sm mt-2">Accede a tu cuenta de Habitacio.ad</p>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('loginTitle')}</h1>
+        <p className="text-[#6b7280] text-sm mt-2">{t('loginSubtitle')}</p>
       </div>
 
       <Suspense fallback={null}>
@@ -101,9 +100,9 @@ export default function LoginPage() {
 
       <div className="mt-8 pt-6 border-t border-gray-100 text-center">
         <p className="text-sm text-[#6b7280]">
-          ¿No tienes cuenta?{' '}
+          {t('noAccount')}{' '}
           <Link href="/registro" className="font-bold text-[#1a3c5e] hover:text-[#0ea5a0]">
-            Regístrate gratis
+            {t('registerFree')}
           </Link>
         </p>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { Mensaje } from '@/types'
 
@@ -16,6 +17,19 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
   const [enviando, setEnviando] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+  const router = useRouter()
+
+  // Marcar mensajes como leídos al abrir la conversación
+  useEffect(() => {
+    supabase
+      .from('mensajes')
+      .update({ leido: true })
+      .eq('conversacion_id', conversacionId)
+      .eq('leido', false)
+      .neq('sender_id', currentUserId)
+      .then(() => router.refresh()) // actualiza el badge del navbar
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversacionId])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

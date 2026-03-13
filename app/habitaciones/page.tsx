@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { supabase } from '@/lib/supabase'
 import { Anuncio } from '@/types'
 import TarjetaHabitacion from '@/components/habitaciones/TarjetaHabitacion'
@@ -16,6 +17,7 @@ const PARROQUIAS = [
 ]
 
 export default function HabitacionesPage() {
+  const t = useTranslations('rooms')
   const [anuncios, setAnuncios] = useState<Anuncio[]>([])
   const [cargando, setCargando] = useState(true)
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)

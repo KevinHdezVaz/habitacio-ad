@@ -1,33 +1,37 @@
-export default function Home() {
+import { getTranslations } from 'next-intl/server'
+
+export default async function Home() {
+  const t = await getTranslations('home')
+
   const acciones = [
     {
       icono: '🔍',
-      titulo: 'Buscar habitación',
-      subtitulo: 'Ver anuncios disponibles',
+      titulo: t('buscarHabitacion'),
+      subtitulo: t('buscarHabitacionSub'),
       href: '/habitaciones',
       color: '#2980b9',
       bg: '#e8f4fd',
     },
     {
       icono: '🏠',
-      titulo: 'Publicar habitación',
-      subtitulo: 'Ofrece tu habitación',
+      titulo: t('publicarHabitacion'),
+      subtitulo: t('publicarHabitacionSub'),
       href: '/publicar',
       color: '#0ea5a0',
       bg: '#e6f7f7',
     },
     {
       icono: '🙋',
-      titulo: 'Encuéntrame habitación',
-      subtitulo: 'Publica tu perfil de búsqueda',
+      titulo: t('encontrarme'),
+      subtitulo: t('encontrarmeSub'),
       href: '/buscar-habitacion',
       color: '#0ea5a0',
       bg: '#e6f7f7',
     },
     {
       icono: '👥',
-      titulo: 'Ver perfiles',
-      subtitulo: 'Personas interesadas',
+      titulo: t('verPerfiles'),
+      subtitulo: t('verPerfilesSub'),
       href: '/perfiles',
       color: '#1a3c5e',
       bg: '#e8edf2',
@@ -42,10 +46,10 @@ export default function Home() {
   ]
 
   const ventajas = [
-    { icono: '✅', titulo: 'Información clara', texto: 'Todos los detalles visibles desde el principio.' },
-    { icono: '🏔️', titulo: 'Para residentes y temporeros', texto: 'Pensado para vivir en Andorra todo el año o por temporada.' },
-    { icono: '💬', titulo: 'Contacto directo', texto: 'Chatea con el anunciante dentro de la plataforma.' },
-    { icono: '📱', titulo: 'Fácil desde el móvil', texto: 'Publica o busca habitación en segundos.' },
+    { icono: '✅', titulo: t('infoClara'),      texto: t('infoClaraText') },
+    { icono: '🏔️', titulo: t('paraResidentes'), texto: t('paraResidentesText') },
+    { icono: '💬', titulo: t('contactoDirecto'), texto: t('contactoDirectoText') },
+    { icono: '📱', titulo: t('facilMovil'),      texto: t('facilMovilText') },
   ]
 
   return (
@@ -54,33 +58,27 @@ export default function Home() {
       {/* HERO */}
       <div className="pt-2">
         <h1 className="text-3xl font-bold text-[#1a3c5e] leading-tight">
-          Encuentra habitación en{' '}
-          <span className="text-[#0ea5a0]">Andorra</span>
+          {t('heroTitle')}{' '}
+          <span className="text-[#0ea5a0]">{t('andorra')}</span>
         </h1>
-        <p className="text-[#6b7280] mt-2 text-base">
-          Habitaciones para todo el año o temporada, con información clara desde el principio.
-        </p>
+        <p className="text-[#6b7280] mt-2 text-base">{t('heroSubtitle')}</p>
         <div className="flex gap-3 mt-4">
-
           <a href="/habitaciones"
             className="flex-1 bg-[#1a3c5e] text-white text-center py-3 rounded-xl font-semibold text-sm"
           >
-            Buscar habitación
+            {t('buscarHabitacion')}
           </a>
-
           <a href="/publicar"
             className="flex-1 border-2 border-[#1a3c5e] text-[#1a3c5e] text-center py-3 rounded-xl font-semibold text-sm"
           >
-            Publicar gratis
+            {t('publicarGratis')}
           </a>
         </div>
-      </div >
+      </div>
 
       {/* 4 ACCIONES */}
-      < div >
-        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
-          ¿Qué necesitas?
-        </h2>
+      <div>
+        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">{t('queNecesitas')}</h2>
         <div className="grid grid-cols-2 gap-3 stagger-children">
           {acciones.map((accion) => (
             <a
@@ -98,39 +96,24 @@ export default function Home() {
                 <p className="font-bold text-sm leading-tight" style={{ color: accion.color }}>
                   {accion.titulo}
                 </p>
-                <p className="text-[#9ca3af] text-xs mt-1">
-                  {accion.subtitulo} &rarr;
-                </p>
+                <p className="text-[#9ca3af] text-xs mt-1">{accion.subtitulo} &rarr;</p>
               </div>
             </a>
-          ))
-          }
-        </div >
-      </div >
+          ))}
+        </div>
+      </div>
 
       {/* ÚLTIMAS HABITACIONES */}
-      < div >
+      <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-bold text-[#1a3c5e] text-lg">
-            Últimas habitaciones
-          </h2>
-          <a href="/habitaciones" className="text-[#0ea5a0] text-sm font-semibold">
-            Ver todas
-          </a>
+          <h2 className="font-bold text-[#1a3c5e] text-lg">{t('ultimasHabitaciones')}</h2>
+          <a href="/habitaciones" className="text-[#0ea5a0] text-sm font-semibold">{t('verTodas')}</a>
         </div>
         <div className="grid grid-cols-2 gap-3 stagger-children">
           {ultimasHabitaciones.map((hab, i) => (
-            <a
-              key={i}
-              href="/habitaciones"
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-            >
+            <a key={i} href="/habitaciones" className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="relative aspect-square">
-                <img
-                  src={hab.imagen}
-                  alt="Habitación"
-                  className="w-full h-full object-cover"
-                />
+                <img src={hab.imagen} alt="Habitació" className="w-full h-full object-cover" />
                 <div className="absolute top-2 left-2 bg-white rounded-full px-2 py-1 text-xs font-bold text-[#1a3c5e] shadow">
                   {hab.precio} €/mes
                 </div>
@@ -140,14 +123,12 @@ export default function Home() {
               </div>
             </a>
           ))}
-        </div >
-      </div >
+        </div>
+      </div>
 
       {/* VENTAJAS */}
-      < div >
-        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
-          Por qué Habitacio.ad
-        </h2>
+      <div>
+        <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">{t('porqueTitle')}</h2>
         <div className="flex flex-col gap-3 stagger-children">
           {ventajas.map((v) => (
             <div key={v.titulo} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-start">
@@ -159,24 +140,17 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </div >
+      </div>
 
       {/* CTA FINAL */}
-      < div className="bg-[#1a3c5e] rounded-2xl p-6 text-center" >
-        <h2 className="text-white font-bold text-xl mb-2">
-          ¿Tienes una habitación libre?
-        </h2>
-        <p className="text-[#a8c0d6] text-sm mb-4">
-          Publica gratis y encuentra inquilino rápidamente.
-        </p>
-
-        <a href="/publicar"
-          className="inline-block bg-[#0ea5a0] text-white font-semibold px-6 py-3 rounded-xl text-sm"
-        >
-          Publicar habitación gratis
+      <div className="bg-[#1a3c5e] rounded-2xl p-6 text-center">
+        <h2 className="text-white font-bold text-xl mb-2">{t('ctaTitle')}</h2>
+        <p className="text-[#a8c0d6] text-sm mb-4">{t('ctaSubtitle')}</p>
+        <a href="/publicar" className="inline-block bg-[#0ea5a0] text-white font-semibold px-6 py-3 rounded-xl text-sm">
+          {t('ctaBtn')}
         </a>
       </div>
 
-    </div >
+    </div>
   )
 }

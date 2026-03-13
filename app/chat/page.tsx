@@ -14,7 +14,22 @@ export default async function ChatPage() {
     .or(`inquilino_id.eq.${user.id},arrendador_id.eq.${user.id}`)
     .order('created_at', { ascending: false })
 
-  // Enriquecer con nombre del otro participante
+  // Enriquecer con nombre del otro participante + mensajes no leídos
+  const convIds = (conversaciones ?? []).map((c) => c.id)
+
+  // Unread count por conversación
+  const { data: mensajesNoLeidos } = await supabase
+    .from('mensajes')
+    .select('conversacion_id')
+    .eq('leido', false)
+    .neq('sender_id', user.id)
+    .in('conversacion_id', convIds.length > 0 ? convIds : [''])
+
+  const unreadPerConv: Record<string, number> = {}
+  for (const m of mensajesNoLeidos ?? []) {
+    unreadPerConv[m.conversacion_id] = (unreadPerConv[m.conversacion_id] ?? 0) + 1
+  }
+
   const convConNombres = await Promise.all(
     (conversaciones ?? []).map(async (conv) => {
       const otroId = conv.arrendador_id === user.id ? conv.inquilino_id : conv.arrendador_id
@@ -34,8 +49,9 @@ export default async function ChatPage() {
 
       return {
         ...conv,
-        nombre_otro: perfil?.nombre ?? undefined,
+        nombre_otro:    perfil?.nombre ?? undefined,
         ultimo_mensaje: ultimo?.contenido ?? undefined,
+        unread:         unreadPerConv[conv.id] ?? 0,
       }
     })
   )
