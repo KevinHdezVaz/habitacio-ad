@@ -26,14 +26,18 @@ export default async function RootLayout({
 
   let isAdmin     = false
   let unreadCount = 0
+  let avatarUrl: string | null = null
+  let userName:  string | null = null
 
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('tipo')
+      .select('tipo, avatar_url, nombre')
       .eq('id', user.id)
       .single()
     isAdmin = profile?.tipo === 'admin'
+    avatarUrl = profile?.avatar_url ?? null
+    userName  = profile?.nombre ?? null
 
     // Mensajes no leídos
     const { data: convs } = await supabase
@@ -63,7 +67,7 @@ export default async function RootLayout({
             showSpinner={false}
             shadow="0 0 10px #0ea5a0,0 0 5px #0ea5a0"
           />
-          <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} />
+          <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} avatarUrl={avatarUrl} userName={userName} />
           <main className="max-w-5xl mx-auto px-4 py-6">
             <PageTransition>{children}</PageTransition>
           </main>

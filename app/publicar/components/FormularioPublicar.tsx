@@ -2,9 +2,8 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import Card from '@/components/ui/Card'
+import MapaPicker from '@/components/maps/MapaPicker'
 import { createClient } from '@/lib/supabase-browser'
 import { publicarAnuncio } from '@/app/actions/anuncios'
 import Link from 'next/link'
@@ -14,12 +13,90 @@ const PARROQUIAS = [
   'Sant Julià de Lòria', 'La Massana', 'Ordino', 'Canillo',
 ]
 
+// ─── Componentes auxiliares ────────────────────────────────────────────────
+
+function Seccion({
+  num, icon, title, subtitle, children,
+}: {
+  num: number; icon: string; title: string; subtitle?: string; children: React.ReactNode
+}) {
+  return (
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#f8fafc] to-white">
+        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1a3c5e] text-lg flex-shrink-0">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">Paso {num}</span>
+          <h2 className="font-bold text-[#1a3c5e] text-base leading-tight">{title}</h2>
+          {subtitle && <p className="text-xs text-[#6b7280] mt-0.5">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="p-6 flex flex-col gap-5">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function Toggle({
+  checked, onToggle, label, icon,
+}: {
+  checked: boolean; onToggle: () => void; label: string; icon: string
+}) {
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={onToggle}
+        className={`relative w-11 h-6 rounded-full transition-all duration-200 flex-shrink-0 focus:outline-none
+          ${checked ? 'bg-[#0ea5a0]' : 'bg-gray-200 group-hover:bg-gray-300'}`}
+      >
+        <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200
+          ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+      </button>
+      <span className="text-sm text-[#374151] flex items-center gap-1.5 select-none">
+        <span>{icon}</span>
+        <span>{label}</span>
+      </span>
+    </label>
+  )
+}
+
+function LoadingOverlay({ visible }: { visible: boolean }) {
+  if (!visible) return null
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
+      <div className="flex flex-col items-center gap-6">
+        <div className="relative w-20 h-20">
+          <div className="absolute inset-0 rounded-full border-4 border-[#e8edf2]" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#1a3c5e] animate-spin" />
+          <div
+            className="absolute inset-3 rounded-full border-4 border-transparent border-t-[#0ea5a0] animate-spin"
+            style={{ animationDuration: '0.6s', animationDirection: 'reverse' }}
+          />
+        </div>
+        <div className="text-center">
+          <p className="text-xl font-bold text-[#1a3c5e]">Publicando tu anuncio…</p>
+          <p className="text-sm text-[#6b7280] mt-1">Subiendo imágenes y guardando información</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Componente principal ──────────────────────────────────────────────────
+
 export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) {
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [imagePreviews, setImagePreviews] = useState<{ file: File; preview: string }[]>([])
+  const [coords, setCoords] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null })
+  const [dragOver, setDragOver] = useState(false)
 
   const [form, setForm] = useState({
     titulo: '', parroquia: '', zona: '', precio: '',
@@ -41,9 +118,10 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
   }
   const toggle = (key: string) => set(key, !form[key as keyof typeof form])
 
-  function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []).slice(0, 8)
-    const previews = files.map((file) => ({ file, preview: URL.createObjectURL(file) }))
+  function addFiles(files: FileList | null) {
+    if (!files) return
+    const arr = Array.from(files).slice(0, 8 - imagePreviews.length)
+    const previews = arr.map((file) => ({ file, preview: URL.createObjectURL(file) }))
     setImagePreviews((prev) => [...prev, ...previews].slice(0, 8))
   }
 
@@ -106,6 +184,8 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
         idioma_vivienda: form.idioma_vivienda || null,
         descripcion: form.descripcion || null,
         normas: form.normas || null,
+        latitud: coords.lat && coords.lat !== 0 ? coords.lat : null,
+        longitud: coords.lng && coords.lng !== 0 ? coords.lng : null,
       }
 
       const result = await publicarAnuncio(datos, imageUrls)
@@ -121,193 +201,363 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
     }
   }
 
-  return (
-    <div className="max-w-3xl mx-auto flex flex-col gap-8">
-      <div>
-        <h1 className="text-3xl font-bold text-[#1a3c5e]">Publica tu anuncio</h1>
-        <p className="text-[#6b7280] mt-1">Completa los detalles para encontrar al inquilino ideal.</p>
-      </div>
+  // ─── Render ───────────────────────────────────────────────────────────────
 
-      {/* Aviso teléfono */}
-      {!hasPhone && (
-        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5">
-          <span className="text-xl leading-none mt-0.5">📞</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-amber-800">Añade tu número de teléfono</p>
-            <p className="text-xs text-amber-700 mt-0.5">
-              Los interesados podrán llamarte o escribirte por WhatsApp directamente.{' '}
-              <Link href="/perfil" className="font-bold underline underline-offset-2 hover:text-amber-900">
-                Añadirlo en mi perfil →
-              </Link>
-            </p>
+  return (
+    <>
+      <LoadingOverlay visible={loading} />
+
+      <div className="max-w-2xl mx-auto flex flex-col gap-6">
+
+        {/* Hero header */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1a3c5e] to-[#0ea5a0] flex items-center justify-center text-2xl shadow-md">
+              🏠
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-[#1a3c5e]">Publica tu habitación</h1>
+              <p className="text-sm text-[#6b7280]">Completa los detalles · Completamente gratis</p>
+            </div>
+          </div>
+          {/* Barra decorativa de pasos */}
+          <div className="flex items-center gap-1">
+            {[1,2,3,4,5,6].map((n) => (
+              <div key={n} className="flex-1 h-1 rounded-full bg-gradient-to-r from-[#1a3c5e] to-[#0ea5a0] opacity-15" />
+            ))}
           </div>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Aviso teléfono */}
+        {!hasPhone && (
+          <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-base">📞</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-amber-800">Añade tu teléfono para recibir más contactos</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Los interesados podrán llamarte o escribirte por WhatsApp.{' '}
+                <Link href="/perfil" className="font-bold underline underline-offset-2 hover:text-amber-900">
+                  Añadirlo ahora →
+                </Link>
+              </p>
+            </div>
+          </div>
+        )}
 
-        {/* ── Información básica ── */}
-        <Card className="p-6 flex flex-col gap-5">
-          <h2 className="font-bold text-[#1a3c5e] text-base border-b border-gray-100 pb-3">Información básica</h2>
-          <Input label="Título del anuncio *" placeholder="Ej: Habitación luminosa en el centro con balcón" value={form.titulo} onChange={(e) => set('titulo', e.target.value)} required />
-          <div className="grid grid-cols-2 gap-4">
-            <Input label="Precio mensual (€) *" type="number" placeholder="500" value={form.precio} onChange={(e) => set('precio', e.target.value)} required />
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Parroquia *</label>
-              <select value={form.parroquia} onChange={(e) => set('parroquia', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#f4f5f7] text-sm outline-none" required>
-                <option value="">Selecciona...</option>
-                {PARROQUIAS.map((p) => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Input label="Zona aproximada" placeholder="Ej: Cerca del centro comercial" value={form.zona} onChange={(e) => set('zona', e.target.value)} />
-            <Input label="Disponible desde" type="date" value={form.disponible_desde} onChange={(e) => set('disponible_desde', e.target.value)} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de estancia</label>
-            <div className="flex gap-2">
-              {[{ label: 'Anual', v: 'anual' }, { label: 'Temporero', v: 'temporero' }, { label: 'Ambos', v: 'ambos' }].map(({ label, v }) => (
-                <button type="button" key={v} onClick={() => set('tipo_estancia', v)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${form.tipo_estancia === v ? 'bg-[#1a3c5e] text-white' : 'bg-[#f4f5f7] text-[#6b7280]'}`}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </Card>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-        {/* ── Condiciones ── */}
-        <Card className="p-6 flex flex-col gap-5">
-          <h2 className="font-bold text-[#1a3c5e] text-base border-b border-gray-100 pb-3">Condiciones</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-3">
-              {[
-                { key: 'fianza', label: 'Requiere fianza' },
-                { key: 'gastos_incluidos', label: 'Gastos incluidos' },
-                { key: 'admite_pareja', label: 'Admite pareja' },
-                { key: 'admite_mascotas', label: 'Admite mascotas' },
-              ].map(({ key, label }) => (
-                <label key={key} className="flex items-center gap-3 cursor-pointer">
-                  <div onClick={() => toggle(key)} className={`w-10 h-6 rounded-full transition-colors flex items-center px-1 ${form[key as keyof typeof form] ? 'bg-[#0ea5a0]' : 'bg-gray-200'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${form[key as keyof typeof form] ? 'translate-x-4' : ''}`} />
-                  </div>
-                  <span className="text-sm text-[#1a3c5e]">{label}</span>
-                </label>
-              ))}
-            </div>
-            <div className="flex flex-col gap-3">
-              {[
-                { key: 'empadronamiento', label: 'Permite empadronamiento' },
-                { key: 'fumadores', label: 'Se permite fumar' },
-                { key: 'bano_privado', label: 'Baño privado' },
-                { key: 'wifi', label: 'WiFi incluido' },
-              ].map(({ key, label }) => (
-                <label key={key} className="flex items-center gap-3 cursor-pointer">
-                  <div onClick={() => toggle(key)} className={`w-10 h-6 rounded-full transition-colors flex items-center px-1 ${form[key as keyof typeof form] ? 'bg-[#0ea5a0]' : 'bg-gray-200'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${form[key as keyof typeof form] ? 'translate-x-4' : ''}`} />
-                  </div>
-                  <span className="text-sm text-[#1a3c5e]">{label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          {form.fianza && (
-            <Input label="Importe de la fianza (€)" type="number" placeholder="Ej: 1000" value={form.importe_fianza} onChange={(e) => set('importe_fianza', e.target.value)} />
-          )}
-          <div className="grid grid-cols-2 gap-4">
-            <Input label="Duración mínima" placeholder="Ej: 3 meses" value={form.duracion_minima} onChange={(e) => set('duracion_minima', e.target.value)} />
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Preferencia</label>
-              <select value={form.preferencia_sexo} onChange={(e) => set('preferencia_sexo', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#f4f5f7] text-sm outline-none">
-                <option value="indiferente">Indiferente</option>
-                <option value="chicas">Solo chicas</option>
-                <option value="chicos">Solo chicos</option>
-              </select>
-            </div>
-          </div>
-        </Card>
+          {/* ── 1. Información básica ── */}
+          <Seccion num={1} icon="📋" title="Información básica" subtitle="Título, precio y ubicación">
+            <Input
+              label="Título del anuncio *"
+              placeholder="Ej: Habitación luminosa con balcón en el centro"
+              value={form.titulo}
+              onChange={(e) => set('titulo', e.target.value)}
+              required
+            />
 
-        {/* ── Sobre la vivienda ── */}
-        <Card className="p-6 flex flex-col gap-5">
-          <h2 className="font-bold text-[#1a3c5e] text-base border-b border-gray-100 pb-3">Sobre la vivienda</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Input label="Metros habitación" type="number" placeholder="12" value={form.metros_habitacion} onChange={(e) => set('metros_habitacion', e.target.value)} />
-            <Input label="Metros piso" type="number" placeholder="80" value={form.metros_piso} onChange={(e) => set('metros_piso', e.target.value)} />
-            <Input label="Personas viviendo" type="number" placeholder="3" value={form.num_personas} onChange={(e) => set('num_personas', e.target.value)} />
-            <Input label="Tipo de cama" placeholder="Doble" value={form.tipo_cama} onChange={(e) => set('tipo_cama', e.target.value)} />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Idioma principal</label>
-              <select value={form.idioma_vivienda} onChange={(e) => set('idioma_vivienda', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#f4f5f7] text-sm outline-none">
-                <option>Español</option>
-                <option>Catalán</option>
-                <option>Francés</option>
-                <option>Portugués</option>
-                <option>Inglés</option>
-                <option>Indiferente</option>
-              </select>
-            </div>
-            <label className="flex items-center gap-3 cursor-pointer mt-6">
-              <div onClick={() => toggle('vive_propietario')} className={`w-10 h-6 rounded-full transition-colors flex items-center px-1 ${form.vive_propietario ? 'bg-[#0ea5a0]' : 'bg-gray-200'}`}>
-                <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${form.vive_propietario ? 'translate-x-4' : ''}`} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Precio mensual *</label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder="500"
+                    value={form.precio}
+                    onChange={(e) => set('precio', e.target.value)}
+                    required
+                    className="w-full px-4 py-3 pr-10 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#6b7280]">€</span>
+                </div>
               </div>
-              <span className="text-sm text-[#1a3c5e]">Vive el propietario</span>
-            </label>
-          </div>
-        </Card>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Parroquia *</label>
+                <select
+                  value={form.parroquia}
+                  onChange={(e) => set('parroquia', e.target.value)}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                >
+                  <option value="">Selecciona…</option>
+                  {PARROQUIAS.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+            </div>
 
-        {/* ── Descripción ── */}
-        <Card className="p-6 flex flex-col gap-5">
-          <h2 className="font-bold text-[#1a3c5e] text-base border-b border-gray-100 pb-3">Descripción y normas</h2>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-bold text-[#1a3c5e] ml-1">Descripción</label>
-            <textarea value={form.descripcion} onChange={(e) => set('descripcion', e.target.value)} rows={4} placeholder="Cuéntanos sobre la habitación, el piso y el perfil de inquilino que buscas..." className="w-full px-4 py-3 rounded-xl bg-[#f4f5f7] text-sm outline-none resize-none focus:bg-white transition-colors" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-bold text-[#1a3c5e] ml-1">Normas de convivencia</label>
-            <textarea value={form.normas} onChange={(e) => set('normas', e.target.value)} rows={3} placeholder="Horarios, limpieza, visitas, mascotas..." className="w-full px-4 py-3 rounded-xl bg-[#f4f5f7] text-sm outline-none resize-none focus:bg-white transition-colors" />
-          </div>
-        </Card>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Zona / referencia"
+                placeholder="Ej: Cerca del centro comercial"
+                value={form.zona}
+                onChange={(e) => set('zona', e.target.value)}
+              />
+              <Input
+                label="Disponible desde"
+                type="date"
+                value={form.disponible_desde}
+                onChange={(e) => set('disponible_desde', e.target.value)}
+              />
+            </div>
 
-        {/* ── Fotos ── */}
-        <Card className="p-6 flex flex-col gap-4">
-          <h2 className="font-bold text-[#1a3c5e] text-base border-b border-gray-100 pb-3">Fotos de la habitación</h2>
-          <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImages} />
-
-          {imagePreviews.length > 0 && (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {imagePreviews.map(({ preview }, i) => (
-                <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-gray-100">
-                  <img src={preview} alt="" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-black/50 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-black/70">
-                    ✕
+            {/* Tipo estancia — cards visuales */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de estancia</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Todo el año',  sub: 'Residencia habitual', v: 'anual',     icon: '🏠' },
+                  { label: 'Temporero',    sub: 'Esquí, verano…',      v: 'temporero', icon: '⛷️' },
+                  { label: 'Ambos',        sub: 'Flexible',            v: 'ambos',     icon: '✅' },
+                ].map(({ label, sub, v, icon }) => (
+                  <button
+                    type="button"
+                    key={v}
+                    onClick={() => set('tipo_estancia', v)}
+                    className={`flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 transition-all text-center
+                      ${form.tipo_estancia === v
+                        ? 'border-[#1a3c5e] bg-[#f0f4f8]'
+                        : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
+                  >
+                    <span className="text-xl">{icon}</span>
+                    <span className={`text-xs font-bold leading-tight ${form.tipo_estancia === v ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>{label}</span>
+                    <span className="text-[10px] text-[#9ca3af]">{sub}</span>
                   </button>
+                ))}
+              </div>
+            </div>
+          </Seccion>
+
+          {/* ── 2. Condiciones ── */}
+          <Seccion num={2} icon="✅" title="Condiciones" subtitle="Qué incluye y qué se permite">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label="Requiere fianza"        icon="🔐" />
+              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label="Gastos incluidos"        icon="💡" />
+              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label="Admite pareja"           icon="👫" />
+              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label="Admite mascotas"         icon="🐾" />
+              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label="Permite empadronamiento" icon="📄" />
+              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label="Se permite fumar"        icon="🚬" />
+              <Toggle checked={form.bano_privado}     onToggle={() => toggle('bano_privado')}     label="Baño privado"            icon="🚿" />
+              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label="WiFi incluido"           icon="📶" />
+            </div>
+
+            {form.fianza && (
+              <Input
+                label="Importe de la fianza (€)"
+                type="number"
+                placeholder="Ej: 600"
+                value={form.importe_fianza}
+                onChange={(e) => set('importe_fianza', e.target.value)}
+              />
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Duración mínima"
+                placeholder="Ej: 3 meses"
+                value={form.duracion_minima}
+                onChange={(e) => set('duracion_minima', e.target.value)}
+              />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Preferencia género</label>
+                <select
+                  value={form.preferencia_sexo}
+                  onChange={(e) => set('preferencia_sexo', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                >
+                  <option value="indiferente">Indiferente</option>
+                  <option value="chicas">Solo chicas</option>
+                  <option value="chicos">Solo chicos</option>
+                </select>
+              </div>
+            </div>
+          </Seccion>
+
+          {/* ── 3. Sobre la vivienda ── */}
+          <Seccion num={3} icon="🛋️" title="Sobre la vivienda" subtitle="Detalles del piso y la habitación">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'Habitación m²', key: 'metros_habitacion', placeholder: '12',    icon: '🛏️' },
+                { label: 'Piso m²',       key: 'metros_piso',       placeholder: '80',    icon: '🏠' },
+                { label: 'Convivientes',  key: 'num_personas',      placeholder: '3',     icon: '👥' },
+                { label: 'Tipo de cama',  key: 'tipo_cama',         placeholder: 'Doble', icon: '🛌', text: true },
+              ].map(({ label, key, placeholder, icon, text }) => (
+                <div key={key} className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-[#1a3c5e] ml-1 flex items-center gap-1">
+                    {icon} {label}
+                  </label>
+                  <input
+                    type={text ? 'text' : 'number'}
+                    placeholder={placeholder}
+                    value={form[key as keyof typeof form] as string}
+                    onChange={(e) => set(key, e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                  />
                 </div>
               ))}
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">🌐 Idioma principal</label>
+                <select
+                  value={form.idioma_vivienda}
+                  onChange={(e) => set('idioma_vivienda', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                >
+                  {['Español','Catalán','Francés','Portugués','Inglés','Indiferente'].map((l) => (
+                    <option key={l}>{l}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end pb-1">
+                <Toggle
+                  checked={form.vive_propietario}
+                  onToggle={() => toggle('vive_propietario')}
+                  label="Vive el propietario"
+                  icon="🏡"
+                />
+              </div>
+            </div>
+          </Seccion>
+
+          {/* ── 4. Ubicación ── */}
+          <Seccion num={4} icon="📍" title="Ubicación en el mapa" subtitle="Opcional · Solo se muestra el pin, no la dirección exacta">
+            <MapaPicker
+              lat={coords.lat}
+              lng={coords.lng}
+              onChange={(lat, lng) => setCoords({ lat, lng })}
+            />
+          </Seccion>
+
+          {/* ── 5. Descripción y normas ── */}
+          <Seccion num={5} icon="✍️" title="Descripción y normas" subtitle="Cuéntanos más sobre la habitación">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Descripción</label>
+              <textarea
+                value={form.descripcion}
+                onChange={(e) => set('descripcion', e.target.value)}
+                rows={5}
+                placeholder="Cuéntanos sobre la habitación, el piso, la zona y el tipo de persona que buscas…"
+                className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Normas de convivencia</label>
+              <textarea
+                value={form.normas}
+                onChange={(e) => set('normas', e.target.value)}
+                rows={3}
+                placeholder="Horarios, limpieza, visitas, ruido, mascotas…"
+                className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+              />
+            </div>
+          </Seccion>
+
+          {/* ── 6. Fotos ── */}
+          <Seccion num={6} icon="📸" title="Fotos de la habitación" subtitle="Las fotos aumentan mucho el interés · Máximo 8">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => addFiles(e.target.files)}
+            />
+
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {imagePreviews.map(({ preview }, i) => (
+                  <div
+                    key={i}
+                    className={`relative aspect-square rounded-2xl overflow-hidden bg-gray-100
+                      ${i === 0 ? 'ring-2 ring-[#0ea5a0] ring-offset-2' : ''}`}
+                  >
+                    <img src={preview} alt="" className="w-full h-full object-cover" />
+                    {i === 0 && (
+                      <div className="absolute bottom-0 inset-x-0 bg-[#0ea5a0]/90 text-white text-[9px] font-bold text-center py-1 uppercase tracking-wide">
+                        Portada
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute top-1.5 right-1.5 bg-black/60 hover:bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                {imagePreviews.length < 8 && (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#0ea5a0] bg-[#f8fafc] flex flex-col items-center justify-center gap-1 transition-colors group"
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">➕</span>
+                    <span className="text-[10px] text-[#9ca3af]">Añadir</span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            {imagePreviews.length === 0 && (
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files) }}
+                onClick={() => fileRef.current?.click()}
+                className={`cursor-pointer rounded-3xl border-2 border-dashed transition-all p-10 flex flex-col items-center gap-3
+                  ${dragOver
+                    ? 'border-[#0ea5a0] bg-[#e6f7f7]'
+                    : 'border-gray-200 bg-[#f8fafc] hover:border-[#0ea5a0] hover:bg-[#f0fafa]'}`}
+              >
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-[#e8edf2] to-[#f4f5f7] flex items-center justify-center text-3xl">
+                  📸
+                </div>
+                <div className="text-center">
+                  <p className="font-bold text-[#1a3c5e] text-sm">Arrastra fotos aquí o toca para seleccionar</p>
+                  <p className="text-xs text-[#9ca3af] mt-1">JPG, PNG · Hasta 8 fotos · La primera será la portada</p>
+                </div>
+              </div>
+            )}
+
+            {imagePreviews.length > 0 && (
+              <p className="text-xs text-[#9ca3af] text-center">
+                {imagePreviews.length}/8 fotos · La primera imagen es la portada del anuncio
+              </p>
+            )}
+          </Seccion>
+
+          {/* Error */}
+          {error && (
+            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5">
+              <span className="text-xl">⚠️</span>
+              <p className="text-sm font-medium text-red-700">{error}</p>
+            </div>
           )}
 
-          <button type="button" onClick={() => fileRef.current?.click()}
-            className="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center gap-2 hover:border-[#0ea5a0] transition-colors group cursor-pointer">
-            <div className="w-12 h-12 rounded-full bg-[#f4f5f7] flex items-center justify-center text-2xl group-hover:bg-[#e6f7f7] transition-colors">📸</div>
-            <p className="font-bold text-[#1a3c5e] text-sm">Añadir fotos</p>
-            <p className="text-[#6b7280] text-xs">{imagePreviews.length}/8 fotos · Máximo 8</p>
-          </button>
-          <p className="text-xs text-[#9ca3af]">⚠️ Necesitas crear el bucket <strong>habitaciones</strong> en Supabase Storage con acceso público antes de subir imágenes.</p>
-        </Card>
+          {/* ── Botón de envío ── */}
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-[#1a3c5e]">¿Todo listo?</p>
+                <p className="text-xs text-[#6b7280] mt-0.5">
+                  Tu anuncio se revisará antes de publicarse · Normalmente en menos de 24 h
+                </p>
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#1a3c5e] to-[#1e4a72] text-white font-bold px-8 py-4 rounded-2xl hover:from-[#152e4a] hover:to-[#193d5e] transition-all shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-sm"
+              >
+                <span className="text-base">🚀</span>
+                Enviar anuncio
+              </button>
+            </div>
+          </div>
 
-        {error && (
-          <p className="text-red-500 text-sm bg-red-50 py-3 px-4 rounded-xl text-center">{error}</p>
-        )}
-
-        <div className="flex justify-end gap-3">
-          <Button type="submit" disabled={loading} className="px-12">
-            {loading ? 'Publicando...' : 'Enviar anuncio'}
-          </Button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   )
 }

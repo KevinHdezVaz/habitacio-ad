@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { login } from '@/app/actions/auth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Spinner from '@/components/ui/Spinner'
 import BotonGoogle from '@/components/auth/BotonGoogle'
 import Link from 'next/link'
 
@@ -17,7 +18,9 @@ function LoginForm() {
   const oauthError = searchParams.get('error') === 'oauth'
   const t = useTranslations('auth')
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
     setLoading(true)
     setError(null)
     if (next) formData.set('next', next)
@@ -34,6 +37,14 @@ function LoginForm() {
 
   return (
     <>
+      {/* Overlay de carga */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+          <Spinner size="md" color="blue" />
+          <p className="mt-3 text-sm font-semibold text-[#1a3c5e]">{t('loggingIn')}</p>
+        </div>
+      )}
+
       <BotonGoogle next={next || '/'} />
 
       <div className="flex items-center gap-3 my-1">
@@ -48,7 +59,7 @@ function LoginForm() {
         </p>
       )}
 
-      <form action={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Input
           label={t('email')}
           name="email"
@@ -76,7 +87,7 @@ function LoginForm() {
           </Link>
         </div>
 
-        <Button type="submit" className="w-full" loading={loading}>
+        <Button type="submit" className="w-full" loading={loading} disabled={loading}>
           {loading ? t('loggingIn') : t('login')}
         </Button>
       </form>

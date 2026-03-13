@@ -64,13 +64,18 @@ export default async function FichaHabitacionPage({
 
   const isOwner = user?.id === anuncio.user_id
 
-  // Mapa
-  const coords = PARROQUIA_COORDS[anuncio.parroquia]
-  // Embed de Google Maps sin API key (URL clásica con output=embed)
+  // Mapa — usar coordenadas exactas si el anunciante las proporcionó, si no la parroquia
+  const coordsExactas: [number, number] | null =
+    anuncio.latitud && anuncio.longitud ? [anuncio.latitud, anuncio.longitud] : null
+  const coordsFallback = PARROQUIA_COORDS[anuncio.parroquia]
+  const coords = coordsExactas ?? coordsFallback
+
   const googleMapsEmbedUrl = coords
-    ? `https://maps.google.com/maps?q=${coords[0]},${coords[1]}&z=15&output=embed`
+    ? `https://maps.google.com/maps?q=${coords[0]},${coords[1]}&z=${coordsExactas ? 17 : 15}&output=embed`
     : `https://maps.google.com/maps?q=${encodeURIComponent(`${anuncio.parroquia}, Andorra`)}&z=14&output=embed`
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${anuncio.parroquia}${anuncio.zona ? `, ${anuncio.zona}` : ''}, Andorra`)}`
+  const googleMapsUrl = coordsExactas
+    ? `https://www.google.com/maps/search/?api=1&query=${coordsExactas[0]},${coordsExactas[1]}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${anuncio.parroquia}${anuncio.zona ? `, ${anuncio.zona}` : ''}, Andorra`)}`
 
   // Teléfono
   const telefono = anuncio.profiles?.telefono ?? null
@@ -258,7 +263,9 @@ export default async function FichaHabitacionPage({
                 <div>
                   <p className="font-semibold text-[#1a3c5e] text-sm">{anuncio.parroquia}</p>
                   {anuncio.zona && <p className="text-xs text-[#6b7280]">{anuncio.zona}</p>}
-                  <p className="text-xs text-[#9ca3af]">Andorra · Zona aproximada</p>
+                  <p className="text-xs text-[#9ca3af]">
+                    Andorra · {coordsExactas ? 'Ubicación exacta' : 'Zona aproximada'}
+                  </p>
                 </div>
               </div>
 

@@ -6,6 +6,7 @@ import { registro } from '@/app/actions/auth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import PhoneInput from '@/components/ui/PhoneInput'
+import Spinner from '@/components/ui/Spinner'
 import BotonGoogle from '@/components/auth/BotonGoogle'
 import Link from 'next/link'
 
@@ -14,7 +15,10 @@ export default function RegistroPage() {
   const [loading, setLoading] = useState(false)
   const t = useTranslations('auth')
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+
     const password  = formData.get('password') as string
     const confirmar = formData.get('confirmar') as string
 
@@ -55,7 +59,15 @@ export default function RegistroPage() {
         <div className="flex-1 h-px bg-gray-100" />
       </div>
 
-      <form action={handleSubmit} className="flex flex-col gap-5">
+      {/* Overlay de carga */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+          <Spinner size="md" color="blue" />
+          <p className="mt-3 text-sm font-semibold text-[#1a3c5e]">{t('creatingAccount')}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Input
           label={t('fullName')}
           name="nombre"
@@ -89,7 +101,7 @@ export default function RegistroPage() {
           required
         />
 
-        {/* Teléfono opcional — útil para arrendadores que quieren recibir llamadas */}
+        {/* Teléfono opcional */}
         <div className="flex flex-col gap-1.5">
           <PhoneInput
             label={t('phone')}
@@ -113,7 +125,7 @@ export default function RegistroPage() {
           </label>
         </div>
 
-        <Button type="submit" className="w-full" loading={loading}>
+        <Button type="submit" className="w-full" loading={loading} disabled={loading}>
           {loading ? t('creatingAccount') : t('createAccount')}
         </Button>
       </form>

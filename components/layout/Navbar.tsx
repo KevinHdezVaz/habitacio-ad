@@ -7,16 +7,37 @@ import { logout } from '@/app/actions/auth'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import type { User } from '@supabase/supabase-js'
 
+function MiniAvatar({ avatarUrl, userName }: { avatarUrl: string | null; userName: string | null }) {
+  const iniciales = userName
+    ? userName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    : '?'
+  return (
+    <span className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#e8edf2] inline-flex">
+      {avatarUrl ? (
+        <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+      ) : (
+        <span className="w-full h-full bg-gradient-to-br from-[#1a3c5e] to-[#2d5a8e] flex items-center justify-center text-white text-[10px] font-bold">
+          {iniciales}
+        </span>
+      )}
+    </span>
+  )
+}
+
 export default function Navbar({
   user,
   isAdmin = false,
   unreadCount = 0,
   locale = 'es',
+  avatarUrl = null,
+  userName = null,
 }: {
   user: User | null
   isAdmin?: boolean
   unreadCount?: number
   locale?: string
+  avatarUrl?: string | null
+  userName?: string | null
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('nav')
@@ -51,7 +72,8 @@ export default function Navbar({
                   </span>
                 )}
               </Link>
-              <Link href="/perfil" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+              <Link href="/perfil" className="flex items-center gap-2 text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+                <MiniAvatar avatarUrl={avatarUrl} userName={userName} />
                 {t('miPerfil')}
               </Link>
 
@@ -119,7 +141,8 @@ export default function Navbar({
                   </span>
                 )}
               </Link>
-              <Link href="/perfil" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
+              <Link href="/perfil" className="flex items-center gap-2 font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
+                <MiniAvatar avatarUrl={avatarUrl} userName={userName} />
                 {t('miPerfil')}
               </Link>
 

@@ -48,6 +48,7 @@ export interface Profile {
   nombre: string
   telefono: string
   descripcion?: string
+  avatar_url?: string
   tipo: 'arrendador' | 'inquilino' | 'admin'
   created_at: string
 }

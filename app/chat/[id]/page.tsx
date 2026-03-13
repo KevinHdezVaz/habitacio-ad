@@ -42,33 +42,59 @@ export default async function ChatDetallesPage({
     .order('created_at', { ascending: true })
 
   return (
-    <div className="flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
-      {/* Cabecera */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
-        <Link href="/chat" className="text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors p-1">
+    /*
+      Usamos dvh para tener en cuenta la barra del navegador móvil.
+      El contenedor ocupa toda la pantalla disponible sin dejar que la página haga scroll.
+    */
+    <div
+      className="flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden"
+      style={{ height: 'calc(100dvh - 112px)' }}
+    >
+      {/* ── Cabecera ──────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#e8edf2] flex-shrink-0 bg-white">
+        <Link
+          href="/chat"
+          className="text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors p-1.5 rounded-xl hover:bg-[#f4f7fa] -ml-1"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <div className="w-10 h-10 rounded-full bg-[#e8edf2] flex items-center justify-center flex-shrink-0">
-          <span className="text-[#1a3c5e] font-bold text-base">
+
+        {/* Avatar del otro usuario */}
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1a3c5e] to-[#2d5a8e] flex items-center justify-center flex-shrink-0 shadow-sm">
+          <span className="text-white font-bold text-base">
             {(otroPerfil?.nombre ?? 'A')[0].toUpperCase()}
           </span>
         </div>
+
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-[#1a3c5e] text-base">{otroPerfil?.nombre ?? 'Anónimo'}</p>
+          <p className="font-bold text-[#1a3c5e] text-[15px] leading-tight">{otroPerfil?.nombre ?? 'Anónimo'}</p>
           {conv.anuncio?.titulo && (
             <Link
               href={`/habitaciones/${conv.anuncio.id}`}
-              className="text-xs text-[#0ea5a0] hover:underline truncate block"
+              className="text-xs text-[#0ea5a0] hover:underline truncate block mt-0.5"
             >
-              {conv.anuncio.titulo}
+              📍 {conv.anuncio.titulo}
             </Link>
           )}
         </div>
+
+        {/* Botón ver anuncio (desktop) */}
+        {conv.anuncio?.id && (
+          <Link
+            href={`/habitaciones/${conv.anuncio.id}`}
+            className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#0ea5a0] border border-[#0ea5a0]/30 rounded-xl px-3 py-1.5 hover:bg-[#0ea5a0]/5 transition-colors flex-shrink-0"
+          >
+            Ver anuncio
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        )}
       </div>
 
-      {/* Vista del chat */}
+      {/* ── Vista del chat ────────────────────────────────────────────────── */}
       <VistaChat
         conversacionId={id}
         currentUserId={user.id}

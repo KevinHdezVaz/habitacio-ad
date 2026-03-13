@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { Mensaje } from '@/types'
@@ -11,16 +11,53 @@ interface Props {
   mensajesIniciales: Mensaje[]
 }
 
+function formatHora(fecha: string) {
+  return new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+}
+
+function formatFecha(fecha: string) {
+  const d = new Date(fecha)
+  const hoy = new Date()
+  const ayer = new Date(hoy)
+  ayer.setDate(hoy.getDate() - 1)
+
+  if (d.toDateString() === hoy.toDateString()) return 'Hoy'
+  if (d.toDateString() === ayer.toDateString()) return 'Ayer'
+  return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function esMismoDia(a: string, b: string) {
+  return new Date(a).toDateString() === new Date(b).toDateString()
+}
+
 export default function VistaChat({ conversacionId, currentUserId, mensajesIniciales }: Props) {
   const [mensajes, setMensajes] = useState<Mensaje[]>(mensajesIniciales)
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const supabase = createClient()
   const router = useRouter()
 
-  // Marcar mensajes como leídos al abrir la conversación
+  // ─── Scroll helpers ───────────────────────────────────────────────────────
+  function esCercaDelFondo() {
+    const container = messagesContainerRef.current
+    if (!container) return true
+    return container.scrollHeight - container.scrollTop - container.clientHeight < 120
+  }
+
+  function scrollAlFondo(behavior: ScrollBehavior = 'smooth') {
+    bottomRef.current?.scrollIntoView({ behavior, block: 'end' })
+  }
+
+  // Scroll instantáneo al montar
+  useEffect(() => {
+    scrollAlFondo('instant')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ─── Marcar como leídos (sin router.refresh para evitar scroll de página) ─
   useEffect(() => {
     supabase
       .from('mensajes')
@@ -28,27 +65,14 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
       .eq('conversacion_id', conversacionId)
       .eq('leido', false)
       .neq('sender_id', currentUserId)
-      .then(() => router.refresh())
+      .then(() => {
+        // Refrescamos silenciosamente solo el badge de mensajes no leídos
+        router.refresh()
+      })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversacionId])
 
-  // Scroll al fondo del contenedor (no de la página)
-  function scrollAlFondo(smooth = true) {
-    const container = messagesContainerRef.current
-    if (!container) return
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: smooth ? 'smooth' : 'instant',
-    })
-  }
-
-  // Scroll instantáneo al cargar, suave al recibir mensajes nuevos
-  useEffect(() => {
-    scrollAlFondo(mensajes !== mensajesIniciales)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mensajes])
-
-  // Realtime: nuevos mensajes
+  // ─── Realtime: nuevos mensajes ────────────────────────────────────────────
   useEffect(() => {
     const channel = supabase
       .channel(`chat-${conversacionId}`)
@@ -66,16 +90,21 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
             if (prev.some((m) => m.id === nuevo.id)) return prev
             return [...prev, nuevo]
           })
+
+          // Solo hacer scroll automático si el usuario ya estaba cerca del fondo
+          // o si el mensaje es del propio usuario
+          if (nuevo.sender_id === currentUserId || esCercaDelFondo()) {
+            requestAnimationFrame(() => scrollAlFondo('smooth'))
+          }
         }
       )
       .subscribe()
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return () => { supabase.removeChannel(channel) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversacionId])
 
+  // ─── Enviar ───────────────────────────────────────────────────────────────
   async function enviar() {
     const contenido = texto.trim()
     if (!contenido || enviando) return
@@ -90,20 +119,19 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
     })
 
     setEnviando(false)
+    // Scroll al fondo tras enviar propio mensaje
+    requestAnimationFrame(() => scrollAlFondo('smooth'))
   }
 
   function resetTextareaHeight() {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-    }
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
   }
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setTexto(e.target.value)
-    // Auto-resize
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 128) + 'px'
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 140) + 'px'
     }
   }
 
@@ -112,82 +140,143 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
       e.preventDefault()
       enviar()
     }
-    // Shift + Enter → salto de línea (comportamiento por defecto del textarea)
+    // Shift + Enter → salto de línea (comportamiento por defecto)
   }
 
-  function formatHora(fecha: string) {
-    return new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-  }
-
-  // Agrupar mensajes consecutivos del mismo remitente
+  // ─── Helpers de agrupación ────────────────────────────────────────────────
   function esMismoBloqueAnterior(index: number) {
     if (index === 0) return false
     return mensajes[index].sender_id === mensajes[index - 1].sender_id
   }
 
+  function esMismoBloquesiguiente(index: number) {
+    if (index === mensajes.length - 1) return false
+    return mensajes[index].sender_id === mensajes[index + 1].sender_id
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      {/* Mensajes */}
+
+      {/* ── Lista de mensajes ────────────────────────────────────────────── */}
       <div
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto flex flex-col gap-1 px-4 py-4 bg-[#f4f7fa]"
+        className="flex-1 overflow-y-auto px-4 py-5 space-y-0.5"
+        style={{ background: 'linear-gradient(180deg, #f4f7fa 0%, #eef2f7 100%)' }}
       >
         {mensajes.length === 0 && (
-          <div className="flex-1 flex items-center justify-center text-[#9ca3af] text-base mt-16">
-            Empieza la conversación 👋
+          <div className="flex flex-col items-center justify-center gap-3 pt-20 pb-10">
+            <div className="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-3xl">
+              💬
+            </div>
+            <p className="text-[#6b7280] text-base font-medium">Empieza la conversación</p>
+            <p className="text-[#9ca3af] text-sm">Di hola 👋</p>
           </div>
         )}
 
         {mensajes.map((msg, index) => {
           const esMio = msg.sender_id === currentUserId
-          const agrupado = esMismoBloqueAnterior(index)
+          const agrupadoArriba = esMismoBloqueAnterior(index)
+          const agrupadoAbajo = esMismoBloquesiguiente(index)
+          const mostrarFecha = index === 0 || !esMismoDia(msg.created_at, mensajes[index - 1].created_at)
+          const mostrarHora = !agrupadoAbajo
+
+          // Radio de las esquinas según agrupación y lado
+          let bubbleRadius: string
+          if (esMio) {
+            if (!agrupadoArriba && !agrupadoAbajo) bubbleRadius = 'rounded-2xl rounded-br-sm'
+            else if (!agrupadoArriba) bubbleRadius = 'rounded-2xl rounded-br-sm rounded-b-none'
+            else if (!agrupadoAbajo) bubbleRadius = 'rounded-2xl rounded-tr-sm'
+            else bubbleRadius = 'rounded-2xl rounded-r-sm'
+          } else {
+            if (!agrupadoArriba && !agrupadoAbajo) bubbleRadius = 'rounded-2xl rounded-bl-sm'
+            else if (!agrupadoArriba) bubbleRadius = 'rounded-2xl rounded-bl-sm rounded-b-none'
+            else if (!agrupadoAbajo) bubbleRadius = 'rounded-2xl rounded-tl-sm'
+            else bubbleRadius = 'rounded-2xl rounded-l-sm'
+          }
 
           return (
-            <div
-              key={msg.id}
-              className={`flex ${esMio ? 'justify-end' : 'justify-start'} ${agrupado ? 'mt-0.5' : 'mt-3'}`}
-            >
-              <div className={`max-w-[78%] flex flex-col ${esMio ? 'items-end' : 'items-start'}`}>
-                <div
-                  className={`px-4 py-3 text-base leading-relaxed ${
-                    esMio
-                      ? `bg-[#1a3c5e] text-white ${agrupado ? 'rounded-2xl rounded-tr-md' : 'rounded-2xl rounded-br-md'}`
-                      : `bg-white text-[#1a3c5e] shadow-sm ${agrupado ? 'rounded-2xl rounded-tl-md' : 'rounded-2xl rounded-bl-md'}`
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap break-words">{msg.contenido}</p>
-                </div>
-                {/* Hora: sólo en el último de cada bloque o si es el último mensaje */}
-                {(!mensajes[index + 1] || mensajes[index + 1].sender_id !== msg.sender_id) && (
-                  <span className={`text-[11px] mt-1 px-1 ${esMio ? 'text-[#9ca3af]' : 'text-[#9ca3af]'}`}>
-                    {formatHora(msg.created_at)}
+            <div key={msg.id}>
+              {/* Separador de fecha */}
+              {mostrarFecha && (
+                <div className="flex items-center gap-3 my-5">
+                  <div className="flex-1 h-px bg-[#e5eaf0]" />
+                  <span className="text-[11px] font-semibold text-[#9ca3af] tracking-wide uppercase px-2">
+                    {formatFecha(msg.created_at)}
                   </span>
-                )}
+                  <div className="flex-1 h-px bg-[#e5eaf0]" />
+                </div>
+              )}
+
+              {/* Burbuja */}
+              <div className={`flex ${esMio ? 'justify-end' : 'justify-start'} ${agrupadoArriba ? 'mt-0.5' : 'mt-3'}`}>
+                <div className={`max-w-[78%] sm:max-w-[68%] flex flex-col ${esMio ? 'items-end' : 'items-start'}`}>
+                  <div
+                    className={`px-4 py-2.5 text-[15px] leading-relaxed break-words ${bubbleRadius} ${
+                      esMio
+                        ? 'bg-[#1a3c5e] text-white'
+                        : 'bg-white text-[#1a3c5e] shadow-sm border border-[#eef2f7]'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.contenido}</p>
+                  </div>
+
+                  {/* Hora debajo del último mensaje del bloque */}
+                  {mostrarHora && (
+                    <span className="text-[11px] mt-1 px-1 text-[#aab4c0] select-none">
+                      {formatHora(msg.created_at)}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           )
         })}
+
+        {/* Ancla para scroll */}
+        <div ref={bottomRef} className="h-1" />
       </div>
 
-      {/* Input */}
-      <div className="border-t border-gray-100 bg-white px-3 py-3 flex gap-2 items-end flex-shrink-0">
+      {/* ── Input de texto ───────────────────────────────────────────────── */}
+      <div className="border-t border-[#e8edf2] bg-white px-3 py-3 flex gap-2 items-end flex-shrink-0 shadow-[0_-1px_8px_rgba(0,0,0,0.04)]">
         <textarea
           ref={textareaRef}
           value={texto}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="Escribe un mensaje… (Intro para enviar)"
+          placeholder="Escribe un mensaje…"
           rows={1}
-          className="flex-1 resize-none border border-[#e5e7eb] rounded-2xl px-4 py-3 text-base text-[#1a3c5e] placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#0ea5a0] overflow-y-auto leading-relaxed"
-          style={{ maxHeight: '128px' }}
+          className="flex-1 resize-none border border-[#e5e7eb] rounded-2xl px-4 py-3 text-[15px] text-[#1a3c5e] placeholder-[#b0b9c4] focus:outline-none focus:ring-2 focus:ring-[#0ea5a0] focus:border-transparent overflow-y-auto leading-relaxed bg-[#f9fafc] transition-colors"
+          style={{ maxHeight: '140px' }}
         />
         <button
           onClick={enviar}
           disabled={!texto.trim() || enviando}
-          className="bg-[#0ea5a0] text-white px-5 py-3 rounded-2xl text-base font-semibold disabled:opacity-40 transition-opacity flex-shrink-0 hover:bg-[#0d9490] active:scale-95"
+          aria-label="Enviar mensaje"
+          className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+            texto.trim() && !enviando
+              ? 'bg-gradient-to-br from-[#0ea5a0] to-[#0d8f8a] text-white shadow-md hover:shadow-lg active:scale-95'
+              : 'bg-[#f0f4f8] text-[#b0b9c4] cursor-not-allowed'
+          }`}
         >
-          Enviar
+          {enviando ? (
+            <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"/>
+            </svg>
+          ) : (
+            <svg className="w-5 h-5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          )}
         </button>
+      </div>
+
+      {/* Hint debajo del input */}
+      <div className="bg-white px-4 pb-2 flex-shrink-0">
+        <p className="text-[10px] text-[#c0c8d2] text-center">
+          Intro para enviar · Shift+Intro para nueva línea
+        </p>
       </div>
     </div>
   )

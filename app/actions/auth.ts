@@ -47,6 +47,14 @@ export async function registro(formData: FormData) {
     })
   }
 
+  // Iniciar sesión automáticamente tras el registro.
+  // Supabase puede tener confirmación de email activada, en cuyo caso
+  // signInWithPassword fallará — en ese caso redirigimos igual y el
+  // usuario verá el estado de "no logueado" hasta que confirme el email.
+  // Para MVP: desactivar "Enable email confirmations" en Supabase Dashboard
+  // → Authentication → Email → Email confirmations: OFF
+  await supabase.auth.signInWithPassword({ email, password })
+
   redirect('/')
 }
 

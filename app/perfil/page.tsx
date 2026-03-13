@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
 import FormularioPerfil from './components/FormularioPerfil'
 import MisAnuncios from './components/MisAnuncios'
+import AvatarUpload from './components/AvatarUpload'
 import type { Anuncio, Profile } from '@/types'
 
 export default async function PerfilPage() {
@@ -25,10 +26,6 @@ export default async function PerfilPage() {
   ])
 
   if (!profile) redirect('/login')
-
-  const iniciales = profile.nombre
-    ? profile.nombre.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : '?'
 
   const miembro = new Date(user.created_at).toLocaleDateString('es-ES', {
     month: 'long', year: 'numeric',
@@ -56,10 +53,13 @@ export default async function PerfilPage() {
         {/* Sidebar */}
         <div className="md:col-span-1">
           <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-center gap-4 text-center sticky top-20">
-            {/* Avatar con iniciales */}
-            <div className="w-20 h-20 rounded-full bg-[#1a3c5e] flex items-center justify-center text-white text-2xl font-bold select-none">
-              {iniciales}
-            </div>
+            {/* Avatar con subida de foto */}
+            <AvatarUpload
+              userId={user.id}
+              avatarUrl={profile.avatar_url}
+              nombre={profile.nombre ?? ''}
+              size="lg"
+            />
             <div>
               <p className="font-bold text-[#1a3c5e] leading-tight">{profile.nombre}</p>
               <p className="text-xs text-[#9ca3af] mt-0.5">Miembro desde {miembro}</p>
