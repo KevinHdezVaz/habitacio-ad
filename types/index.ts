@@ -47,6 +47,7 @@ export interface Profile {
   id: string
   nombre: string
   telefono: string
+  descripcion?: string
   tipo: 'arrendador' | 'inquilino' | 'admin'
   created_at: string
 }
@@ -67,4 +68,28 @@ export interface Conversacion {
   arrendador_id: string
   created_at: string
   anuncio?: Anuncio
+}
+
+export type TipoBusqueda   = 'anual' | 'temporero' | 'ambos'
+export type SituacionLaboral = 'trabajador' | 'estudiante' | 'temporero'
+
+export interface PerfilInquilino {
+  id: string
+  user_id: string
+  nombre: string
+  edad: number
+  tipo_busqueda: TipoBusqueda
+  parroquias: string[]
+  presupuesto_max: number
+  fecha_entrada: string
+  fecha_salida: string | null
+  situacion: SituacionLaboral
+  sector: string
+  fumador: boolean
+  mascotas: boolean
+  acompanado: boolean
+  descripcion: string
+  estado: 'activo' | 'inactivo'
+  destacado: boolean
+  created_at: string
 }

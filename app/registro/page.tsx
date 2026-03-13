@@ -4,14 +4,15 @@ import { useState } from 'react'
 import { registro } from '@/app/actions/auth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import BotonGoogle from '@/components/auth/BotonGoogle'
 import Link from 'next/link'
 
 export default function RegistroPage() {
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError]     = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(formData: FormData) {
-    const password = formData.get('password') as string
+    const password  = formData.get('password') as string
     const confirmar = formData.get('confirmar') as string
 
     if (password !== confirmar) {
@@ -41,6 +42,16 @@ export default function RegistroPage() {
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-[#1a3c5e]">Crea tu cuenta</h1>
         <p className="text-[#6b7280] text-sm mt-2">Únete a la comunidad de Habitacio.ad</p>
+      </div>
+
+      {/* Google */}
+      <BotonGoogle next="/" />
+
+      {/* Separador */}
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-px bg-gray-100" />
+        <span className="text-xs text-[#9ca3af] font-medium">o con email</span>
+        <div className="flex-1 h-px bg-gray-100" />
       </div>
 
       <form action={handleSubmit} className="flex flex-col gap-5">

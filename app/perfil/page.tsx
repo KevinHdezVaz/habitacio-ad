@@ -1,70 +1,108 @@
-'use client'
+import { createClient } from '@/lib/supabase-server'
+import { redirect } from 'next/navigation'
+import { logout } from '@/app/actions/auth'
+import FormularioPerfil from './components/FormularioPerfil'
+import MisAnuncios from './components/MisAnuncios'
+import type { Anuncio, Profile } from '@/types'
 
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import Card from '@/components/ui/Card'
+export default async function PerfilPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-export default function PerfilPage() {
+  if (!user) redirect('/login?next=/perfil')
+
+  const [{ data: profile }, { data: anuncios }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('anuncios')
+      .select('*, imagenes_anuncio(*)')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false }),
+  ])
+
+  if (!profile) redirect('/login')
+
+  const iniciales = profile.nombre
+    ? profile.nombre.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+    : '?'
+
+  const miembro = new Date(user.created_at).toLocaleDateString('es-ES', {
+    month: 'long', year: 'numeric',
+  })
+
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-10">
-      <div className="flex items-center justify-between">
+    <div className="max-w-4xl mx-auto flex flex-col gap-8">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#1a3c5e]">Mi Perfil</h1>
-          <p className="text-[#6b7280] mt-1">Gestiona tu información y preferencias de búsqueda.</p>
+          <h1 className="text-2xl font-bold text-[#1a3c5e]">Mi Perfil</h1>
+          <p className="text-[#6b7280] text-sm mt-0.5">Gestiona tu información y tus anuncios.</p>
         </div>
-        <Button variant="outline" size="sm">Cerrar sesión</Button>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-[#6b7280] hover:border-red-200 hover:text-red-600 transition-colors"
+          >
+            Cerrar sesión
+          </button>
+        </form>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Sidebar */}
         <div className="md:col-span-1">
-          <Card className="p-6 flex flex-col items-center gap-4 text-center">
-            <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200" 
-                alt="Avatar" 
-                className="w-full h-full object-cover"
-              />
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-center gap-4 text-center sticky top-20">
+            {/* Avatar con iniciales */}
+            <div className="w-20 h-20 rounded-full bg-[#1a3c5e] flex items-center justify-center text-white text-2xl font-bold select-none">
+              {iniciales}
             </div>
             <div>
-              <p className="font-bold text-[#1a3c5e]">Marc Ferrer</p>
-              <p className="text-xs text-[#6b7280]">miembro desde Marzo 2026</p>
+              <p className="font-bold text-[#1a3c5e] leading-tight">{profile.nombre}</p>
+              <p className="text-xs text-[#9ca3af] mt-0.5">Miembro desde {miembro}</p>
             </div>
-            <Button size="sm" variant="ghost" className="text-xs">Cambiar foto</Button>
-          </Card>
+
+            {/* Stats rápidos */}
+            <div className="w-full border-t border-gray-100 pt-4 grid grid-cols-2 gap-3 text-center">
+              <div>
+                <p className="text-xl font-bold text-[#1a3c5e]">
+                  {anuncios?.filter((a) => a.estado === 'activo').length ?? 0}
+                </p>
+                <p className="text-[10px] text-[#6b7280]">Activos</p>
+              </div>
+              <div>
+                <p className="text-xl font-bold text-[#1a3c5e]">
+                  {anuncios?.length ?? 0}
+                </p>
+                <p className="text-[10px] text-[#6b7280]">Total</p>
+              </div>
+            </div>
+          </div>
         </div>
 
+        {/* Content */}
         <div className="md:col-span-3 flex flex-col gap-6">
-          <Card className="p-6 flex flex-col gap-6">
-            <h2 className="font-bold text-[#1a3c5e] text-lg border-b border-gray-100 pb-3">Información personal</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Nombre" defaultValue="Marc" />
-              <Input label="Apellidos" defaultValue="Ferrer" />
-            </div>
-            
-            <Input label="Email" defaultValue="marc.ferrer@email.com" readOnly className="opacity-70" />
-            
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Sobre mí</label>
-              <textarea 
-                className="w-full px-4 py-3 rounded-xl border-transparent bg-[#f4f5f7] text-sm focus:bg-white focus:border-[#1a3c5e] outline-none transition-all min-h-[100px]"
-                defaultValue="Trabajo en el sector bancario y busco una habitación tranquila para larga temporada en Andorra la Vella o Escaldes."
-              ></textarea>
-            </div>
-            
-            <div className="flex justify-end pt-4">
-              <Button>Guardar cambios</Button>
-            </div>
-          </Card>
+          {/* Formulario perfil */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <FormularioPerfil
+              profile={profile as Profile & { descripcion?: string }}
+              email={user.email ?? ''}
+            />
+          </div>
 
-          <Card className="p-6">
-            <h2 className="font-bold text-[#1a3c5e] text-lg border-b border-gray-100 pb-3 mb-6">Mis anuncios</h2>
-            <div className="text-center py-10 flex flex-col items-center gap-3">
-              <span className="text-4xl">📭</span>
-              <p className="text-[#6b7280] text-sm">Aún no has publicado ningún anuncio.</p>
-              <Button href="/publicar" variant="secondary" size="sm" className="mt-2">Publicar mi primer anuncio</Button>
+          {/* Mis anuncios */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
+              <h2 className="font-bold text-[#1a3c5e] text-lg">Mis anuncios</h2>
+              {(anuncios?.length ?? 0) > 0 && (
+                <span className="text-xs text-[#6b7280]">{anuncios?.length} publicación{(anuncios?.length ?? 0) !== 1 ? 'es' : ''}</span>
+              )}
             </div>
-          </Card>
+            <MisAnuncios anuncios={(anuncios ?? []) as Anuncio[]} />
+          </div>
         </div>
       </div>
     </div>

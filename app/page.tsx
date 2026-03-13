@@ -19,10 +19,10 @@ export default function Home() {
     {
       icono: '🙋',
       titulo: 'Encuéntrame habitación',
-      subtitulo: 'Publica tu perfil',
-      href: '/perfil',
-      color: '#2980b9',
-      bg: '#e8f4fd',
+      subtitulo: 'Publica tu perfil de búsqueda',
+      href: '/buscar-habitacion',
+      color: '#0ea5a0',
+      bg: '#e6f7f7',
     },
     {
       icono: '👥',

@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Rutas protegidas — redirige a login si no hay sesión
-  const protectedPaths = ['/perfil', '/publicar', '/chat']
+  const protectedPaths = ['/perfil', '/publicar', '/chat', '/admin']
   const isProtected = protectedPaths.some((p) =>
     request.nextUrl.pathname.startsWith(p)
   )
