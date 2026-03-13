@@ -57,8 +57,7 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <Link
-            href={`/habitaciones/${anuncio.id}`}
-            target="_blank"
+            href={`/admin/anuncios/${anuncio.id}`}
             className="font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors truncate text-sm"
           >
             {anuncio.titulo}

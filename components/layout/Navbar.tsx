@@ -47,9 +47,8 @@ export default function Navbar({
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className="flex items-center gap-1.5 bg-[#1a3c5e] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-[#0ea5a0] transition-colors"
+                  className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors"
                 >
-                  <span>⚙️</span>
                   Dashboard
                 </Link>
               )}
@@ -110,9 +109,8 @@ export default function Navbar({
                 <Link
                   href="/admin"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 bg-[#1a3c5e] text-white px-4 py-3 rounded-xl font-bold text-sm"
+                  className="font-medium text-[#1a3c5e]"
                 >
-                  <span>⚙️</span>
                   Dashboard
                 </Link>
               )}

@@ -52,6 +52,17 @@ export async function destacarAnuncio(id: string, destacado: boolean) {
   return { ok: true }
 }
 
+export async function cambiarTipoUsuario(userId: string, nuevoTipo: string) {
+  const supabase = await verificarAdmin()
+  const { error } = await supabase
+    .from('profiles')
+    .update({ tipo: nuevoTipo })
+    .eq('id', userId)
+  if (error) return { error: error.message }
+  revalidatePath('/admin/usuarios')
+  return { ok: true }
+}
+
 export async function eliminarAnuncio(id: string) {
   const supabase = await verificarAdmin()
 
