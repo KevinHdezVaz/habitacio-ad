@@ -1,7 +1,10 @@
 import { Anuncio } from '@/types'
 
+type AnuncioCard = Pick<Anuncio, 'id' | 'titulo' | 'precio' | 'parroquia'> &
+  Partial<Pick<Anuncio, 'tipo_estancia' | 'gastos_incluidos' | 'bano_privado' | 'num_personas' | 'metros_habitacion' | 'fianza' | 'destacado' | 'imagenes_anuncio'>>
+
 interface Props {
-  anuncio: Anuncio
+  anuncio: AnuncioCard
 }
 
 export default function TarjetaHabitacion({ anuncio }: Props) {
@@ -15,7 +18,7 @@ export default function TarjetaHabitacion({ anuncio }: Props) {
 
   return (
     <a
-      href={`/habitacion/${anuncio.id}`}
+      href={`/habitaciones/${anuncio.id}`}
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
     >
       <div className="relative aspect-video">
@@ -40,7 +43,7 @@ export default function TarjetaHabitacion({ anuncio }: Props) {
         <p className="text-[#6b7280] text-xs">{anuncio.parroquia}</p>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           <span className="bg-[#e8f4fd] text-[#2980b9] text-xs px-2 py-0.5 rounded-full font-medium">
-            {etiquetaTipo[anuncio.tipo_estancia]}
+            {anuncio.tipo_estancia ? etiquetaTipo[anuncio.tipo_estancia] : null}
           </span>
           {anuncio.gastos_incluidos && (
             <span className="bg-[#e6f7f7] text-[#0ea5a0] text-xs px-2 py-0.5 rounded-full font-medium">

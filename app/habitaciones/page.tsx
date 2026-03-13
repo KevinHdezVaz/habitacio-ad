@@ -1,0 +1,219 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { Anuncio } from '@/types'
+import TarjetaHabitacion from '@/components/habitaciones/TarjetaHabitacion'
+
+const PARROQUIAS = [
+  'Andorra la Vella',
+  'Escaldes-Engordany',
+  'Encamp',
+  'Sant Julià de Lòria',
+  'La Massana',
+  'Ordino',
+  'Canillo',
+]
+
+export default function HabitacionesPage() {
+  const [anuncios, setAnuncios] = useState<Anuncio[]>([])
+  const [cargando, setCargando] = useState(true)
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
+  const [filtros, setFiltros] = useState({
+    parroquia: '',
+    precioMin: '',
+    precioMax: '',
+    tipoEstancia: '',
+    fianza: '',
+    gastosIncluidos: '',
+    admitePareja: '',
+    admiteMascotas: '',
+    fumadores: '',
+    orden: 'recientes',
+  })
+
+  useEffect(() => {
+    cargarAnuncios()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtros])
+
+  async function cargarAnuncios() {
+    setCargando(true)
+    let query = supabase
+      .from('anuncios')
+      .select('*, imagenes_anuncio(*)')
+      .eq('estado', 'activo')
+
+    if (filtros.parroquia) query = query.eq('parroquia', filtros.parroquia)
+    if (filtros.precioMin) query = query.gte('precio', Number(filtros.precioMin))
+    if (filtros.precioMax) query = query.lte('precio', Number(filtros.precioMax))
+    if (filtros.tipoEstancia) query = query.eq('tipo_estancia', filtros.tipoEstancia)
+    if (filtros.fianza) query = query.eq('fianza', filtros.fianza === 'si')
+    if (filtros.gastosIncluidos) query = query.eq('gastos_incluidos', filtros.gastosIncluidos === 'si')
+    if (filtros.admitePareja) query = query.eq('admite_pareja', filtros.admitePareja === 'si')
+    if (filtros.admiteMascotas) query = query.eq('admite_mascotas', filtros.admiteMascotas === 'si')
+    if (filtros.fumadores) query = query.eq('fumadores', filtros.fumadores === 'si')
+
+    if (filtros.orden === 'precio_asc') query = query.order('precio', { ascending: true })
+    else if (filtros.orden === 'precio_desc') query = query.order('precio', { ascending: false })
+    else query = query.order('created_at', { ascending: false })
+
+    const { data } = await query
+    setAnuncios((data as Anuncio[]) ?? [])
+    setCargando(false)
+  }
+
+  function actualizarFiltro(key: string, valor: string) {
+    setFiltros((prev) => ({ ...prev, [key]: valor }))
+  }
+
+  function limpiarFiltros() {
+    setFiltros({ parroquia: '', precioMin: '', precioMax: '', tipoEstancia: '', fianza: '', gastosIncluidos: '', admitePareja: '', admiteMascotas: '', fumadores: '', orden: 'recientes' })
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Cabecera */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a3c5e]">Habitaciones</h1>
+          <p className="text-[#6b7280] text-sm">{anuncios.length} anuncios disponibles</p>
+        </div>
+        <button
+          onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+          className="flex items-center gap-2 bg-white border border-[#e5e7eb] px-4 py-2 rounded-xl text-sm font-medium text-[#1a3c5e] shadow-sm"
+        >
+          🔧 Filtros
+        </button>
+      </div>
+
+      {/* Ordenación */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {[
+          { label: 'Más recientes', valor: 'recientes' },
+          { label: 'Precio ↑', valor: 'precio_asc' },
+          { label: 'Precio ↓', valor: 'precio_desc' },
+        ].map((op) => (
+          <button
+            key={op.valor}
+            onClick={() => actualizarFiltro('orden', op.valor)}
+            className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              filtros.orden === op.valor ? 'bg-[#1a3c5e] text-white' : 'bg-white text-[#6b7280] border border-[#e5e7eb]'
+            }`}
+          >
+            {op.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Panel de filtros */}
+      {filtrosAbiertos && (
+        <div className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <p className="font-bold text-[#1a3c5e]">Filtros</p>
+            <button onClick={limpiarFiltros} className="text-[#0ea5a0] text-sm font-medium">
+              Limpiar
+            </button>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-[#6b7280] mb-1 block">Parroquia</label>
+            <select
+              value={filtros.parroquia}
+              onChange={(e) => actualizarFiltro('parroquia', e.target.value)}
+              className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]"
+            >
+              <option value="">Todas</option>
+              {PARROQUIAS.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-[#6b7280] mb-1 block">Precio mín (€)</label>
+              <input type="number" value={filtros.precioMin} onChange={(e) => actualizarFiltro('precioMin', e.target.value)} placeholder="0" className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-[#6b7280] mb-1 block">Precio máx (€)</label>
+              <input type="number" value={filtros.precioMax} onChange={(e) => actualizarFiltro('precioMax', e.target.value)} placeholder="2000" className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]" />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-[#6b7280] mb-2 block">Tipo de estancia</label>
+            <div className="flex gap-2">
+              {[
+                { label: 'Todos', valor: '' },
+                { label: 'Anual', valor: 'anual' },
+                { label: 'Temporero', valor: 'temporero' },
+                { label: 'Ambos', valor: 'ambos' },
+              ].map((op) => (
+                <button
+                  key={op.valor}
+                  onClick={() => actualizarFiltro('tipoEstancia', op.valor)}
+                  className={`flex-1 py-2 rounded-xl text-xs font-medium transition-colors ${
+                    filtros.tipoEstancia === op.valor ? 'bg-[#1a3c5e] text-white' : 'bg-[#f4f5f7] text-[#6b7280]'
+                  }`}
+                >
+                  {op.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { key: 'gastosIncluidos', label: 'Gastos incluidos' },
+              { key: 'fianza', label: 'Con fianza' },
+              { key: 'admitePareja', label: 'Admite pareja' },
+              { key: 'admiteMascotas', label: 'Admite mascotas' },
+              { key: 'fumadores', label: 'Fumadores' },
+            ].map(({ key, label }) => (
+              <div key={key}>
+                <label className="text-xs font-medium text-[#6b7280] mb-1 block">{label}</label>
+                <select
+                  value={filtros[key as keyof typeof filtros]}
+                  onChange={(e) => actualizarFiltro(key, e.target.value)}
+                  className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]"
+                >
+                  <option value="">Indiferente</option>
+                  <option value="si">Sí</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Resultados */}
+      {cargando ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+              <div className="aspect-video bg-gray-200" />
+              <div className="p-3 flex flex-col gap-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : anuncios.length === 0 ? (
+        <div className="text-center py-20 flex flex-col items-center gap-3">
+          <span className="text-5xl">🏠</span>
+          <p className="font-bold text-[#1a3c5e]">No hay habitaciones con estos filtros</p>
+          <button onClick={limpiarFiltros} className="text-[#0ea5a0] text-sm font-medium underline">
+            Limpiar filtros
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {anuncios.map((anuncio) => (
+            <TarjetaHabitacion key={anuncio.id} anuncio={anuncio} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
