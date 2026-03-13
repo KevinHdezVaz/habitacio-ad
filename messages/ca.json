@@ -187,7 +187,10 @@
     "creatingAccount": "Creant compte…",
     "alreadyHaveAccount": "Ja tens compte?",
     "signIn": "Inicia sessió",
-    "orWithEmail": "o amb correu"
+    "orWithEmail": "o amb correu",
+    "phone": "Telèfon (opcional)",
+    "phonePlaceholder": "+376 600 000",
+    "phoneHint": "Els interessats podran trucar-te o escriure't per WhatsApp. Pots afegir-lo més tard des del teu perfil."
   },
   "chat": {
     "title": "Missatges",

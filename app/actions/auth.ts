@@ -22,9 +22,10 @@ export async function login(formData: FormData) {
 export async function registro(formData: FormData) {
   const supabase = await createClient()
 
-  const nombre = formData.get('nombre') as string
-  const email = formData.get('email') as string
+  const nombre   = formData.get('nombre')   as string
+  const email    = formData.get('email')    as string
   const password = formData.get('password') as string
+  const telefono = ((formData.get('telefono') as string) ?? '').trim()
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -42,6 +43,7 @@ export async function registro(formData: FormData) {
       id: data.user.id,
       nombre,
       tipo: 'inquilino',
+      ...(telefono ? { telefono } : {}),
     })
   }
 

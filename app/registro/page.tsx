@@ -88,6 +88,18 @@ export default function RegistroPage() {
           required
         />
 
+        {/* Teléfono opcional — útil para arrendadores que quieren recibir llamadas */}
+        <div className="flex flex-col gap-1.5">
+          <Input
+            label={t('phone')}
+            name="telefono"
+            type="tel"
+            placeholder={t('phonePlaceholder')}
+            autoComplete="tel"
+          />
+          <p className="text-[11px] text-[#9ca3af] ml-1">{t('phoneHint')}</p>
+        </div>
+
         {error && (
           <p className="text-red-500 text-sm bg-red-50 py-2 px-3 rounded-xl text-center">{error}</p>
         )}
