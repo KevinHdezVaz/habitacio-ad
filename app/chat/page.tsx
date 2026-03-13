@@ -14,7 +14,7 @@ export default async function ChatPage() {
     .or(`inquilino_id.eq.${user.id},arrendador_id.eq.${user.id}`)
     .order('created_at', { ascending: false })
 
-  // Enriquecer con nombre del otro participante + mensajes no leídos
+  // Enriquecer con nombre del otro participante + mensajes no eídos
   const convIds = (conversaciones ?? []).map((c) => c.id)
 
   // Unread count por conversación
@@ -49,9 +49,9 @@ export default async function ChatPage() {
 
       return {
         ...conv,
-        nombre_otro:    perfil?.nombre ?? undefined,
+        nombre_otro: perfil?.nombre ?? undefined,
         ultimo_mensaje: ultimo?.contenido ?? undefined,
-        unread:         unreadPerConv[conv.id] ?? 0,
+        unread: unreadPerConv[conv.id] ?? 0,
       }
     })
   )
