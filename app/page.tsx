@@ -81,7 +81,7 @@ export default function Home() {
         <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
           ¿Qué necesitas?
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 stagger-children">
           {acciones.map((accion) => (
             <a
               key={accion.titulo}
@@ -118,7 +118,7 @@ export default function Home() {
             Ver todas
           </a>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 stagger-children">
           {ultimasHabitaciones.map((hab, i) => (
             <a
               key={i}
@@ -148,7 +148,7 @@ export default function Home() {
         <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">
           Por qué Habitacio.ad
         </h2>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 stagger-children">
           {ventajas.map((v) => (
             <div key={v.titulo} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-start">
               <span className="text-2xl">{v.icono}</span>

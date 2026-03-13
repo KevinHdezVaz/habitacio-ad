@@ -8,9 +8,11 @@ import type { User } from '@supabase/supabase-js'
 export default function Navbar({
   user,
   isAdmin = false,
+  unreadCount = 0,
 }: {
   user: User | null
   isAdmin?: boolean
+  unreadCount?: number
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -36,8 +38,13 @@ export default function Navbar({
 
           {user ? (
             <div className="flex items-center gap-3">
-              <Link href="/chat" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+              <Link href="/chat" className="relative text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
                 Mensajes
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
               <Link href="/perfil" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
                 Mi perfil
@@ -84,7 +91,7 @@ export default function Navbar({
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 flex flex-col p-4 gap-4 shadow-lg">
+        <div className="md:hidden bg-white border-t border-gray-100 flex flex-col p-4 gap-4 shadow-lg animate-fade-in">
           <Link href="/habitaciones" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
             Buscar habitación
           </Link>
@@ -97,8 +104,13 @@ export default function Navbar({
 
           {user ? (
             <>
-              <Link href="/chat" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
+              <Link href="/chat" className="relative inline-flex items-center gap-2 font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
                 Mensajes
+                {unreadCount > 0 && (
+                  <span className="min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
               <Link href="/perfil" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
                 Mi perfil

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Spinner from '@/components/ui/Spinner'
 import { publicarPerfilInquilino } from '@/app/actions/perfiles-inquilino'
 import type { TipoBusqueda, SituacionLaboral } from '@/types'
 
@@ -272,7 +273,7 @@ export default function FormularioBusqueda() {
           disabled={loading}
           className="w-full py-4 rounded-2xl bg-[#1a3c5e] text-white font-bold text-base hover:bg-[#0ea5a0] transition-colors disabled:opacity-60"
         >
-          {loading ? 'Publicando…' : 'Publicar perfil'}
+          {loading ? <><Spinner size="sm" color="white" /> Publicando…</> : 'Publicar perfil'}
         </button>
 
         <p className="text-xs text-center text-[#9ca3af]">

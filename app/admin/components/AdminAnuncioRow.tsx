@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Spinner from '@/components/ui/Spinner'
 import { aprobarAnuncio, rechazarAnuncio, destacarAnuncio } from '@/app/actions/admin'
 
 type AnuncioAdmin = {
@@ -15,9 +16,9 @@ type AnuncioAdmin = {
 }
 
 export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) {
-  const [estado, setEstado] = useState(anuncio.estado)
+  const [estado, setEstado]       = useState(anuncio.estado)
   const [destacado, setDestacado] = useState(false)
-  const [loading, setLoading] = useState<string | null>(null)
+  const [loading, setLoading]     = useState<string | null>(null)
 
   const fecha = new Date(anuncio.created_at).toLocaleDateString('es-ES', {
     day: '2-digit', month: 'short', year: 'numeric',
@@ -29,14 +30,12 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
     if (!res.error) setEstado('activo')
     setLoading(null)
   }
-
   async function handleRechazar() {
     setLoading('rechazar')
     const res = await rechazarAnuncio(anuncio.id)
     if (!res.error) setEstado('inactivo')
     setLoading(null)
   }
-
   async function handleDestacar() {
     setLoading('destacar')
     const nuevoValor = !destacado
@@ -53,7 +52,6 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
 
   return (
     <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <Link
@@ -74,57 +72,36 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
         </p>
       </div>
 
-      {/* Acciones */}
       <div className="flex items-center gap-2 shrink-0">
         {estado === 'pendiente' && (
           <>
-            <button
-              onClick={handleAprobar}
-              disabled={loading !== null}
-              className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading === 'aprobar' ? '…' : '✓ Aprobar'}
+            <button onClick={handleAprobar} disabled={loading !== null}
+              className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+              {loading === 'aprobar' ? <Spinner size="xs" color="white" /> : '✓'} Aprobar
             </button>
-            <button
-              onClick={handleRechazar}
-              disabled={loading !== null}
-              className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading === 'rechazar' ? '…' : '✕ Rechazar'}
+            <button onClick={handleRechazar} disabled={loading !== null}
+              className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : '✕'} Rechazar
             </button>
           </>
         )}
-
         {estado === 'activo' && (
           <>
-            <button
-              onClick={handleDestacar}
-              disabled={loading !== null}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 ${
-                destacado
-                  ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-              }`}
-            >
-              {loading === 'destacar' ? '…' : destacado ? '★ Quitar' : '☆ Destacar'}
+            <button onClick={handleDestacar} disabled={loading !== null}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5 ${destacado ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
+              {loading === 'destacar' ? <Spinner size="xs" color="blue" /> : (destacado ? '★' : '☆')}
+              {destacado ? 'Quitar' : 'Destacar'}
             </button>
-            <button
-              onClick={handleRechazar}
-              disabled={loading !== null}
-              className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading === 'rechazar' ? '…' : 'Desactivar'}
+            <button onClick={handleRechazar} disabled={loading !== null}
+              className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : null} Desactivar
             </button>
           </>
         )}
-
         {estado === 'inactivo' && (
-          <button
-            onClick={handleAprobar}
-            disabled={loading !== null}
-            className="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-semibold transition-colors disabled:opacity-50"
-          >
-            {loading === 'aprobar' ? '…' : 'Reactivar'}
+          <button onClick={handleAprobar} disabled={loading !== null}
+            className="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
+            {loading === 'aprobar' ? <Spinner size="xs" color="teal" /> : null} Reactivar
           </button>
         )}
       </div>

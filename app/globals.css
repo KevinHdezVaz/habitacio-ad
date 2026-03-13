@@ -12,3 +12,42 @@ body {
   background-color: #f4f5f7;
   font-family: 'Inter', sans-serif;
 }
+
+/* Evita el zoom automático en iOS al hacer foco en inputs */
+@layer base {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: 1rem; /* mínimo 16px para evitar zoom en Safari iOS */
+  }
+}
+
+/* ── Animaciones ─────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+.animate-fade-up  { animation: fadeUp  0.35s ease-out forwards; }
+.animate-fade-in  { animation: fadeIn  0.3s  ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.3s  ease-out forwards; }
+
+/* Stagger para listas de tarjetas */
+.stagger-children > * {
+  animation: fadeUp 0.35s ease-out both;
+}
+.stagger-children > *:nth-child(1)  { animation-delay: 0ms;   }
+.stagger-children > *:nth-child(2)  { animation-delay: 60ms;  }
+.stagger-children > *:nth-child(3)  { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4)  { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5)  { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6)  { animation-delay: 300ms; }
+.stagger-children > *:nth-child(n+7){ animation-delay: 360ms; }

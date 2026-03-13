@@ -79,8 +79,8 @@ function LoginForm() {
           </Link>
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Entrando...' : 'Iniciar sesión'}
+        <Button type="submit" className="w-full" loading={loading}>
+          {loading ? 'Entrando…' : 'Iniciar sesión'}
         </Button>
       </form>
     </>

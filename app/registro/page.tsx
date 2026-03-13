@@ -104,8 +104,8 @@ export default function RegistroPage() {
           </label>
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+        <Button type="submit" className="w-full" loading={loading}>
+          {loading ? 'Creando cuenta…' : 'Crear cuenta'}
         </Button>
       </form>
 
