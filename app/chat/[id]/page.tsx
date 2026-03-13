@@ -42,19 +42,21 @@ export default async function ChatDetallesPage({
     .order('created_at', { ascending: true })
 
   return (
-    <div className="flex flex-col gap-0 bg-white rounded-2xl shadow-sm overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
+    <div className="flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
       {/* Cabecera */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 flex-shrink-0">
-        <Link href="/chat" className="text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-          ←
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
+        <Link href="/chat" className="text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors p-1">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </Link>
-        <div className="w-9 h-9 rounded-full bg-[#e8edf2] flex items-center justify-center">
-          <span className="text-[#1a3c5e] font-bold text-sm">
+        <div className="w-10 h-10 rounded-full bg-[#e8edf2] flex items-center justify-center flex-shrink-0">
+          <span className="text-[#1a3c5e] font-bold text-base">
             {(otroPerfil?.nombre ?? 'A')[0].toUpperCase()}
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-[#1a3c5e] text-sm">{otroPerfil?.nombre ?? 'Anónimo'}</p>
+          <p className="font-bold text-[#1a3c5e] text-base">{otroPerfil?.nombre ?? 'Anónimo'}</p>
           {conv.anuncio?.titulo && (
             <Link
               href={`/habitaciones/${conv.anuncio.id}`}
