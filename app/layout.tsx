@@ -9,8 +9,47 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 
 export const metadata: Metadata = {
-  title: 'Habitacio.ad - Habitaciones en alquiler en Andorra',
-  description: 'Encuentra habitación para todo el año o temporada en Andorra.',
+  title: {
+    default: 'Habitacio.ad — Habitaciones en alquiler en Andorra',
+    template: '%s | Habitacio.ad',
+  },
+  description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí. La plataforma de habitaciones más completa del Principat.',
+  metadataBase: new URL('https://habitacio.ad'),
+  keywords: ['habitaciones andorra', 'alquiler andorra', 'piso andorra', 'habitació andorra', 'temporeros andorra', 'esqui andorra alquiler'],
+  authors: [{ name: 'Habitacio.ad' }],
+  creator: 'Habitacio.ad',
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: 'https://habitacio.ad',
+    siteName: 'Habitacio.ad',
+    title: 'Habitacio.ad — Habitaciones en alquiler en Andorra',
+    description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Habitacio.ad — Habitaciones en Andorra',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Habitacio.ad — Habitaciones en alquiler en Andorra',
+    description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default async function RootLayout({

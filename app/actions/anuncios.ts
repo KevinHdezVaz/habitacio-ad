@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
+import { after } from 'next/server'
+import { emailAnuncioEnRevision } from '@/lib/email'
 
 export async function publicarAnuncio(
   datos: Record<string, unknown>,
@@ -29,7 +31,29 @@ export async function publicarAnuncio(
     )
   }
 
-  return { ok: true, id: anuncio.id }
+  const anuncioId = anuncio.id
+
+  after(async () => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('nombre')
+        .eq('id', user.id)
+        .single()
+
+      const { data: authUser } = await supabase.auth.admin.getUserById(user.id)
+      const email = authUser?.user?.email
+      if (!email) return
+
+      await emailAnuncioEnRevision({
+        destinatarioEmail: email,
+        destinatarioNombre: profile?.nombre ?? 'Usuario',
+        tituloAnuncio: String(datos.titulo ?? 'Tu habitación'),
+      })
+    } catch { /* silent */ }
+  })
+
+  return { ok: true, id: anuncioId }
 }
 
 export async function editarAnuncio(

@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase-server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { after } from 'next/server'
+import { emailAnuncioAprobado, emailAnuncioRechazado } from '@/lib/email'
 
 async function verificarAdmin() {
   const supabase = await createClient()
@@ -27,6 +29,35 @@ export async function aprobarAnuncio(id: string) {
     .eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin')
+
+  after(async () => {
+    try {
+      const { data: anuncio } = await supabase
+        .from('anuncios')
+        .select('titulo, user_id')
+        .eq('id', id)
+        .single()
+      if (!anuncio) return
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('nombre')
+        .eq('id', anuncio.user_id)
+        .single()
+
+      const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+      const email = authUser?.user?.email
+      if (!email) return
+
+      await emailAnuncioAprobado({
+        destinatarioEmail: email,
+        destinatarioNombre: profile?.nombre ?? 'Usuario',
+        tituloAnuncio: anuncio.titulo,
+        anuncioId: id,
+      })
+    } catch { /* silent */ }
+  })
+
   return { ok: true }
 }
 
@@ -38,6 +69,34 @@ export async function rechazarAnuncio(id: string) {
     .eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin')
+
+  after(async () => {
+    try {
+      const { data: anuncio } = await supabase
+        .from('anuncios')
+        .select('titulo, user_id')
+        .eq('id', id)
+        .single()
+      if (!anuncio) return
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('nombre')
+        .eq('id', anuncio.user_id)
+        .single()
+
+      const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+      const email = authUser?.user?.email
+      if (!email) return
+
+      await emailAnuncioRechazado({
+        destinatarioEmail: email,
+        destinatarioNombre: profile?.nombre ?? 'Usuario',
+        tituloAnuncio: anuncio.titulo,
+      })
+    } catch { /* silent */ }
+  })
+
   return { ok: true }
 }
 

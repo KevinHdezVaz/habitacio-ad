@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { Mensaje } from '@/types'
+import { enviarMensaje } from '@/app/actions/chat'
 
 interface Props {
   conversacionId: string
@@ -112,11 +113,8 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
     setTexto('')
     resetTextareaHeight()
 
-    await supabase.from('mensajes').insert({
-      conversacion_id: conversacionId,
-      sender_id: currentUserId,
-      contenido,
-    })
+    // Usamos server action para poder disparar notificación por email
+    await enviarMensaje(conversacionId, contenido)
 
     setEnviando(false)
     // Scroll al fondo tras enviar propio mensaje

@@ -146,7 +146,8 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
       {/* ── LIGHTBOX ───────────────────────────────────────────────────── */}
       {lightboxOpen && (
         <div
-          className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+          className="fixed inset-0 z-[100] flex flex-col"
+          style={{ backgroundColor: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(6px)' }}
           onClick={(e) => { if (e.target === e.currentTarget) cerrar() }}
         >
           {/* Header */}
@@ -157,7 +158,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
             <p className="text-white font-semibold text-sm truncate max-w-xs text-center">{titulo}</p>
             <button
               onClick={cerrar}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
+              className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors text-white"
               aria-label="Cerrar"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -166,8 +167,8 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
             </button>
           </div>
 
-          {/* Imagen central */}
-          <div className="flex-1 flex items-center justify-center px-16 py-4 min-h-0 relative">
+          {/* Imagen central — ocupa todo el espacio disponible */}
+          <div className="flex-1 flex items-center justify-center relative" style={{ minHeight: 0 }}>
             {/* Flecha izquierda */}
             {total > 1 && (
               <button
@@ -181,13 +182,17 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
               </button>
             )}
 
-            {/* Imagen */}
+            {/* Imagen centrada con límites de viewport */}
             <img
               key={indiceActual}
               src={imagenes[indiceActual]?.url}
               alt={`${titulo} — foto ${indiceActual + 1}`}
-              className="max-w-full max-h-full object-contain rounded-xl select-none"
-              style={{ animation: 'fadeIn 0.15s ease' }}
+              className="object-contain rounded-xl select-none"
+              style={{
+                maxWidth: '88vw',
+                maxHeight: '72vh',
+                animation: 'fadeIn 0.15s ease',
+              }}
               draggable={false}
             />
 

@@ -66,6 +66,59 @@ function DetalleItem({ icon, label, value, positive }: { icon: string; label: st
   )
 }
 
+// ── Meta tags dinámicos ───────────────────────────────────────────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: anuncio } = await supabase
+    .from('anuncios')
+    .select('titulo, descripcion, precio, parroquia, imagenes_anuncio(url, orden)')
+    .eq('id', id)
+    .eq('estado', 'activo')
+    .single()
+
+  if (!anuncio) {
+    return { title: 'Habitacion no encontrada — Habitacio.ad' }
+  }
+
+  const imagenes = (anuncio.imagenes_anuncio ?? []).sort(
+    (a: { orden: number }, b: { orden: number }) => a.orden - b.orden
+  )
+  const imagenOG = imagenes[0]?.url ?? null
+
+  const titulo  = `${anuncio.titulo} — ${anuncio.parroquia} | Habitacio.ad`
+  const descripcion = anuncio.descripcion
+    ? anuncio.descripcion.slice(0, 155) + (anuncio.descripcion.length > 155 ? '…' : '')
+    : `Habitación en alquiler en ${anuncio.parroquia}, Andorra. Desde ${anuncio.precio}€/mes.`
+
+  return {
+    title: titulo,
+    description: descripcion,
+    openGraph: {
+      title: titulo,
+      description: descripcion,
+      url: `https://habitacio.ad/habitaciones/${id}`,
+      siteName: 'Habitacio.ad',
+      locale: 'es_ES',
+      type: 'article',
+      ...(imagenOG && {
+        images: [{ url: imagenOG, width: 1200, height: 800, alt: anuncio.titulo }],
+      }),
+    },
+    twitter: {
+      card: imagenOG ? 'summary_large_image' : 'summary',
+      title: titulo,
+      description: descripcion,
+      ...(imagenOG && { images: [imagenOG] }),
+    },
+  }
+}
+
 export default async function FichaHabitacionPage({
   params,
 }: {
