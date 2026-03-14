@@ -8,9 +8,15 @@ export default async function BuscarHabitacionPage() {
 
   if (!user) redirect('/login?next=/buscar-habitacion')
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('avatar_url')
+    .eq('id', user.id)
+    .single()
+
   return (
     <div className="max-w-xl mx-auto">
-      <FormularioBusqueda />
+      <FormularioBusqueda avatarUrl={profile?.avatar_url ?? null} />
     </div>
   )
 }

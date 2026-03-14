@@ -35,7 +35,7 @@ export default async function ChatPage() {
       const otroId = conv.arrendador_id === user.id ? conv.inquilino_id : conv.arrendador_id
       const { data: perfil } = await supabase
         .from('profiles')
-        .select('nombre')
+        .select('nombre, avatar_url')
         .eq('id', otroId)
         .single()
 
@@ -49,7 +49,8 @@ export default async function ChatPage() {
 
       return {
         ...conv,
-        nombre_otro: perfil?.nombre ?? undefined,
+        nombre_otro:  perfil?.nombre     ?? undefined,
+        avatar_otro:  perfil?.avatar_url ?? undefined,
         ultimo_mensaje: ultimo?.contenido ?? undefined,
         unread: unreadPerConv[conv.id] ?? 0,
       }

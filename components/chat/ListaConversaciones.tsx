@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import Avatar from '@/components/ui/Avatar'
 import { Conversacion } from '@/types'
 
 interface ConversacionConExtra extends Conversacion {
   ultimo_mensaje?: string
   nombre_otro?: string
+  avatar_otro?: string
   unread?: number
 }
 
@@ -43,7 +45,6 @@ export default function ListaConversaciones({ conversaciones, currentUserId, con
         const nombreOtro = conv.nombre_otro ?? (esArrendador ? 'Inquilino' : 'Anunciante')
         const activa = conv.id === conversacionActivaId
         const tieneNoLeidos = (conv.unread ?? 0) > 0
-        const inicial = nombreOtro[0].toUpperCase()
 
         return (
           <Link
@@ -55,13 +56,11 @@ export default function ListaConversaciones({ conversaciones, currentUserId, con
           >
             {/* Avatar con badge de no leídos */}
             <div className="relative flex-shrink-0">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-base shadow-sm ${
-                tieneNoLeidos
-                  ? 'bg-gradient-to-br from-[#1a3c5e] to-[#2d5a8e] text-white'
-                  : 'bg-[#e8edf2] text-[#1a3c5e]'
-              }`}>
-                {inicial}
-              </div>
+              <Avatar
+                nombre={nombreOtro}
+                avatarUrl={conv.avatar_otro ?? null}
+                size="md"
+              />
               {tieneNoLeidos && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none shadow-sm">
                   {(conv.unread ?? 0) > 9 ? '9+' : conv.unread}

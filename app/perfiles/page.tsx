@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
+import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
 
 const labelTipo: Record<string, string> = {
@@ -11,21 +12,6 @@ const labelSituacion: Record<string, string> = {
   trabajador: 'Trabajador/a',
   estudiante: 'Estudiante',
   temporero:  'Temporero/a',
-}
-
-const COLORS = [
-  'bg-[#1a3c5e]', 'bg-[#0ea5a0]', 'bg-purple-600',
-  'bg-rose-500',  'bg-amber-500',  'bg-emerald-600',
-]
-
-function Iniciales({ nombre }: { nombre: string }) {
-  const ini = nombre.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-  const idx = nombre.charCodeAt(0) % COLORS.length
-  return (
-    <div className={`w-14 h-14 rounded-full ${COLORS[idx]} flex items-center justify-center text-white text-lg font-bold select-none shrink-0`}>
-      {ini}
-    </div>
-  )
 }
 
 export default async function PerfilesPage({
@@ -52,6 +38,19 @@ export default async function PerfilesPage({
   }
 
   const { data: perfiles } = await query
+
+  // Fetch avatars desde profiles para todos los perfiles encontrados
+  const userIds = (perfiles ?? []).map((p) => p.user_id).filter(Boolean)
+  const avatarMap: Record<string, string | null> = {}
+  if (userIds.length > 0) {
+    const { data: profileAvatars } = await supabase
+      .from('profiles')
+      .select('id, avatar_url')
+      .in('id', userIds)
+    for (const pa of profileAvatars ?? []) {
+      avatarMap[pa.id] = pa.avatar_url ?? null
+    }
+  }
 
   const tabs = [
     { key: 'todos',     label: 'Todos' },
@@ -149,7 +148,11 @@ export default async function PerfilesPage({
                   perfil.destacado ? 'border-[#0ea5a0]/40 ring-1 ring-[#0ea5a0]/20' : 'border-gray-100 hover:border-[#0ea5a0]/30'
                 }`}
               >
-                <Iniciales nombre={perfil.nombre} />
+                <Avatar
+                  nombre={perfil.nombre}
+                  avatarUrl={avatarMap[perfil.user_id] ?? null}
+                  size="md"
+                />
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">

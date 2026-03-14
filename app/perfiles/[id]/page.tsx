@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
 
 const labelTipo: Record<string, string> = {
@@ -13,11 +14,6 @@ const labelSituacion: Record<string, string> = {
   estudiante: 'Estudiante',
   temporero:  'Temporero/a',
 }
-const COLORS = [
-  'bg-[#1a3c5e]', 'bg-[#0ea5a0]', 'bg-purple-600',
-  'bg-rose-500',  'bg-amber-500',  'bg-emerald-600',
-]
-
 export default async function PerfilInquilinoPage({
   params,
 }: {
@@ -35,8 +31,14 @@ export default async function PerfilInquilinoPage({
 
   const p = perfil as PerfilInquilino
   const esPropio = user?.id === p.user_id
-  const colorIdx = p.nombre.charCodeAt(0) % COLORS.length
-  const iniciales = p.nombre.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+
+  // Obtener avatar del profile del usuario
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('avatar_url')
+    .eq('id', p.user_id)
+    .single()
+  const avatarUrl = profileData?.avatar_url ?? null
 
   const fechaEntrada = p.fecha_entrada
     ? new Date(p.fecha_entrada).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -69,9 +71,12 @@ export default async function PerfilInquilinoPage({
       {/* Tarjeta principal */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8">
         <div className="flex items-start gap-5 flex-wrap">
-          <div className={`w-20 h-20 rounded-2xl ${COLORS[colorIdx]} flex items-center justify-center text-white text-3xl font-bold select-none shrink-0`}>
-            {iniciales}
-          </div>
+          <Avatar
+            nombre={p.nombre}
+            avatarUrl={avatarUrl}
+            size="xl"
+            rounded="2xl"
+          />
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">

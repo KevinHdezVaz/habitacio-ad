@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { publicarPerfilInquilino } from '@/app/actions/perfiles-inquilino'
+import Avatar from '@/components/ui/Avatar'
 import type { TipoBusqueda, SituacionLaboral } from '@/types'
 
 const PARROQUIAS = [
@@ -98,7 +99,7 @@ function Toggle({ checked, onChange, label, icon }: {
 }
 
 // ─── Vista previa ────────────────────────────────────────────────────────────
-function VistaPrevia({ data }: { data: FormState }) {
+function VistaPrevia({ data, avatarUrl }: { data: FormState; avatarUrl?: string | null }) {
   const labelTipo: Record<TipoBusqueda, string> = {
     anual: 'Todo el año', temporero: 'Temporada', ambos: 'Flexible',
   }
@@ -128,8 +129,13 @@ function VistaPrevia({ data }: { data: FormState }) {
     <div className="bg-white rounded-3xl border-2 border-[#1a3c5e]/10 overflow-hidden shadow-sm">
       {/* Header de la card */}
       <div className="bg-gradient-to-r from-[#1a3c5e] to-[#2d5a8e] p-5 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 border border-white/20">
-          {(data.nombre || '?').charAt(0).toUpperCase()}
+        <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-white/30 shadow-md">
+          <Avatar
+            nombre={data.nombre || '?'}
+            avatarUrl={avatarUrl}
+            size="lg"
+            rounded="2xl"
+          />
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-white text-lg leading-tight">
@@ -216,7 +222,7 @@ function LoadingOverlay({ visible }: { visible: boolean }) {
 }
 
 // ─── Componente principal ─────────────────────────────────────────────────────
-export default function FormularioBusqueda() {
+export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string | null }) {
   const router  = useRouter()
   const [step, setStep]       = useState(0)
   const [preview, setPreview] = useState(false)
@@ -301,7 +307,7 @@ export default function FormularioBusqueda() {
             </div>
           </div>
 
-          <VistaPrevia data={data} />
+          <VistaPrevia data={data} avatarUrl={avatarUrl} />
 
           {error && (
             <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5">
