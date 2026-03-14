@@ -92,6 +92,12 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
               >
                 Ver
               </Link>
+              <Link
+                href={`/publicar/${anuncio.id}`}
+                className="px-3 py-1.5 rounded-lg bg-[#e8f0fa] hover:bg-[#d4e4f7] text-[#1a3c5e] text-xs font-medium transition-colors"
+              >
+                ✏️ Editar
+              </Link>
               {!isPendiente && (
                 <button
                   onClick={() => toggle(anuncio.id)}

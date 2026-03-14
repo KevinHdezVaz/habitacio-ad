@@ -26,7 +26,8 @@ export default function PerfilPublicadoPage() {
           Ver perfiles publicados
         </Link>
 
-        {/* Destacar perfil — preparado para Fase 2 */}
+
+        {/* Destacar perfil — preparado para Fase 2 
         <button
           disabled
           className="w-full py-3 rounded-2xl border-2 border-dashed border-[#0ea5a0]/40 text-[#0ea5a0] font-semibold text-sm flex items-center justify-center gap-2 opacity-70 cursor-not-allowed"
@@ -36,6 +37,8 @@ export default function PerfilPublicadoPage() {
             Próximamente
           </span>
         </button>
+        */}
+
 
         <Link
           href="/"
