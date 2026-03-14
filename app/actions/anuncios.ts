@@ -33,25 +33,27 @@ export async function publicarAnuncio(
 
   const anuncioId = anuncio.id
 
-  after(async () => {
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('nombre')
-        .eq('id', user.id)
-        .single()
+  try {
+    after(async () => {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('nombre')
+          .eq('id', user.id)
+          .single()
 
-      const { data: authUser } = await supabase.auth.admin.getUserById(user.id)
-      const email = authUser?.user?.email
-      if (!email) return
+        const { data: authUser } = await supabase.auth.admin.getUserById(user.id)
+        const email = authUser?.user?.email
+        if (!email) return
 
-      await emailAnuncioEnRevision({
-        destinatarioEmail: email,
-        destinatarioNombre: profile?.nombre ?? 'Usuario',
-        tituloAnuncio: String(datos.titulo ?? 'Tu habitación'),
-      })
-    } catch { /* silent */ }
-  })
+        await emailAnuncioEnRevision({
+          destinatarioEmail: email,
+          destinatarioNombre: profile?.nombre ?? 'Usuario',
+          tituloAnuncio: String(datos.titulo ?? 'Tu habitación'),
+        })
+      } catch { /* silent */ }
+    })
+  } catch { /* after() no disponible */ }
 
   return { ok: true, id: anuncioId }
 }

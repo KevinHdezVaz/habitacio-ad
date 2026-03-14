@@ -30,33 +30,35 @@ export async function aprobarAnuncio(id: string) {
   if (error) return { error: error.message }
   revalidatePath('/admin')
 
-  after(async () => {
-    try {
-      const { data: anuncio } = await supabase
-        .from('anuncios')
-        .select('titulo, user_id')
-        .eq('id', id)
-        .single()
-      if (!anuncio) return
+  try {
+    after(async () => {
+      try {
+        const { data: anuncio } = await supabase
+          .from('anuncios')
+          .select('titulo, user_id')
+          .eq('id', id)
+          .single()
+        if (!anuncio) return
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('nombre')
-        .eq('id', anuncio.user_id)
-        .single()
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('nombre')
+          .eq('id', anuncio.user_id)
+          .single()
 
-      const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
-      const email = authUser?.user?.email
-      if (!email) return
+        const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+        const email = authUser?.user?.email
+        if (!email) return
 
-      await emailAnuncioAprobado({
-        destinatarioEmail: email,
-        destinatarioNombre: profile?.nombre ?? 'Usuario',
-        tituloAnuncio: anuncio.titulo,
-        anuncioId: id,
-      })
-    } catch { /* silent */ }
-  })
+        await emailAnuncioAprobado({
+          destinatarioEmail: email,
+          destinatarioNombre: profile?.nombre ?? 'Usuario',
+          tituloAnuncio: anuncio.titulo,
+          anuncioId: id,
+        })
+      } catch { /* silent */ }
+    })
+  } catch { /* after() no disponible */ }
 
   return { ok: true }
 }
@@ -70,32 +72,34 @@ export async function rechazarAnuncio(id: string) {
   if (error) return { error: error.message }
   revalidatePath('/admin')
 
-  after(async () => {
-    try {
-      const { data: anuncio } = await supabase
-        .from('anuncios')
-        .select('titulo, user_id')
-        .eq('id', id)
-        .single()
-      if (!anuncio) return
+  try {
+    after(async () => {
+      try {
+        const { data: anuncio } = await supabase
+          .from('anuncios')
+          .select('titulo, user_id')
+          .eq('id', id)
+          .single()
+        if (!anuncio) return
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('nombre')
-        .eq('id', anuncio.user_id)
-        .single()
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('nombre')
+          .eq('id', anuncio.user_id)
+          .single()
 
-      const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
-      const email = authUser?.user?.email
-      if (!email) return
+        const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+        const email = authUser?.user?.email
+        if (!email) return
 
-      await emailAnuncioRechazado({
-        destinatarioEmail: email,
-        destinatarioNombre: profile?.nombre ?? 'Usuario',
-        tituloAnuncio: anuncio.titulo,
-      })
-    } catch { /* silent */ }
-  })
+        await emailAnuncioRechazado({
+          destinatarioEmail: email,
+          destinatarioNombre: profile?.nombre ?? 'Usuario',
+          tituloAnuncio: anuncio.titulo,
+        })
+      } catch { /* silent */ }
+    })
+  } catch { /* after() no disponible */ }
 
   return { ok: true }
 }

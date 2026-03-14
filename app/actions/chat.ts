@@ -48,57 +48,53 @@ export async function enviarMensaje(conversacionId: string, contenido: string) {
 
   if (error) return { error: error.message }
 
-  // Email diferido — no bloquea la respuesta al cliente
-  after(async () => {
-    try {
-      // Obtener datos de la conversación y del destinatario
-      const { data: conv } = await supabase
-        .from('conversaciones')
-        .select('inquilino_id, arrendador_id, anuncio:anuncios(titulo)')
-        .eq('id', conversacionId)
-        .single()
+  // Email diferido — nunca bloquea ni rompe el envío del mensaje
+  try {
+    after(async () => {
+      try {
+        const { data: conv } = await supabase
+          .from('conversaciones')
+          .select('inquilino_id, arrendador_id, anuncio:anuncios(titulo)')
+          .eq('id', conversacionId)
+          .single()
 
-      if (!conv) return
+        if (!conv) return
 
-      const destinatarioId = conv.arrendador_id === user.id ? conv.inquilino_id : conv.arrendador_id
+        const destinatarioId = conv.arrendador_id === user.id ? conv.inquilino_id : conv.arrendador_id
 
-      // Contar mensajes no leídos del destinatario — si ya tiene mensajes sin leer
-      // en esta conv, no enviamos otro email para no saturar
-      const { count } = await supabase
-        .from('mensajes')
-        .select('id', { count: 'exact', head: true })
-        .eq('conversacion_id', conversacionId)
-        .eq('leido', false)
-        .neq('sender_id', user.id)
+        // Solo enviamos email si el destinatario no tiene ya mensajes sin leer en esta conv
+        const { count } = await supabase
+          .from('mensajes')
+          .select('id', { count: 'exact', head: true })
+          .eq('conversacion_id', conversacionId)
+          .eq('leido', false)
+          .neq('sender_id', user.id)
 
-      // Solo enviamos email en el primer mensaje no leído (count será 1 tras el insert)
-      if ((count ?? 0) > 1) return
+        if ((count ?? 0) > 1) return
 
-      const [{ data: destProfile }, { data: remProfile }] = await Promise.all([
-        supabase.from('profiles').select('nombre').eq('id', destinatarioId).single(),
-        supabase.from('profiles').select('nombre').eq('id', user.id).single(),
-      ])
+        const [{ data: destProfile }, { data: remProfile }] = await Promise.all([
+          supabase.from('profiles').select('nombre').eq('id', destinatarioId).single(),
+          supabase.from('profiles').select('nombre').eq('id', user.id).single(),
+        ])
 
-      // Obtener email del destinatario via admin (service role) — si no está disponible, salimos
-      const { data: destAuth } = await supabase.auth.admin.getUserById(destinatarioId)
-      const destEmail = destAuth?.user?.email
-      if (!destEmail) return
+        const { data: destAuth } = await supabase.auth.admin.getUserById(destinatarioId)
+        const destEmail = destAuth?.user?.email
+        if (!destEmail) return
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tituloAnuncio = (conv.anuncio as any)?.titulo ?? 'Habitación en Andorra'
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tituloAnuncio = (conv.anuncio as any)?.titulo ?? 'Habitación en Andorra'
 
-      await emailNuevoMensaje({
-        destinatarioEmail: destEmail,
-        destinatarioNombre: destProfile?.nombre ?? 'Usuario',
-        remitenteNombre: remProfile?.nombre ?? 'Alguien',
-        tituloAnuncio,
-        extractoMensaje: texto,
-        conversacionId,
-      })
-    } catch {
-      // Silent fail — nunca romper el flujo de chat por un email
-    }
-  })
+        await emailNuevoMensaje({
+          destinatarioEmail: destEmail,
+          destinatarioNombre: destProfile?.nombre ?? 'Usuario',
+          remitenteNombre: remProfile?.nombre ?? 'Alguien',
+          tituloAnuncio,
+          extractoMensaje: texto,
+          conversacionId,
+        })
+      } catch { /* silent */ }
+    })
+  } catch { /* after() no disponible — ignorar */ }
 
   return { ok: true }
 }

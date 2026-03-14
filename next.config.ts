@@ -4,7 +4,9 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 const nextConfig: NextConfig = {
-  // Opciones futuras aquí
+  experimental: {
+    after: true,
+  },
 }
 
 export default withNextIntl(nextConfig)
