@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Input from '@/components/ui/Input'
 import MapaPicker from '@/components/maps/MapaPicker'
 import { createClient } from '@/lib/supabase-browser'
-import { editarAnuncio } from '@/app/actions/anuncios'
 import Link from 'next/link'
 
 const PARROQUIAS = [
@@ -223,19 +222,42 @@ export default function FormularioEditar({ anuncio }: Props) {
         longitud:          coords.lng,
       }
 
-      const result = await editarAnuncio(anuncio.id, datos, nuevasUrls, eliminarIds)
-      if (result?.error) {
-        setError(result.error)
+      // Actualizar anuncio directamente en Supabase (evita problemas con server actions)
+      const { error: updateError } = await supabase
+        .from('anuncios')
+        .update(datos)
+        .eq('id', anuncio.id)
+        .eq('user_id', user.id)
+
+      if (updateError) {
+        setError(updateError.message)
         setLoading(false)
         return
+      }
+
+      // Eliminar registros de imágenes marcadas
+      if (eliminarIds.length > 0) {
+        await supabase.from('imagenes_anuncio').delete().in('id', eliminarIds)
+      }
+
+      // Insertar nuevas imágenes
+      if (nuevasUrls.length > 0) {
+        const { data: existentes } = await supabase
+          .from('imagenes_anuncio')
+          .select('orden')
+          .eq('anuncio_id', anuncio.id)
+          .order('orden', { ascending: false })
+          .limit(1)
+        const baseOrden = (existentes?.[0]?.orden ?? -1) + 1
+        await supabase.from('imagenes_anuncio').insert(
+          nuevasUrls.map((url, i) => ({ anuncio_id: anuncio.id, url, orden: baseOrden + i }))
+        )
       }
 
       setGuardado(true)
       setLoading(false)
       setTimeout(() => router.push(`/habitaciones/${anuncio.id}`), 1500)
-    } catch (err) {
-      // Ignore Next.js redirect errors (they're not real errors)
-      if (err && typeof err === 'object' && 'digest' in err) return
+    } catch {
       setError('Error inesperado. Inténtalo de nuevo.')
       setLoading(false)
     }
