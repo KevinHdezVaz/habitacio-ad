@@ -162,10 +162,9 @@ export default async function Home() {
         <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">{t('queNecesitas')}</h2>
         <div className="grid grid-cols-2 gap-3">
           {acciones.map((accion) => (
-            <a
+            <div
               key={accion.titulo}
-              href={accion.href}
-              className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow active:scale-95"
+              className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3"
             >
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
@@ -179,7 +178,7 @@ export default async function Home() {
                 </p>
                 <p className="text-[#9ca3af] text-xs mt-1">{accion.subtitulo} →</p>
               </div>
-            </a>
+            </div>
           ))}
         </div>
       </div>
@@ -188,7 +187,7 @@ export default async function Home() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-bold text-[#1a3c5e] text-lg">{t('ultimasHabitaciones')}</h2>
-          <a href="/habitaciones" className="text-[#0ea5a0] text-sm font-semibold">{t('verTodas')}</a>
+          <span className="text-[#0ea5a0] text-sm font-semibold">{t('verTodas')}</span>
         </div>
 
         {ultimasHabitaciones.length === 0 ? (
@@ -205,10 +204,9 @@ export default async function Home() {
                 : 'Disponible ahora'
 
               return (
-                <a
+                <div
                   key={hab.id}
-                  href={`/habitaciones/${hab.id}`}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col"
                 >
                   {/* Imagen — altura fija */}
                   <div className="relative h-[280px] flex-shrink-0 bg-[#f4f7fa]">
@@ -241,7 +239,7 @@ export default async function Home() {
                       <span className="truncate">{hab.gastos_incluidos ? 'Gastos incluidos' : 'Gastos no incluidos'} →</span>
                     </p>
                   </div>
-                </a>
+                </div>
               )
             })}
           </div>
@@ -273,12 +271,9 @@ export default async function Home() {
         <div className="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-2.5">
           <h2 className="font-bold text-sm text-[#1a3c5e] leading-snug">{t('noEncuentrasTitle')}</h2>
           <p className="text-[#6b7280] text-[11px] leading-relaxed">{t('noEncuentrasDesc')}</p>
-          <a
-            href="/buscar-habitacion"
-            className="mt-auto inline-block bg-[#1a3c5e] text-white font-bold text-[11px] text-center py-2.5 px-3 rounded-xl hover:bg-[#152f4a] transition-colors"
-          >
+          <span className="mt-auto inline-block bg-[#1a3c5e] text-white font-bold text-[11px] text-center py-2.5 px-3 rounded-xl">
             {t('noEncuentrasBtn')}
-          </a>
+          </span>
         </div>
       </div>
 

@@ -52,123 +52,19 @@ export default function Navbar({
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/habitaciones" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            {t('buscar')}
-          </Link>
-          <Link href="/perfiles" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            {t('perfiles')}
-          </Link>
-          <Link href="/publicar" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-            {t('publicar')}
-          </Link>
-
-          {user ? (
-            <div className="flex items-center gap-5">
-              <Link href="/chat" className="relative text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-                {t('mensajes')}
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <Link href="/perfil" className="flex items-center gap-2 text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-                <MiniAvatar avatarUrl={avatarUrl} userName={userName} />
-                {t('miPerfil')}
-              </Link>
-
-              {isAdmin && (
-                <Link href="/admin" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
-                  {t('dashboard')}
-                </Link>
-              )}
-
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="bg-[#f4f5f7] text-[#1a3c5e] font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors"
-                >
-                  {t('salir')}
-                </button>
-              </form>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="bg-[#f4f5f7] text-[#1a3c5e] font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors"
-            >
-              {t('iniciarSesion')}
-            </Link>
-          )}
-
-          {/* Selector de idioma — desktop */}
-          <LanguageSwitcher currentLocale={locale} />
+          <span className="text-sm font-medium text-[#1a3c5e] cursor-default">{t('buscar')}</span>
+          <span className="text-sm font-medium text-[#1a3c5e] cursor-default">{t('perfiles')}</span>
+          <span className="text-sm font-medium text-[#1a3c5e] cursor-default">{t('publicar')}</span>
+          <span className="bg-[#f4f5f7] text-[#1a3c5e] font-semibold px-5 py-2 rounded-full text-sm cursor-default">
+            {t('iniciarSesion')}
+          </span>
         </nav>
 
-        {/* Mobile: idioma + toggle */}
+        {/* Mobile: toggle — TEMPORALMENTE SIN MENÚ */}
         <div className="md:hidden flex items-center gap-3">
-          <LanguageSwitcher currentLocale={locale} />
-          <button
-            className="text-[#1a3c5e] text-2xl"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Menú"
-          >
-            {isOpen ? '✕' : '☰'}
-          </button>
+          <button className="text-[#1a3c5e] text-2xl" aria-label="Menú">☰</button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 flex flex-col p-4 gap-4 shadow-lg animate-fade-in">
-          <Link href="/habitaciones" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            {t('buscar')}
-          </Link>
-          <Link href="/perfiles" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            {t('perfiles')}
-          </Link>
-          <Link href="/publicar" className="font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-            {t('publicar')}
-          </Link>
-
-          {user ? (
-            <>
-              <Link href="/chat" className="relative inline-flex items-center gap-2 font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-                {t('mensajes')}
-                {unreadCount > 0 && (
-                  <span className="min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <Link href="/perfil" className="flex items-center gap-2 font-medium text-[#1a3c5e]" onClick={() => setIsOpen(false)}>
-                <MiniAvatar avatarUrl={avatarUrl} userName={userName} />
-                {t('miPerfil')}
-              </Link>
-
-              {isAdmin && (
-                <Link href="/admin" onClick={() => setIsOpen(false)} className="font-medium text-[#1a3c5e]">
-                  {t('dashboard')}
-                </Link>
-              )}
-
-              <form action={logout}>
-                <button type="submit" className="w-full bg-gray-100 text-[#1a3c5e] text-center py-3 rounded-xl font-bold">
-                  {t('cerrarSesion')}
-                </button>
-              </form>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="bg-[#1a3c5e] text-white text-center py-3 rounded-xl font-bold"
-              onClick={() => setIsOpen(false)}
-            >
-              {t('iniciarSesion')}
-            </Link>
-          )}
-        </div>
-      )}
     </header>
   )
 }
