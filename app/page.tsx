@@ -88,55 +88,57 @@ export default async function Home() {
           <form
             action="/habitaciones"
             method="get"
-            className="mt-4 bg-white rounded-2xl shadow-lg p-3 flex flex-wrap gap-2 items-center"
+            className="mt-4 bg-white rounded-2xl shadow-lg p-3 flex flex-col gap-2"
           >
-            <select
-              name="parroquia"
-              className="flex-1 min-w-[80px] text-sm text-[#1a3c5e] font-medium bg-transparent border-0 outline-none cursor-pointer"
-            >
-              <option value="">Zona</option>
-              <option value="Andorra la Vella">Andorra la Vella</option>
-              <option value="Escaldes-Engordany">Escaldes-Engordany</option>
-              <option value="Encamp">Encamp</option>
-              <option value="La Massana">La Massana</option>
-              <option value="Ordino">Ordino</option>
-              <option value="Sant Julià de Lòria">Sant Julià de Lòria</option>
-              <option value="Canillo">Canillo</option>
-            </select>
+            {/* Fila de selects */}
+            <div className="flex gap-2">
+              <select
+                name="parroquia"
+                className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
+              >
+                <option value="">Zona</option>
+                <option value="Andorra la Vella">Andorra la Vella</option>
+                <option value="Escaldes-Engordany">Escaldes-Engordany</option>
+                <option value="Encamp">Encamp</option>
+                <option value="La Massana">La Massana</option>
+                <option value="Ordino">Ordino</option>
+                <option value="Sant Julià de Lòria">Sant Julià de Lòria</option>
+                <option value="Canillo">Canillo</option>
+              </select>
 
-            <div className="w-px h-5 bg-[#e5e7eb]" />
+              <select
+                name="precio_max"
+                className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
+              >
+                <option value="">Presupuesto</option>
+                <option value="400">Hasta 400 €</option>
+                <option value="600">Hasta 600 €</option>
+                <option value="800">Hasta 800 €</option>
+                <option value="1200">Hasta 1.200 €</option>
+              </select>
+            </div>
 
-            <select
-              name="precio_max"
-              className="flex-1 min-w-[95px] text-sm text-[#1a3c5e] font-medium bg-transparent border-0 outline-none cursor-pointer"
-            >
-              <option value="">Presupuesto</option>
-              <option value="400">Hasta 400 €</option>
-              <option value="600">Hasta 600 €</option>
-              <option value="800">Hasta 800 €</option>
-              <option value="1200">Hasta 1.200 €</option>
-            </select>
+            {/* Segunda fila: tipo estancia + botón */}
+            <div className="flex gap-2">
+              <select
+                name="tipo_estancia"
+                className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
+              >
+                <option value="">Tipo de estancia</option>
+                <option value="anual">Todo el año</option>
+                <option value="temporero">Temporada</option>
+              </select>
 
-            <div className="w-px h-5 bg-[#e5e7eb]" />
-
-            <select
-              name="tipo_estancia"
-              className="flex-1 min-w-[85px] text-sm text-[#1a3c5e] font-medium bg-transparent border-0 outline-none cursor-pointer"
-            >
-              <option value="">Todo el año</option>
-              <option value="anual">Todo el año</option>
-              <option value="temporero">Temporada</option>
-            </select>
-
-            <button
-              type="submit"
-              className="bg-[#1a3c5e] text-white font-bold text-sm px-4 py-2.5 rounded-xl flex items-center gap-1.5 hover:bg-[#152f4a] transition-colors flex-shrink-0 whitespace-nowrap"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-              </svg>
-              Buscar →
-            </button>
+              <button
+                type="submit"
+                className="bg-[#1a3c5e] text-white font-bold text-sm px-5 py-2.5 rounded-xl flex items-center gap-1.5 hover:bg-[#152f4a] transition-colors flex-shrink-0 whitespace-nowrap"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                </svg>
+                Buscar
+              </button>
+            </div>
           </form>
 
           {/* Stats bar */}
