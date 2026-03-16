@@ -56,25 +56,6 @@ function Toggle({ checked, onToggle, label, icon }: {
   )
 }
 
-function LoadingOverlay({ visible }: { visible: boolean }) {
-  if (!visible) return null
-  return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
-      <div className="flex flex-col items-center gap-6">
-        <div className="relative w-20 h-20">
-          <div className="absolute inset-0 rounded-full border-4 border-[#e8edf2]" />
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#1a3c5e] animate-spin" />
-          <div className="absolute inset-3 rounded-full border-4 border-transparent border-t-[#0ea5a0] animate-spin"
-            style={{ animationDuration: '0.6s', animationDirection: 'reverse' }} />
-        </div>
-        <div className="text-center">
-          <p className="text-xl font-bold text-[#1a3c5e]">Guardando cambios…</p>
-          <p className="text-sm text-[#6b7280] mt-1">Actualizando tu anuncio</p>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 interface ImagenExistente {
   id: number
@@ -250,8 +231,11 @@ export default function FormularioEditar({ anuncio }: Props) {
       }
 
       setGuardado(true)
+      setLoading(false)
       setTimeout(() => router.push(`/habitaciones/${anuncio.id}`), 1500)
-    } catch {
+    } catch (err) {
+      // Ignore Next.js redirect errors (they're not real errors)
+      if (err && typeof err === 'object' && 'digest' in err) return
       setError('Error inesperado. Inténtalo de nuevo.')
       setLoading(false)
     }
@@ -261,8 +245,6 @@ export default function FormularioEditar({ anuncio }: Props) {
 
   return (
     <>
-      <LoadingOverlay visible={loading} />
-
       <div className="flex flex-col gap-6">
 
         {/* Header */}
@@ -579,8 +561,20 @@ export default function FormularioEditar({ anuncio }: Props) {
                 disabled={loading}
                 className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#0ea5a0] to-[#0c8e8a] text-white font-bold px-8 py-4 rounded-2xl hover:from-[#0c8e8a] transition-all shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-sm"
               >
-                <span className="text-base">💾</span>
-                Guardar cambios
+                {loading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"/>
+                    </svg>
+                    Guardando…
+                  </>
+                ) : (
+                  <>
+                    <span className="text-base">💾</span>
+                    Guardar cambios
+                  </>
+                )}
               </button>
             </div>
           </div>
