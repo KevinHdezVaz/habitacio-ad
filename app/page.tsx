@@ -22,7 +22,7 @@ export default async function Home() {
       titulo: t('buscarHabitacion'),
       subtitulo: t('buscarHabitacionSub'),
       href: '/habitaciones',
-      color: '#2980b9',
+      color: '#1a3c5e',
       bg: '#e8f4fd',
     },
     {
@@ -30,7 +30,7 @@ export default async function Home() {
       titulo: t('publicarHabitacion'),
       subtitulo: t('publicarHabitacionSub'),
       href: '/publicar',
-      color: '#0ea5a0',
+      color: '#1a3c5e',
       bg: '#e6f7f7',
     },
     {
@@ -38,7 +38,7 @@ export default async function Home() {
       titulo: t('encontrarme'),
       subtitulo: t('encontrarmeSub'),
       href: '/buscar-habitacion',
-      color: '#0ea5a0',
+      color: '#1a3c5e',
       bg: '#e6f7f7',
     },
     {
@@ -140,13 +140,13 @@ export default async function Home() {
           </form>
 
           {/* Stats bar */}
-          <div className="mt-3 bg-[#1a3c5e]/10 backdrop-blur-sm rounded-xl px-4 py-2.5 flex items-center gap-4">
-            <span className="text-xs font-semibold text-[#1a3c5e]">
-              +&nbsp;<span className="text-[#0ea5a0] font-bold">120</span> perfiles activos
+          <div className="mt-3 bg-[#1a3c5e]/90 backdrop-blur-sm rounded-xl px-4 py-2.5 flex items-center gap-4">
+            <span className="text-xs font-semibold text-white">
+              +&nbsp;<span className="text-white font-bold">120</span> perfiles activos
             </span>
-            <div className="w-px h-3.5 bg-[#1a3c5e]/20" />
-            <span className="text-xs font-medium text-[#1a3c5e] flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-[#0ea5a0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+            <div className="w-px h-3.5 bg-white/20" />
+            <span className="text-xs font-medium text-white flex items-center gap-1.5" id="stats-habitaciones">
+              <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
               Nuevas habitaciones cada semana

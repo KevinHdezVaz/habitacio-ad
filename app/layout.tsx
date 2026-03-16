@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     default: 'Habitacio.ad — Habitaciones en alquiler en Andorra',
     template: '%s | Habitacio.ad',
   },
+  icons: {
+    icon: '/logo.jpeg',
+    apple: '/logo.jpeg',
+  },
   description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí. La plataforma de habitaciones más completa del Principat.',
   metadataBase: new URL('https://habitacio.ad'),
   keywords: ['habitaciones andorra', 'alquiler andorra', 'piso andorra', 'habitació andorra', 'temporeros andorra', 'esqui andorra alquiler'],

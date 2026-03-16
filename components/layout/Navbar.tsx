@@ -46,7 +46,7 @@ export default function Navbar({
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🏠</span>
+          <img src="/logo.jpeg" alt="Habitacio.ad" className="h-10 w-auto rounded-xl" />
           <span className="font-bold text-xl text-[#1a3c5e]">Habitacio.ad</span>
         </Link>
 
