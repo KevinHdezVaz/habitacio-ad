@@ -90,7 +90,9 @@ export interface PerfilInquilino {
   mascotas: boolean
   acompanado: boolean
   descripcion: string
-  estado: 'activo' | 'inactivo'
+  estado: 'activo' | 'caducado' | 'oculto'
   destacado: boolean
+  fecha_publicacion: string
+  fecha_caducidad: string
   created_at: string
 }

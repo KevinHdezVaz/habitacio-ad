@@ -4,7 +4,8 @@ import { logout } from '@/app/actions/auth'
 import FormularioPerfil from './components/FormularioPerfil'
 import MisAnuncios from './components/MisAnuncios'
 import AvatarUpload from './components/AvatarUpload'
-import type { Anuncio, Profile } from '@/types'
+import MiPerfilBusqueda from './components/MiPerfilBusqueda'
+import type { Anuncio, Profile, PerfilInquilino } from '@/types'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
@@ -12,7 +13,7 @@ export default async function PerfilPage() {
 
   if (!user) redirect('/login?next=/perfil')
 
-  const [{ data: profile }, { data: anuncios }] = await Promise.all([
+  const [{ data: profile }, { data: anuncios }, { data: perfilBusqueda }] = await Promise.all([
     supabase
       .from('profiles')
       .select('*')
@@ -23,6 +24,14 @@ export default async function PerfilPage() {
       .select('*, imagenes_anuncio(*)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
+    supabase
+      .from('perfiles_inquilino')
+      .select('*')
+      .eq('user_id', user.id)
+      .neq('estado', 'oculto')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ])
 
   if (!profile) redirect('/login')
@@ -92,6 +101,25 @@ export default async function PerfilPage() {
               email={user.email ?? ''}
             />
           </div>
+
+          {/* Perfil de búsqueda */}
+          {perfilBusqueda ? (
+            <MiPerfilBusqueda perfil={perfilBusqueda as PerfilInquilino} />
+          ) : (
+            <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-6 flex flex-col items-center gap-3 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#f4f5f7] flex items-center justify-center text-2xl">🔍</div>
+              <div>
+                <p className="font-bold text-[#1a3c5e]">¿Buscas habitación?</p>
+                <p className="text-xs text-[#6b7280] mt-1">Publica tu perfil gratis y que los propietarios te contacten.</p>
+              </div>
+              <a
+                href="/buscar-habitacion"
+                className="px-5 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
+              >
+                Publicar mi perfil — Gratis
+              </a>
+            </div>
+          )}
 
           {/* Mis anuncios */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6">

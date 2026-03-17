@@ -20,12 +20,31 @@ export type DatosPerfilInquilino = {
   descripcion: string
 }
 
+function fechaCaducidad30dias() {
+  const d = new Date()
+  d.setDate(d.getDate() + 30)
+  return d.toISOString()
+}
+
 export async function publicarPerfilInquilino(datos: DatosPerfilInquilino) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login?next=/buscar-habitacion')
 
+  // Verificar si ya tiene un perfil activo o caducado
+  const { data: existente } = await supabase
+    .from('perfiles_inquilino')
+    .select('id')
+    .eq('user_id', user.id)
+    .neq('estado', 'oculto')
+    .single()
+
+  if (existente) {
+    return { error: 'Ya tienes un perfil publicado. Edítalo desde tu panel.' }
+  }
+
+  const ahora = new Date().toISOString()
   const { data, error } = await supabase
     .from('perfiles_inquilino')
     .insert({
@@ -33,6 +52,8 @@ export async function publicarPerfilInquilino(datos: DatosPerfilInquilino) {
       user_id: user.id,
       estado: 'activo',
       destacado: false,
+      fecha_publicacion: ahora,
+      fecha_caducidad: fechaCaducidad30dias(),
     })
     .select('id')
     .single()
@@ -44,14 +65,34 @@ export async function publicarPerfilInquilino(datos: DatosPerfilInquilino) {
   return { ok: true, id: data.id }
 }
 
-export async function desactivarPerfilInquilino(id: string) {
+export async function reactivarPerfilInquilino(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const ahora = new Date().toISOString()
+  const { error } = await supabase
+    .from('perfiles_inquilino')
+    .update({
+      estado: 'activo',
+      fecha_publicacion: ahora,
+      fecha_caducidad: fechaCaducidad30dias(),
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  return { ok: true }
+}
+
+export async function ocultarPerfilInquilino(id: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
   await supabase
     .from('perfiles_inquilino')
-    .update({ estado: 'inactivo' })
+    .update({ estado: 'oculto' })
     .eq('id', id)
     .eq('user_id', user.id)
 

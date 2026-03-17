@@ -44,7 +44,7 @@ export default async function Home() {
     {
       icono: '👥',
       titulo: t('verPerfiles'),
-      subtitulo: "",
+      subtitulo: "Accede a perfiles que ya buscan una habitación como la tuya",
       href: '/perfiles',
       color: '#1a3c5e',
       bg: '#e8edf2',
@@ -162,9 +162,10 @@ export default async function Home() {
         <h2 className="font-bold text-[#1a3c5e] text-lg mb-3">{t('queNecesitas')}</h2>
         <div className="grid grid-cols-2 gap-3">
           {acciones.map((accion) => (
-            <div
+            <a
               key={accion.titulo}
-              className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3"
+              href={accion.href}
+              className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow active:scale-95"
             >
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
@@ -178,7 +179,7 @@ export default async function Home() {
                 </p>
                 <p className="text-[#9ca3af] text-xs mt-1">{accion.subtitulo} →</p>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>
@@ -187,7 +188,7 @@ export default async function Home() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-bold text-[#1a3c5e] text-lg">{t('ultimasHabitaciones')}</h2>
-          <span className="text-[#0ea5a0] text-sm font-semibold">{t('verTodas')}</span>
+          <a href="/habitaciones" className="text-[#0ea5a0] text-sm font-semibold">{t('verTodas')}</a>
         </div>
 
         {ultimasHabitaciones.length === 0 ? (
@@ -204,9 +205,10 @@ export default async function Home() {
                 : 'Disponible ahora'
 
               return (
-                <div
+                <a
                   key={hab.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col"
+                  href={`/habitaciones/${hab.id}`}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
                 >
                   {/* Imagen — altura fija */}
                   <div className="relative h-[280px] flex-shrink-0 bg-[#f4f7fa]">
@@ -239,7 +241,7 @@ export default async function Home() {
                       <span className="truncate">{hab.gastos_incluidos ? 'Gastos incluidos' : 'Gastos no incluidos'} →</span>
                     </p>
                   </div>
-                </div>
+                </a>
               )
             })}
           </div>
@@ -271,9 +273,12 @@ export default async function Home() {
         <div className="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-2.5">
           <h2 className="font-bold text-sm text-[#1a3c5e] leading-snug">{t('noEncuentrasTitle')}</h2>
           <p className="text-[#6b7280] text-[11px] leading-relaxed">{t('noEncuentrasDesc')}</p>
-          <span className="mt-auto inline-block bg-[#1a3c5e] text-white font-bold text-[11px] text-center py-2.5 px-3 rounded-xl">
+          <a
+            href="/buscar-habitacion"
+            className="mt-auto inline-block bg-[#1a3c5e] text-white font-bold text-[11px] text-center py-2.5 px-3 rounded-xl hover:bg-[#152f4a] transition-colors"
+          >
             {t('noEncuentrasBtn')}
-          </span>
+          </a>
         </div>
       </div>
 

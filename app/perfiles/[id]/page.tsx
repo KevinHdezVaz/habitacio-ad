@@ -120,10 +120,10 @@ export default async function PerfilInquilinoPage({
           ))}
         </div>
 
-        {/* Acciones */}
-        <div className="mt-6 pt-5 border-t border-gray-100 flex gap-3 flex-wrap items-center">
+        {/* Acciones / Sistema de bloqueo */}
+        <div className="mt-6 pt-5 border-t border-gray-100">
           {esPropio ? (
-            <>
+            <div className="flex items-center gap-3">
               <Link
                 href="/perfil"
                 className="px-4 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
@@ -131,18 +131,63 @@ export default async function PerfilInquilinoPage({
                 Editar mi perfil
               </Link>
               <span className="text-xs text-[#9ca3af]">Este es tu perfil publicado</span>
-            </>
-          ) : user ? (
-            <p className="text-sm text-[#6b7280]">
-              💬 ¿Tienes una habitación disponible? Publica tu anuncio y este inquilino podrá contactarte.
-            </p>
+            </div>
           ) : (
-            <Link
-              href={`/login?next=/perfiles/${id}`}
-              className="px-4 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
-            >
-              Inicia sesión para contactar
-            </Link>
+            <div className="bg-[#f8fafc] border border-gray-200 rounded-2xl p-5 flex flex-col gap-4">
+              {/* Info bloqueada */}
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Contacto</p>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { label: 'Teléfono', valor: '••• ••• •••' },
+                    { label: 'Email', valor: '••••••@••••.com' },
+                    { label: 'Chat directo', valor: 'Bloqueado' },
+                  ].map(({ label, valor }) => (
+                    <div key={label} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-gray-100">
+                      <span className="text-xs text-[#9ca3af] font-medium">{label}</span>
+                      <span className="text-xs text-gray-300 font-semibold blur-sm select-none">{valor}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA desbloqueo */}
+              {user ? (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-start gap-3 bg-[#1a3c5e]/5 rounded-xl p-3">
+                    <span className="text-lg">🔒</span>
+                    <div>
+                      <p className="text-sm font-bold text-[#1a3c5e]">Desbloquea el contacto</p>
+                      <p className="text-xs text-[#6b7280] mt-0.5">Accede al teléfono, email y chat de este inquilino.</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      disabled
+                      className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#1a3c5e] text-white text-center opacity-70 cursor-not-allowed"
+                    >
+                      <span className="text-sm font-bold">6,90€</span>
+                      <span className="text-[10px] opacity-80">Este perfil</span>
+                    </button>
+                    <button
+                      disabled
+                      className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#0ea5a0] text-white text-center opacity-70 cursor-not-allowed"
+                    >
+                      <span className="text-sm font-bold">19,90€</span>
+                      <span className="text-[10px] opacity-80">Todos · 7 días</span>
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-center text-[#9ca3af]">Pagos disponibles próximamente</p>
+                </div>
+              ) : (
+                <Link
+                  href={`/login?next=/perfiles/${id}`}
+                  className="w-full py-3 rounded-xl bg-[#1a3c5e] text-white text-sm font-bold text-center hover:bg-[#0ea5a0] transition-colors"
+                >
+                  Inicia sesión para ver el contacto
+                </Link>
+              )}
+            </div>
           )}
         </div>
       </div>
