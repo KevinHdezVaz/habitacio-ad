@@ -85,6 +85,21 @@ export async function reactivarPerfilInquilino(id: string) {
   return { ok: true }
 }
 
+export async function marcarPerfilCaducado(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { ok: false }
+
+  await supabase
+    .from('perfiles_inquilino')
+    .update({ estado: 'caducado' })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .eq('estado', 'activo') // solo si estaba activo, para no sobreescribir oculto
+
+  return { ok: true }
+}
+
 export async function ocultarPerfilInquilino(id: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

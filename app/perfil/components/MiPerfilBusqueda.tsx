@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { reactivarPerfilInquilino, ocultarPerfilInquilino } from '@/app/actions/perfiles-inquilino'
+import { reactivarPerfilInquilino, ocultarPerfilInquilino, marcarPerfilCaducado } from '@/app/actions/perfiles-inquilino'
 import type { PerfilInquilino } from '@/types'
 
 const labelTipo: Record<string, string> = {
@@ -24,6 +24,13 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
   const esActivo = perfil.estado === 'activo' && dias > 0
 
   const alertaDias = esActivo && dias <= 7
+
+  // Si la fecha ya pasó pero el estado aún dice 'activo', lo marcamos como caducado en la DB
+  useEffect(() => {
+    if (dias === 0 && perfil.estado === 'activo') {
+      marcarPerfilCaducado(perfil.id)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleReactivar() {
     setLoading(true)

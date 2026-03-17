@@ -22,10 +22,13 @@ export default async function PerfilesPage({
   const { tipo = 'todos', q = '' } = await searchParams
   const supabase = await createClient()
 
+  const ahora = new Date().toISOString()
+
   let query = supabase
     .from('perfiles_inquilino')
     .select('*')
     .eq('estado', 'activo')
+    .gt('fecha_caducidad', ahora)
     .order('destacado', { ascending: false })
     .order('created_at', { ascending: false })
 
