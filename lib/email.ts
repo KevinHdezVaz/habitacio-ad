@@ -117,7 +117,7 @@ export async function emailNuevoMensaje({
   return resend.emails.send({
     from: FROM,
     to: destinatarioEmail,
-    subject: `💬 ${remitenteNombre} te ha enviado un mensaje — Habitacio.ad`,
+    subject: `Nuevo mensaje de ${remitenteNombre} — Habitacio.ad`,
     html: baseLayout(contenido),
   })
 }
@@ -165,7 +165,7 @@ export async function emailAnuncioAprobado({
   return resend.emails.send({
     from: FROM,
     to: destinatarioEmail,
-    subject: `✅ Tu anuncio "${tituloAnuncio}" ha sido aprobado — Habitacio.ad`,
+    subject: `Tu anuncio "${tituloAnuncio}" ha sido aprobado — Habitacio.ad`,
     html: baseLayout(contenido),
   })
 }
@@ -212,7 +212,7 @@ export async function emailAnuncioRechazado({
   return resend.emails.send({
     from: FROM,
     to: destinatarioEmail,
-    subject: `⚠️ Tu anuncio "${tituloAnuncio}" necesita cambios — Habitacio.ad`,
+    subject: `Tu anuncio "${tituloAnuncio}" necesita cambios — Habitacio.ad`,
     html: baseLayout(contenido),
   })
 }
@@ -275,7 +275,7 @@ export async function emailAnuncioEnRevision({
   return resend.emails.send({
     from: FROM,
     to: destinatarioEmail,
-    subject: `🔍 Tu anuncio "${tituloAnuncio}" está en revisión — Habitacio.ad`,
+    subject: `Tu anuncio "${tituloAnuncio}" está en revisión — Habitacio.ad`,
     html: baseLayout(contenido),
   })
 }
