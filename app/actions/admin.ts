@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { after } from 'next/server'
@@ -46,7 +47,7 @@ export async function aprobarAnuncio(id: string) {
           .eq('id', anuncio.user_id)
           .single()
 
-        const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+        const { data: authUser } = await createAdminClient().auth.admin.getUserById(anuncio.user_id)
         const email = authUser?.user?.email
         if (!email) return
 
@@ -88,7 +89,7 @@ export async function rechazarAnuncio(id: string) {
           .eq('id', anuncio.user_id)
           .single()
 
-        const { data: authUser } = await supabase.auth.admin.getUserById(anuncio.user_id)
+        const { data: authUser } = await createAdminClient().auth.admin.getUserById(anuncio.user_id)
         const email = authUser?.user?.email
         if (!email) return
 

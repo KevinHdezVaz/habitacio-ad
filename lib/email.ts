@@ -2,9 +2,8 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// Cambiar a noreply@habitacio.ad cuando el dominio esté verificado en Resend
 const FROM = process.env.NODE_ENV === 'production'
-  ? 'Habitacio.ad <onboarding@resend.dev>'
+  ? 'Habitacio.ad <noreply@habitacio.ad>'
   : 'Habitacio.ad <onboarding@resend.dev>'
 const BASE_URL = 'https://habitacio.ad'
 
