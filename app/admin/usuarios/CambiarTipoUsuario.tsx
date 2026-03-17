@@ -2,8 +2,19 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Spinner from '@/components/ui/Spinner'
 import { cambiarTipoUsuario } from '@/app/actions/admin'
+
+const labelTipo: Record<string, string> = {
+  inquilino:  'Inquilino',
+  arrendador: 'Propietario',
+  admin:      'Admin',
+}
+
+const badgeTipo: Record<string, string> = {
+  arrendador: 'bg-blue-100 text-blue-700',
+  inquilino:  'bg-teal-100 text-teal-700',
+  admin:      'bg-purple-100 text-purple-700',
+}
 
 export default function CambiarTipoUsuario({
   userId,
@@ -12,7 +23,7 @@ export default function CambiarTipoUsuario({
   userId: string
   tipoActual: string
 }) {
-  const router  = useRouter()
+  const router                = useRouter()
   const [tipo, setTipo]       = useState(tipoActual)
   const [loading, setLoading] = useState(false)
 
@@ -27,35 +38,21 @@ export default function CambiarTipoUsuario({
     setLoading(false)
   }
 
-  const opciones = [
-    { key: 'inquilino',  label: 'Inquilino' },
-    { key: 'arrendador', label: 'Propietario' },
-    { key: 'admin',      label: 'Admin' },
-  ]
-
   return (
-    <div className="flex gap-1 shrink-0">
-      {opciones.map((op) => {
-        const isActive = tipo === op.key
-        const isChanging = loading && tipo !== op.key && op.key === tipo
-        return (
-          <button
-            key={op.key}
-            onClick={() => handleChange(op.key)}
-            disabled={loading}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1 ${
-              isActive
-                ? op.key === 'admin'     ? 'bg-purple-600 text-white'
-                : op.key === 'arrendador' ? 'bg-[#1a3c5e] text-white'
-                :                          'bg-[#0ea5a0] text-white'
-                : 'bg-gray-100 text-[#6b7280] hover:bg-gray-200'
-            }`}
-          >
-            {loading && !isActive ? <Spinner size="xs" color="blue" /> : null}
-            {op.label}
-          </button>
-        )
-      })}
+    <div className="flex items-center gap-2 shrink-0">
+      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shrink-0 ${badgeTipo[tipo] ?? 'bg-gray-100 text-gray-600'}`}>
+        {labelTipo[tipo] ?? tipo}
+      </span>
+      <select
+        value={tipo}
+        onChange={(e) => handleChange(e.target.value)}
+        disabled={loading}
+        className="text-xs rounded-lg border border-gray-200 px-2 py-1.5 focus:outline-none focus:border-[#0ea5a0] bg-white text-[#374151] disabled:opacity-40 cursor-pointer"
+      >
+        <option value="inquilino">Inquilino</option>
+        <option value="arrendador">Propietario</option>
+        <option value="admin">Admin</option>
+      </select>
     </div>
   )
 }

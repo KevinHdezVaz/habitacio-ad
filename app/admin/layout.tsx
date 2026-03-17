@@ -38,8 +38,24 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </header>
 
+      {/* Mobile nav — encima del contenido */}
+      <div className="md:hidden border-b border-gray-100 bg-white">
+        <nav className="flex gap-1 p-2 overflow-x-auto">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-[#374151] hover:bg-[#f4f5f7] whitespace-nowrap"
+            >
+              <span>{item.icon}</span>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
       <div className="flex">
-        {/* Sidebar */}
+        {/* Sidebar — solo desktop */}
         <aside className="w-52 shrink-0 bg-white border-r border-gray-100 min-h-[calc(100vh-49px)] hidden md:block">
           <nav className="p-4 flex flex-col gap-1">
             {navItems.map((item) => (
@@ -55,24 +71,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </nav>
         </aside>
 
-        {/* Mobile nav */}
-        <div className="md:hidden w-full border-b border-gray-100 bg-white">
-          <nav className="flex gap-1 p-2 overflow-x-auto">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-[#374151] hover:bg-[#f4f5f7] whitespace-nowrap"
-              >
-                <span>{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
         {/* Content */}
-        <main className="flex-1 p-4 md:p-8 overflow-auto">
+        <main className="flex-1 p-4 md:p-8 overflow-auto min-w-0">
           {children}
         </main>
       </div>
