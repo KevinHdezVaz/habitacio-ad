@@ -36,10 +36,9 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
 
   async function handleOcultar() {
     setLoading(true)
-    const res = await ocultarPerfilInquilino(perfil.id)
+    await ocultarPerfilInquilino(perfil.id)
     setLoading(false)
-    if (res && 'error' in res && res.error) setError(res.error)
-    else router.refresh()
+    router.refresh()
   }
 
   return (
