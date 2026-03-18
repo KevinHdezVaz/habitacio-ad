@@ -29,19 +29,6 @@ function formatTelefono(tel: string): string {
   return `376${digits}`
 }
 
-// ── Feature pill con icono ───────────────────────────────────────────────────
-function FeaturePill({ icon, label, highlight = false }: { icon: string; label: string; highlight?: boolean }) {
-  return (
-    <div className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-semibold transition-all
-      ${highlight
-        ? 'border-[#0ea5a0]/30 bg-gradient-to-r from-[#e6f7f7] to-[#f0fafa] text-[#0a8c88]'
-        : 'border-gray-100 bg-[#f8fafc] text-[#374151]'}`}
-    >
-      <span className="text-base">{icon}</span>
-      {label}
-    </div>
-  )
-}
 
 // ── Meta tags dinámicos ───────────────────────────────────────────────────────
 export async function generateMetadata({
@@ -202,17 +189,6 @@ export default async function FichaHabitacionPage({
         {/* ── COLUMNA IZQUIERDA ─────────────────────────────────────────── */}
         <div className="lg:col-span-2 flex flex-col gap-8">
 
-          {/* HIGHLIGHTS (pills rápidos) */}
-          <div className="flex flex-wrap gap-2">
-            {anuncio.wifi          && <FeaturePill icon="📶" label="WiFi incluido"      highlight />}
-            {anuncio.bano_privado  && <FeaturePill icon="🚿" label="Baño privado"       highlight />}
-            {anuncio.gastos_incluidos && <FeaturePill icon="💡" label="Gastos incluidos" highlight />}
-            {anuncio.empadronamiento && <FeaturePill icon="📋" label="Empadronamiento"   highlight />}
-            {anuncio.admite_mascotas && <FeaturePill icon="🐾" label="Admite mascotas"   />}
-            {anuncio.admite_pareja   && <FeaturePill icon="👫" label="Admite pareja"     />}
-            {anuncio.tipo_cama && <FeaturePill icon="🛏️" label={anuncio.tipo_cama} />}
-            {!anuncio.fumadores && <FeaturePill icon="🚭" label="No fumadores" />}
-          </div>
 
           {/* ANUNCIANTE ── solo mobile, arriba del contenido */}
           <div className="lg:hidden flex items-center gap-3 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
