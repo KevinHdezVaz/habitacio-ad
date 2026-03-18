@@ -42,18 +42,14 @@ interface Props {
 }
 
 // ─── Item de detalle compacto ──────────────────────────────────────────────
-function DetalleItem({ label, value, positive }: {
-  label: string; value: string; positive?: boolean
+function DetalleItem({ label, value }: {
+  label: string; value: string
 }) {
   return (
     <div className="flex items-start gap-2 py-2">
       <div className="min-w-0 flex-1">
         <p className="text-[10px] text-[#9ca3af] uppercase tracking-wide leading-none">{label}</p>
-        <p className={`text-sm font-semibold leading-snug mt-0.5 ${
-          positive === true ? 'text-[#0ea5a0]' :
-          positive === false ? 'text-[#9ca3af]' :
-          'text-[#1a3c5e]'
-        }`}>{value}</p>
+        <p className="text-sm font-semibold leading-snug mt-0.5 text-[#1a3c5e]">{value}</p>
       </div>
     </div>
   )
@@ -171,6 +167,7 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
     <div className="flex flex-col gap-3">
 
       {/* ── Quick stats chips (siempre visibles) ── */}
+      {/* ── Chips informativos básicos ── */}
       <div className="flex flex-wrap gap-2">
         {superficie && (
           <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
@@ -182,9 +179,7 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
             Cama {anuncio.tipo_cama.toLowerCase()}
           </span>
         )}
-        <span className={`text-xs font-semibold px-3 py-1.5 rounded-xl ${
-          anuncio.bano_privado ? 'bg-[#e6f7f7] text-[#0ea5a0]' : 'bg-[#f4f5f7] text-[#374151]'
-        }`}>
+        <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
           Baño {anuncio.bano_privado ? 'privado' : 'compartido'}
         </span>
         {anuncio.num_personas && (
@@ -192,6 +187,64 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
             {anuncio.num_personas} personas
           </span>
         )}
+      </div>
+
+      {/* ── 5 características principales (siempre visibles) ── */}
+      <div className="grid grid-cols-5 gap-2">
+        {/* WiFi */}
+        <div className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl border ${
+          anuncio.wifi ? 'bg-[#e6f7f7] border-[#b2eaea]' : 'bg-[#f4f5f7] border-gray-100'
+        }`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+            className={`w-5 h-5 ${anuncio.wifi ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>
+            <path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>
+          </svg>
+          <span className={`text-[9px] font-semibold text-center leading-tight ${anuncio.wifi ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>WiFi</span>
+        </div>
+
+        {/* Gastos */}
+        <div className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl border ${
+          anuncio.gastos_incluidos ? 'bg-[#e6f7f7] border-[#b2eaea]' : 'bg-[#f4f5f7] border-gray-100'
+        }`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+            className={`w-5 h-5 ${anuncio.gastos_incluidos ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+          </svg>
+          <span className={`text-[9px] font-semibold text-center leading-tight ${anuncio.gastos_incluidos ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>Gastos{'\n'}incl.</span>
+        </div>
+
+        {/* Baño privado */}
+        <div className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl border ${
+          anuncio.bano_privado ? 'bg-[#e6f7f7] border-[#b2eaea]' : 'bg-[#f4f5f7] border-gray-100'
+        }`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+            className={`w-5 h-5 ${anuncio.bano_privado ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>
+            <path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><line x1="10" y1="5" x2="8" y2="7"/><line x1="2" y1="12" x2="22" y2="12"/>
+          </svg>
+          <span className={`text-[9px] font-semibold text-center leading-tight ${anuncio.bano_privado ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>Baño{'\n'}privado</span>
+        </div>
+
+        {/* No fumadores */}
+        <div className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl border ${
+          !anuncio.fumadores ? 'bg-[#e6f7f7] border-[#b2eaea]' : 'bg-[#f4f5f7] border-gray-100'
+        }`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+            className={`w-5 h-5 ${!anuncio.fumadores ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>
+            <line x1="2" y1="2" x2="22" y2="22"/><path d="M12 12H2v4h10.34M19.34 12H22v4M22 8c-1.11 0-2 .89-2 2v2M10 8a2 2 0 1 0-4 0v4"/>
+          </svg>
+          <span className={`text-[9px] font-semibold text-center leading-tight ${!anuncio.fumadores ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>{!anuncio.fumadores ? 'No' : 'Sí'}{'\n'}fuma</span>
+        </div>
+
+        {/* Sin fianza / Mascotas */}
+        <div className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl border ${
+          !anuncio.fianza ? 'bg-[#e6f7f7] border-[#b2eaea]' : 'bg-[#f4f5f7] border-gray-100'
+        }`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+            className={`w-5 h-5 ${!anuncio.fianza ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          <span className={`text-[9px] font-semibold text-center leading-tight ${!anuncio.fianza ? 'text-[#0ea5a0]' : 'text-[#9ca3af]'}`}>{!anuncio.fianza ? 'Sin' : 'Con'}{'\n'}fianza</span>
+        </div>
       </div>
 
       {/* ── Sobre la habitación ── */}
