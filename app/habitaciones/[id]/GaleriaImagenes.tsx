@@ -9,9 +9,9 @@ interface Props {
 
 export default function GaleriaImagenes({ imagenes, titulo }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [indiceActual, setIndiceActual]  = useState(0)
+  const [indiceActual, setIndiceActual] = useState(0)
 
-  const total        = imagenes.length
+  const total = imagenes.length
   const imgPrincipal = imagenes[0]?.url ?? 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'
   const imgSecundarias = imagenes.slice(1, 5)
 
@@ -27,8 +27,8 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
   useEffect(() => {
     if (!lightboxOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape')     cerrar()
-      if (e.key === 'ArrowLeft')  anterior()
+      if (e.key === 'Escape') cerrar()
+      if (e.key === 'ArrowLeft') anterior()
       if (e.key === 'ArrowRight') siguiente()
     }
     window.addEventListener('keydown', onKey)
@@ -66,7 +66,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
               <img src={imgPrincipal} alt={titulo} className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200" />
             </button>
             {imgSecundarias.map((img, i) => {
-              const esUltima     = i === imgSecundarias.length - 1
+              const esUltima = i === imgSecundarias.length - 1
               const mostrarBadge = esUltima && total > 5
               return (
                 <button key={i} onClick={() => abrirLightbox(i + 1)} className="overflow-hidden group relative" aria-label={`Ver foto ${i + 2}`}>
@@ -88,7 +88,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
             className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-[#1a3c5e] text-xs font-bold px-3 py-2 rounded-xl shadow-md hover:bg-white transition-all"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+              <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" />
             </svg>
             Ver {total} fotos
           </button>
@@ -99,6 +99,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
       {lightboxOpen && (
         <div
           className="fixed inset-0 z-[100] bg-black flex flex-col"
+          style={{ height: '100dvh', top: 0, left: 0, right: 0, bottom: 0 }}
           onClick={(e) => { if (e.target === e.currentTarget) cerrar() }}
         >
           {/* Barra superior: contador + cerrar */}
@@ -112,13 +113,13 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
               aria-label="Cerrar"
             >
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
           {/* Imagen + flechas — ocupa todo el espacio disponible */}
-          <div className="flex-1 flex items-center justify-center relative overflow-hidden">
+          <div className="flex-1 flex items-center justify-center relative overflow-hidden min-h-0">
             {/* Flecha izquierda */}
             {total > 1 && (
               <button
@@ -127,7 +128,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
                 aria-label="Anterior"
               >
                 <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
             )}
@@ -140,7 +141,9 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
               className="select-none rounded-lg"
               style={{
                 maxWidth: 'calc(100vw - 80px)',
-                maxHeight: 'calc(100dvh - 120px)',
+                maxHeight: '100%',
+                width: 'auto',
+                height: 'auto',
                 objectFit: 'contain',
                 animation: 'fadeIn 0.12s ease',
               }}
@@ -155,7 +158,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
                 aria-label="Siguiente"
               >
                 <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             )}
@@ -169,11 +172,10 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
                   <button
                     key={i}
                     onClick={() => setIndiceActual(i)}
-                    className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden transition-all ${
-                      i === indiceActual
-                        ? 'ring-2 ring-white opacity-100'
-                        : 'opacity-40 hover:opacity-70'
-                    }`}
+                    className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden transition-all ${i === indiceActual
+                      ? 'ring-2 ring-white opacity-100'
+                      : 'opacity-40 hover:opacity-70'
+                      }`}
                     aria-label={`Foto ${i + 1}`}
                   >
                     <img src={img.url} alt="" className="w-full h-full object-cover" />
