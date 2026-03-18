@@ -263,24 +263,24 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
             <DetalleItem label="m² habitación" value={`${superficie} m²`} />
           )}
           {anuncio.amueblada !== null && anuncio.amueblada !== undefined && (
-            <DetalleItem label="Amueblada" value={anuncio.amueblada ? 'Sí' : 'No'} positive={!!anuncio.amueblada} />
+            <DetalleItem label="Amueblada" value={anuncio.amueblada ? 'Sí' : 'No'} />
           )}
           {anuncio.tipo_cama && (
             <DetalleItem label="Tipo de cama" value={anuncio.tipo_cama} />
           )}
           {anuncio.armario !== null && anuncio.armario !== undefined && (
-            <DetalleItem label="Armario" value={anuncio.armario ? 'Sí' : 'No'} positive={!!anuncio.armario} />
+            <DetalleItem label="Armario" value={anuncio.armario ? 'Sí' : 'No'} />
           )}
           {anuncio.escritorio !== null && anuncio.escritorio !== undefined && (
-            <DetalleItem label="Escritorio" value={anuncio.escritorio ? 'Sí' : 'No'} positive={!!anuncio.escritorio} />
+            <DetalleItem label="Escritorio" value={anuncio.escritorio ? 'Sí' : 'No'} />
           )}
           {anuncio.exterior !== null && anuncio.exterior !== undefined && (
-            <DetalleItem label="Orientación" value={anuncio.exterior ? 'Exterior' : 'Interior'} positive={!!anuncio.exterior} />
+            <DetalleItem label="Orientación" value={anuncio.exterior ? 'Exterior' : 'Interior'} />
           )}
           {anuncio.balcon_ventana !== null && anuncio.balcon_ventana !== undefined && (
-            <DetalleItem label="Balcón o ventana" value={anuncio.balcon_ventana ? 'Sí' : 'No'} positive={!!anuncio.balcon_ventana} />
+            <DetalleItem label="Balcón o ventana" value={anuncio.balcon_ventana ? 'Sí' : 'No'} />
           )}
-          <DetalleItem label="Baño" value={anuncio.bano_privado ? 'Privado' : 'Compartido'} positive={!!anuncio.bano_privado} />
+          <DetalleItem label="Baño" value={anuncio.bano_privado ? 'Privado' : 'Compartido'} />
         </div>
       </AccordionSection>
 
@@ -300,15 +300,15 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
             <DetalleItem label="Propietario en vivienda" value={anuncio.vive_propietario ? 'Sí' : 'No'} />
           )}
           {anuncio.ascensor !== null && anuncio.ascensor !== undefined && (
-            <DetalleItem label="Ascensor" value={anuncio.ascensor ? 'Sí' : 'No'} positive={!!anuncio.ascensor} />
+            <DetalleItem label="Ascensor" value={anuncio.ascensor ? 'Sí' : 'No'} />
           )}
           {anuncio.parking !== null && anuncio.parking !== undefined && (
-            <DetalleItem label="Parking" value={anuncio.parking ? 'Sí' : 'No'} positive={!!anuncio.parking} />
+            <DetalleItem label="Parking" value={anuncio.parking ? 'Sí' : 'No'} />
           )}
           {anuncio.terraza !== null && anuncio.terraza !== undefined && (
-            <DetalleItem label="Terraza" value={anuncio.terraza ? 'Sí' : 'No'} positive={!!anuncio.terraza} />
+            <DetalleItem label="Terraza" value={anuncio.terraza ? 'Sí' : 'No'} />
           )}
-          <DetalleItem label="Calefacción" value={calefaccionLabel} positive={anuncio.calefaccion === 'incluida'} />
+          <DetalleItem label="Calefacción" value={calefaccionLabel} />
         </div>
       </AccordionSection>
 
@@ -328,27 +328,22 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
             value={anuncio.fianza
               ? (anuncio.importe_fianza ? `${anuncio.importe_fianza} €` : 'Sí')
               : 'Sin fianza'}
-            positive={!anuncio.fianza}
           />
           <DetalleItem
             label="Se aceptan parejas"
             value={anuncio.admite_pareja ? 'Sí' : 'No'}
-            positive={!!anuncio.admite_pareja}
           />
           <DetalleItem
             label="Se aceptan mascotas"
             value={anuncio.admite_mascotas ? 'Sí' : 'No'}
-            positive={!!anuncio.admite_mascotas}
           />
           <DetalleItem
             label="Se permite fumar"
             value={anuncio.fumadores ? 'Sí' : 'No'}
-            positive={!anuncio.fumadores}
           />
           <DetalleItem
             label="Empadronamiento"
             value={anuncio.empadronamiento ? 'Posible' : 'No disponible'}
-            positive={!!anuncio.empadronamiento}
           />
           {anuncio.preferencia_sexo && (
             <DetalleItem
