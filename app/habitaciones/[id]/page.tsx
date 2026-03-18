@@ -4,6 +4,7 @@ import Link from 'next/link'
 import ContactarButton from '@/components/habitaciones/ContactarButton'
 import Avatar from '@/components/ui/Avatar'
 import GaleriaImagenes from './GaleriaImagenes'
+import DetallesColapsables from './DetallesColapsables'
 
 const ETIQUETA_TIPO: Record<string, string> = {
   anual:     'Todo el año',
@@ -28,15 +29,6 @@ function formatTelefono(tel: string): string {
   return `376${digits}`
 }
 
-// ── Icono SVG inline ─────────────────────────────────────────────────────────
-function Icon({ d, className = 'w-5 h-5' }: { d: string; className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d={d} />
-    </svg>
-  )
-}
-
 // ── Feature pill con icono ───────────────────────────────────────────────────
 function FeaturePill({ icon, label, highlight = false }: { icon: string; label: string; highlight?: boolean }) {
   return (
@@ -47,21 +39,6 @@ function FeaturePill({ icon, label, highlight = false }: { icon: string; label: 
     >
       <span className="text-base">{icon}</span>
       {label}
-    </div>
-  )
-}
-
-// ── Detalle con icono en grid ────────────────────────────────────────────────
-function DetalleItem({ icon, label, value, positive }: { icon: string; label: string; value: string; positive?: boolean }) {
-  return (
-    <div className="flex items-center gap-3 py-3.5 border-b border-gray-50 last:border-0">
-      <span className="text-xl w-7 text-center flex-shrink-0">{icon}</span>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-[#9ca3af] font-medium uppercase tracking-wide">{label}</p>
-        <p className={`text-sm font-bold mt-0.5 ${positive === true ? 'text-[#0ea5a0]' : positive === false ? 'text-[#6b7280]' : 'text-[#1a3c5e]'}`}>
-          {value}
-        </p>
-      </div>
     </div>
   )
 }
@@ -259,46 +236,9 @@ export default async function FichaHabitacionPage({
             </section>
           )}
 
-          {/* DETALLES ── grid con iconos */}
+          {/* DETALLES colapsables */}
           <section>
-            <h2 className="text-lg font-bold text-[#1a3c5e] mb-4 flex items-center gap-2">
-              <span className="w-1 h-5 rounded-full bg-[#0ea5a0] inline-block" />
-              Detalles de la habitación
-            </h2>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-50">
-                {/* Columna 1 */}
-                <div className="px-5 divide-y divide-gray-50">
-                  <DetalleItem icon="💶" label="Precio" value={`${anuncio.precio} €/mes`} />
-                  {anuncio.importe_fianza
-                    ? <DetalleItem icon="🔐" label="Fianza" value={`${anuncio.importe_fianza} €`} />
-                    : <DetalleItem icon="🔐" label="Fianza" value="Sin fianza" positive />
-                  }
-                  <DetalleItem icon="💡" label="Gastos" value={anuncio.gastos_incluidos ? 'Incluidos' : 'No incluidos'} positive={!!anuncio.gastos_incluidos} />
-                  {anuncio.metros_habitacion && <DetalleItem icon="📐" label="Metros habitación" value={`${anuncio.metros_habitacion} m²`} />}
-                  {anuncio.metros_piso       && <DetalleItem icon="🏠" label="Metros piso"       value={`${anuncio.metros_piso} m²`} />}
-                  <DetalleItem icon="🚿" label="Baño" value={anuncio.bano_privado ? 'Privado' : 'Compartido'} positive={!!anuncio.bano_privado} />
-                  {anuncio.tipo_cama && <DetalleItem icon="🛏️" label="Tipo de cama" value={anuncio.tipo_cama} />}
-                </div>
-                {/* Columna 2 */}
-                <div className="px-5 divide-y divide-gray-50">
-                  <DetalleItem icon="📶" label="WiFi" value={anuncio.wifi ? 'Incluido' : 'No incluido'} positive={!!anuncio.wifi} />
-                  <DetalleItem icon="🏡" label="Vive el propietario" value={anuncio.vive_propietario ? 'Sí' : 'No'} />
-                  <DetalleItem icon="👫" label="Admite pareja"   value={anuncio.admite_pareja  ? 'Sí' : 'No'} positive={!!anuncio.admite_pareja} />
-                  <DetalleItem icon="🐾" label="Admite mascotas" value={anuncio.admite_mascotas ? 'Sí' : 'No'} positive={!!anuncio.admite_mascotas} />
-                  <DetalleItem icon="🚬" label="Fumadores"       value={anuncio.fumadores       ? 'Permitido' : 'No permitido'} positive={!anuncio.fumadores} />
-                  <DetalleItem icon="📋" label="Empadronamiento" value={anuncio.empadronamiento ? 'Posible' : 'No disponible'} positive={!!anuncio.empadronamiento} />
-                  {anuncio.num_personas  && <DetalleItem icon="👥" label="Personas en el piso" value={String(anuncio.num_personas)} />}
-                  {anuncio.preferencia_sexo && (
-                    <DetalleItem icon="💁" label="Preferencia"
-                      value={({ chicas: 'Solo chicas', chicos: 'Solo chicos', indiferente: 'Sin preferencia' } as Record<string, string>)[anuncio.preferencia_sexo] ?? anuncio.preferencia_sexo}
-                    />
-                  )}
-                  {anuncio.duracion_minima  && <DetalleItem icon="📅" label="Duración mínima"  value={anuncio.duracion_minima} />}
-                  {anuncio.idioma_vivienda  && <DetalleItem icon="🗣️" label="Idioma"            value={anuncio.idioma_vivienda} />}
-                </div>
-              </div>
-            </div>
+            <DetallesColapsables anuncio={anuncio} disponibleDesde={disponibleDesde} />
           </section>
 
           {/* NORMAS */}

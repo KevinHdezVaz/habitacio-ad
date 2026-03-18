@@ -18,13 +18,13 @@ const PARROQUIAS = [
 function Seccion({
   num, icon, title, subtitle, children,
 }: {
-  num: number; icon: string; title: string; subtitle?: string; children: React.ReactNode
+  num: number; icon?: string; title: string; subtitle?: string; children: React.ReactNode
 }) {
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#f8fafc] to-white">
-        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1a3c5e] text-lg flex-shrink-0">
-          {icon}
+        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1a3c5e] text-white font-bold text-sm flex-shrink-0">
+          {num}
         </div>
         <div className="flex-1 min-w-0">
           <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">Paso {num}</span>
@@ -40,9 +40,9 @@ function Seccion({
 }
 
 function Toggle({
-  checked, onToggle, label, icon,
+  checked, onToggle, label,
 }: {
-  checked: boolean; onToggle: () => void; label: string; icon: string
+  checked: boolean; onToggle: () => void; label: string; icon?: string
 }) {
   return (
     <label className="flex items-center gap-3 cursor-pointer group">
@@ -54,13 +54,9 @@ function Toggle({
         className={`relative w-11 h-6 rounded-full transition-all duration-200 flex-shrink-0 focus:outline-none overflow-hidden
           ${checked ? 'bg-[#0ea5a0]' : 'bg-gray-200 group-hover:bg-gray-300'}`}
       >
-        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200
-          ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </button>
-      <span className="text-sm text-[#374151] flex items-center gap-1.5 select-none">
-        <span>{icon}</span>
-        <span>{label}</span>
-      </span>
+      <span className="text-sm text-[#374151] select-none">{label}</span>
     </label>
   )
 }
@@ -111,6 +107,21 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
     tipo_cama: '', bano_privado: false, wifi: true,
     idioma_vivienda: 'Español',
     descripcion: '', normas: '',
+    // La habitación (nuevos campos)
+    estancia_minima: '',
+    estancia_maxima: '',
+    amueblada: false,
+    armario: false,
+    escritorio: false,
+    exterior: true,
+    balcon_ventana: false,
+    // La vivienda (nuevos campos)
+    num_habitaciones: '',
+    num_banos: '',
+    ascensor: false,
+    parking: false,
+    calefaccion: 'no',
+    terraza: false,
   })
 
   function set(key: string, value: unknown) {
@@ -186,6 +197,20 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
         normas: form.normas || null,
         latitud: coords.lat && coords.lat !== 0 ? coords.lat : null,
         longitud: coords.lng && coords.lng !== 0 ? coords.lng : null,
+        // Nuevos campos
+        estancia_minima: form.estancia_minima ? Number(form.estancia_minima) : null,
+        estancia_maxima: form.estancia_maxima ? Number(form.estancia_maxima) : null,
+        amueblada: form.amueblada,
+        armario: form.armario,
+        escritorio: form.escritorio,
+        exterior: form.exterior,
+        balcon_ventana: form.balcon_ventana,
+        num_habitaciones: form.num_habitaciones ? Number(form.num_habitaciones) : null,
+        num_banos: form.num_banos ? Number(form.num_banos) : null,
+        ascensor: form.ascensor,
+        parking: form.parking,
+        calefaccion: form.calefaccion,
+        terraza: form.terraza,
       }
 
       const result = await publicarAnuncio(datos, imageUrls)
@@ -222,7 +247,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
           </div>
           {/* Barra decorativa de pasos */}
           <div className="flex items-center gap-1">
-            {[1,2,3,4,5,6].map((n) => (
+            {[1,2,3,4,5,6,7].map((n) => (
               <div key={n} className="flex-1 h-1 rounded-full bg-gradient-to-r from-[#1a3c5e] to-[#0ea5a0] opacity-15" />
             ))}
           </div>
@@ -247,7 +272,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
           {/* ── 1. Información básica ── */}
-          <Seccion num={1} icon="📋" title="Información básica" subtitle="Título, precio y ubicación">
+          <Seccion num={1} title="Información básica" subtitle="Título, precio y ubicación">
             <Input
               label="Título del anuncio *"
               placeholder="Ej: Habitación luminosa con balcón en el centro"
@@ -305,10 +330,10 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
               <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de estancia</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { label: 'Todo el año',  sub: 'Residencia habitual', v: 'anual',     icon: '🏠' },
-                  { label: 'Temporero',    sub: 'Esquí, verano…',      v: 'temporero', icon: '⛷️' },
-                  { label: 'Ambos',        sub: 'Flexible',            v: 'ambos',     icon: '✅' },
-                ].map(({ label, sub, v, icon }) => (
+                  { label: 'Todo el año',  sub: 'Residencia habitual', v: 'anual' },
+                  { label: 'Temporero',    sub: 'Esquí, verano…',      v: 'temporero' },
+                  { label: 'Me adapto',    sub: 'Flexible',            v: 'ambos' },
+                ].map(({ label, sub, v }) => (
                   <button
                     type="button"
                     key={v}
@@ -318,7 +343,6 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                         ? 'border-[#1a3c5e] bg-[#f0f4f8]'
                         : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
                   >
-                    <span className="text-xl">{icon}</span>
                     <span className={`text-xs font-bold leading-tight ${form.tipo_estancia === v ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>{label}</span>
                     <span className="text-[10px] text-[#9ca3af]">{sub}</span>
                   </button>
@@ -327,17 +351,143 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
             </div>
           </Seccion>
 
-          {/* ── 2. Condiciones ── */}
-          <Seccion num={2} icon="✅" title="Condiciones" subtitle="Qué incluye y qué se permite">
+          {/* ── 2. La habitación ── */}
+          <Seccion num={2} title="La habitación" subtitle="Características y equipamiento">
+            {/* Row 1: metros + tipo cama */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Superficie (m²)</label>
+                <input
+                  type="number"
+                  placeholder="12"
+                  value={form.metros_habitacion}
+                  onChange={(e) => set('metros_habitacion', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de cama</label>
+                <select
+                  value={form.tipo_cama}
+                  onChange={(e) => set('tipo_cama', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                >
+                  <option value="">Selecciona…</option>
+                  <option value="Individual">Individual</option>
+                  <option value="Doble">Doble</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 2: estancia mínima + máxima */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia mínima (meses)</label>
+                <input
+                  type="number"
+                  placeholder="1"
+                  min="1"
+                  value={form.estancia_minima}
+                  onChange={(e) => set('estancia_minima', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia máxima (meses)</label>
+                <input
+                  type="number"
+                  placeholder="12"
+                  min="1"
+                  value={form.estancia_maxima}
+                  onChange={(e) => set('estancia_maxima', e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Toggles grid 2 por fila */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label="Requiere fianza"        icon="🔐" />
-              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label="Gastos incluidos"        icon="💡" />
-              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label="Admite pareja"           icon="👫" />
-              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label="Admite mascotas"         icon="🐾" />
-              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label="Permite empadronamiento" icon="📄" />
-              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label="Se permite fumar"        icon="🚬" />
-              <Toggle checked={form.bano_privado}     onToggle={() => toggle('bano_privado')}     label="Baño privado"            icon="🚿" />
-              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label="WiFi incluido"           icon="📶" />
+              <Toggle checked={form.amueblada}     onToggle={() => toggle('amueblada')}     label="Amueblada" />
+              <Toggle checked={form.exterior}      onToggle={() => toggle('exterior')}      label="Habitación exterior" />
+              <Toggle checked={form.armario}       onToggle={() => toggle('armario')}       label="Armario" />
+              <Toggle checked={form.escritorio}    onToggle={() => toggle('escritorio')}    label="Escritorio" />
+              <Toggle checked={form.balcon_ventana} onToggle={() => toggle('balcon_ventana')} label="Balcón o ventana" />
+              <Toggle checked={form.bano_privado}  onToggle={() => toggle('bano_privado')}  label="Baño privado" />
+            </div>
+          </Seccion>
+
+          {/* ── 3. La vivienda ── */}
+          <Seccion num={3} title="La vivienda" subtitle="Detalles del piso">
+            {/* Row: habitaciones + baños + personas */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Habitaciones</label>
+                <input
+                  type="number"
+                  placeholder="3"
+                  min="1"
+                  value={form.num_habitaciones}
+                  onChange={(e) => set('num_habitaciones', e.target.value)}
+                  className="w-full px-3 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Baños</label>
+                <input
+                  type="number"
+                  placeholder="1"
+                  min="1"
+                  value={form.num_banos}
+                  onChange={(e) => set('num_banos', e.target.value)}
+                  className="w-full px-3 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Convivientes</label>
+                <input
+                  type="number"
+                  placeholder="3"
+                  min="1"
+                  value={form.num_personas}
+                  onChange={(e) => set('num_personas', e.target.value)}
+                  className="w-full px-3 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Calefacción */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Calefacción</label>
+              <select
+                value={form.calefaccion}
+                onChange={(e) => set('calefaccion', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+              >
+                <option value="no">No incluida</option>
+                <option value="si">Sí, hay calefacción</option>
+                <option value="incluida">Incluida en el precio</option>
+              </select>
+            </div>
+
+            {/* Toggles 2 por fila */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Toggle checked={form.ascensor}        onToggle={() => toggle('ascensor')}        label="Ascensor" />
+              <Toggle checked={form.parking}         onToggle={() => toggle('parking')}         label="Parking" />
+              <Toggle checked={form.terraza}         onToggle={() => toggle('terraza')}         label="Terraza" />
+              <Toggle checked={form.vive_propietario} onToggle={() => toggle('vive_propietario')} label="Propietario en la vivienda" />
+            </div>
+          </Seccion>
+
+          {/* ── 4. Condiciones ── */}
+          <Seccion num={4} title="Condiciones" subtitle="Qué incluye y qué se permite">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label="Requiere fianza" />
+              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label="Gastos incluidos" />
+              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label="WiFi incluido" />
+              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label="Se aceptan parejas" />
+              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label="Se aceptan mascotas" />
+              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label="Se permite fumar" />
+              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label="Posibilidad de empadronamiento" />
             </div>
 
             {form.fianza && (
@@ -358,7 +508,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 onChange={(e) => set('duracion_minima', e.target.value)}
               />
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Preferencia género</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Perfil preferido</label>
                 <select
                   value={form.preferencia_sexo}
                   onChange={(e) => set('preferencia_sexo', e.target.value)}
@@ -370,58 +520,23 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 </select>
               </div>
             </div>
-          </Seccion>
 
-          {/* ── 3. Sobre la vivienda ── */}
-          <Seccion num={3} icon="🛋️" title="Sobre la vivienda" subtitle="Detalles del piso y la habitación">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: 'Habitación m²', key: 'metros_habitacion', placeholder: '12',    icon: '🛏️' },
-                { label: 'Piso m²',       key: 'metros_piso',       placeholder: '80',    icon: '🏠' },
-                { label: 'Convivientes',  key: 'num_personas',      placeholder: '3',     icon: '👥' },
-                { label: 'Tipo de cama',  key: 'tipo_cama',         placeholder: 'Doble', icon: '🛌', text: true },
-              ].map(({ label, key, placeholder, icon, text }) => (
-                <div key={key} className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-[#1a3c5e] ml-1 flex items-center gap-1">
-                    {icon} {label}
-                  </label>
-                  <input
-                    type={text ? 'text' : 'number'}
-                    placeholder={placeholder}
-                    value={form[key as keyof typeof form] as string}
-                    onChange={(e) => set(key, e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">🌐 Idioma principal</label>
-                <select
-                  value={form.idioma_vivienda}
-                  onChange={(e) => set('idioma_vivienda', e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
-                >
-                  {['Español','Catalán','Francés','Portugués','Inglés','Indiferente'].map((l) => (
-                    <option key={l}>{l}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-end pb-1">
-                <Toggle
-                  checked={form.vive_propietario}
-                  onToggle={() => toggle('vive_propietario')}
-                  label="Vive el propietario"
-                  icon="🏡"
-                />
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Idiomas en la vivienda</label>
+              <select
+                value={form.idioma_vivienda}
+                onChange={(e) => set('idioma_vivienda', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
+              >
+                {['Español','Catalán','Francés','Portugués','Inglés','Indiferente'].map((l) => (
+                  <option key={l}>{l}</option>
+                ))}
+              </select>
             </div>
           </Seccion>
 
-          {/* ── 4. Ubicación ── */}
-          <Seccion num={4} icon="📍" title="Ubicación en el mapa" subtitle="Opcional · Solo se muestra el pin, no la dirección exacta">
+          {/* ── 5. Ubicación ── */}
+          <Seccion num={5} title="Ubicación en el mapa" subtitle="Opcional · Solo se muestra el pin, no la dirección exacta">
             <MapaPicker
               lat={coords.lat}
               lng={coords.lng}
@@ -429,8 +544,8 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
             />
           </Seccion>
 
-          {/* ── 5. Descripción y normas ── */}
-          <Seccion num={5} icon="✍️" title="Descripción y normas" subtitle="Cuéntanos más sobre la habitación">
+          {/* ── 6. Descripción y normas ── */}
+          <Seccion num={6} title="Descripción y normas" subtitle="Cuéntanos más sobre la habitación">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-bold text-[#1a3c5e] ml-1">Descripción</label>
               <textarea
@@ -453,8 +568,8 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
             </div>
           </Seccion>
 
-          {/* ── 6. Fotos ── */}
-          <Seccion num={6} icon="📸" title="Fotos de la habitación" subtitle="Las fotos aumentan mucho el interés · Máximo 8">
+          {/* ── 7. Fotos ── */}
+          <Seccion num={7} title="Fotos de la habitación" subtitle="Las fotos aumentan mucho el interés · Máximo 8">
             <input
               ref={fileRef}
               type="file"

@@ -22,6 +22,8 @@ export default async function PerfilInquilinoPage({
   const { id } = await params
   const supabase = await createClient()
 
+  const ahora = new Date().toISOString()
+
   const [{ data: perfil }, { data: { user } }] = await Promise.all([
     supabase.from('perfiles_inquilino').select('*').eq('id', id).single(),
     supabase.auth.getUser(),
@@ -29,8 +31,13 @@ export default async function PerfilInquilinoPage({
 
   if (!perfil) notFound()
 
+  // Ocultar perfiles caducados o inactivos (a menos que sea el propio usuario)
+  const esPropio = user?.id === perfil.user_id
+  if (!esPropio && (perfil.estado !== 'activo' || perfil.fecha_caducidad <= ahora)) {
+    notFound()
+  }
+
   const p = perfil as PerfilInquilino
-  const esPropio = user?.id === p.user_id
 
   // Obtener avatar del profile del usuario
   const { data: profileData } = await supabase

@@ -18,7 +18,11 @@ export default async function Home() {
 
   const acciones = [
     {
-      icono: '🔍',
+      icono: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      ),
       titulo: t('buscarHabitacion'),
       subtitulo: t('buscarHabitacionSub'),
       href: '/habitaciones',
@@ -26,7 +30,11 @@ export default async function Home() {
       bg: '#e8f4fd',
     },
     {
-      icono: '🏠',
+      icono: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      ),
       titulo: t('publicarHabitacion'),
       subtitulo: t('publicarHabitacionSub'),
       href: '/publicar',
@@ -34,7 +42,11 @@ export default async function Home() {
       bg: '#e6f7f7',
     },
     {
-      icono: '🙋',
+      icono: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      ),
       titulo: t('encontrarme'),
       subtitulo: t('encontrarmeSub'),
       href: '/buscar-habitacion',
@@ -42,7 +54,12 @@ export default async function Home() {
       bg: '#e6f7f7',
     },
     {
-      icono: '👥',
+      icono: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      ),
       titulo: t('verPerfiles'),
       subtitulo: "Accede a perfiles que ya buscan una habitación como la tuya",
       href: '/perfiles',
@@ -168,7 +185,7 @@ export default async function Home() {
               className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow active:scale-95"
             >
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-[#1a3c5e]"
                 style={{ backgroundColor: accion.bg }}
               >
                 {accion.icono}
@@ -215,7 +232,11 @@ export default async function Home() {
                     {imagen ? (
                       <img src={imagen} alt={hab.titulo} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl">🏠</div>
+                      <div className="w-full h-full flex items-center justify-center text-[#c8d4e0]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-12 h-12">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                      </div>
                     )}
                     <div className="absolute top-2 left-2 bg-white rounded-full px-2 py-0.5 text-[11px] font-bold text-[#1a3c5e] shadow">
                       {hab.precio} €/mes
@@ -232,13 +253,9 @@ export default async function Home() {
                     <p className="font-bold text-[13px] text-[#1a3c5e] leading-tight">{hab.precio} €/mes</p>
                     <p className="text-[11px] text-[#6b7280] font-medium truncate">{hab.parroquia}</p>
                     <p className="text-[11px] text-[#6b7280] truncate">{tipoLabel} →</p>
-                    <p className="text-[11px] text-[#6b7280] flex items-center gap-1">
-                      <span className="flex-shrink-0">📅</span>
-                      <span className="truncate">{disponibleLabel}</span>
-                    </p>
-                    <p className="text-[11px] text-[#6b7280] flex items-center gap-1">
-                      <span className="flex-shrink-0">💰</span>
-                      <span className="truncate">{hab.gastos_incluidos ? 'Gastos incluidos' : 'Gastos no incluidos'} →</span>
+                    <p className="text-[11px] text-[#6b7280] truncate">{disponibleLabel}</p>
+                    <p className="text-[11px] text-[#6b7280] truncate">
+                      {hab.gastos_incluidos ? 'Gastos incluidos' : 'Gastos no incluidos'} →
                     </p>
                   </div>
                 </a>

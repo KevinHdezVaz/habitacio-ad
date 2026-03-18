@@ -41,22 +41,26 @@ const TOTAL_STEPS = 4
 // ─── Barra de progreso mejorada ──────────────────────────────────────────────
 function ProgressBar({ step }: { step: number }) {
   const steps = [
-    { icon: '🏠', label: 'Tipo' },
-    { icon: '📍', label: 'Zona' },
-    { icon: '📅', label: 'Fechas' },
-    { icon: '👤', label: 'Sobre ti' },
+    { label: 'Tipo' },
+    { label: 'Zona' },
+    { label: 'Fechas' },
+    { label: 'Sobre ti' },
   ]
   return (
     <div className="flex items-center gap-0">
       {steps.map((s, i) => (
         <div key={i} className="flex items-center flex-1">
           <div className="flex flex-col items-center gap-1 flex-shrink-0">
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-base transition-all duration-300 border-2
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border-2
               ${i < step  ? 'bg-[#0ea5a0] border-[#0ea5a0] text-white shadow-md shadow-[#0ea5a0]/30'
               : i === step ? 'bg-[#1a3c5e] border-[#1a3c5e] text-white shadow-md shadow-[#1a3c5e]/30'
               : 'bg-white border-gray-200 text-gray-300'}`}
             >
-              {i < step ? '✓' : s.icon}
+              {i < step ? (
+                <svg viewBox="0 0 12 12" fill="none" className="w-4 h-4">
+                  <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (i + 1)}
             </div>
             <span className={`text-[10px] font-semibold whitespace-nowrap transition-colors
               ${i === step ? 'text-[#1a3c5e]' : i < step ? 'text-[#0ea5a0]' : 'text-gray-300'}`}>
@@ -75,8 +79,8 @@ function ProgressBar({ step }: { step: number }) {
 }
 
 // ─── Toggle mejorado ─────────────────────────────────────────────────────────
-function Toggle({ checked, onChange, label, icon }: {
-  checked: boolean; onChange: (v: boolean) => void; label: string; icon: string
+function Toggle({ checked, onChange, label }: {
+  checked: boolean; onChange: (v: boolean) => void; label: string; icon?: string
 }) {
   return (
     <button
@@ -86,7 +90,6 @@ function Toggle({ checked, onChange, label, icon }: {
         ${checked ? 'border-[#0ea5a0] bg-gradient-to-r from-[#e6f7f7] to-[#f0fafa]' : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
     >
       <span className="flex items-center gap-2 text-sm font-semibold text-[#374151]">
-        <span className="text-base">{icon}</span>
         {label}
       </span>
       <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0
@@ -106,23 +109,20 @@ function VistaPrevia({ data, avatarUrl }: { data: FormState; avatarUrl?: string 
   const labelSituacion: Record<SituacionLaboral, string> = {
     trabajador: 'Trabajador/a', estudiante: 'Estudiante', temporero: 'Temporero/a',
   }
-  const iconSituacion: Record<SituacionLaboral, string> = {
-    trabajador: '💼', estudiante: '🎓', temporero: '⛷️',
-  }
   const hoy = new Date()
   const entrada = data.fecha_entrada ? new Date(data.fecha_entrada) : null
   const esInmediata = entrada && Math.abs(entrada.getTime() - hoy.getTime()) < 7 * 24 * 60 * 60 * 1000
 
   const chips = [
     data.tipo_busqueda ? labelTipo[data.tipo_busqueda] : null,
-    esInmediata ? '🚀 Entrada inmediata' : data.fecha_entrada ? `📅 ${new Date(data.fecha_entrada).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}` : null,
-    data.situacion ? `${iconSituacion[data.situacion as SituacionLaboral]} ${labelSituacion[data.situacion as SituacionLaboral]}` : null,
+    esInmediata ? 'Entrada inmediata' : data.fecha_entrada ? new Date(data.fecha_entrada).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : null,
+    data.situacion ? labelSituacion[data.situacion as SituacionLaboral] : null,
   ].filter(Boolean)
 
   const caracteristicas = [
-    data.fumador ? '🚬 Fumador/a' : '🚭 No fumador',
-    data.mascotas ? '🐾 Con mascotas' : null,
-    data.acompanado ? '👫 Viene acompañado' : null,
+    data.fumador ? 'Fumador/a' : 'No fumador',
+    data.mascotas ? 'Con mascotas' : null,
+    data.acompanado ? 'Viene acompañado' : null,
   ].filter(Boolean)
 
   return (
@@ -191,9 +191,7 @@ function VistaPrevia({ data, avatarUrl }: { data: FormState; avatarUrl?: string 
 
         {/* Sector */}
         {data.sector && (
-          <p className="text-xs text-[#6b7280] flex items-center gap-1.5">
-            <span>💼</span> {data.sector}
-          </p>
+          <p className="text-xs text-[#6b7280]">{data.sector}</p>
         )}
       </div>
     </div>
@@ -297,8 +295,10 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
               ← Editar
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0ea5a0] to-[#0c8e8a] flex items-center justify-center text-xl shadow-md">
-                👁️
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0ea5a0] to-[#0c8e8a] flex items-center justify-center shadow-md text-white">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
               </div>
               <div>
                 <h1 className="text-xl font-bold text-[#1a3c5e]">Vista previa</h1>
@@ -311,7 +311,9 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
 
           {error && (
             <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5">
-              <span className="text-xl">⚠️</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-red-500 flex-shrink-0">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
               <p className="text-sm font-medium text-red-700">{error}</p>
             </div>
           )}
@@ -328,7 +330,6 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
               disabled={loading}
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#0ea5a0] to-[#0c8e8a] text-white font-bold px-8 py-4 rounded-2xl hover:from-[#0c8e8a] hover:to-[#0a7a76] transition-all shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-sm"
             >
-              <span className="text-base">🚀</span>
               Publicar perfil
             </button>
           </div>
@@ -338,11 +339,11 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
   }
 
   // ── Form principal ────────────────────────────────────────────────────────
-  const STEP_META = [
-    { icon: '🏠', title: '¿Qué tipo de estancia buscas?', subtitle: 'Cuéntanos tus necesidades básicas' },
-    { icon: '📍', title: '¿Dónde y con qué presupuesto?', subtitle: 'Selecciona zonas y tu límite mensual' },
-    { icon: '📅', title: '¿Cuándo necesitas la habitación?', subtitle: 'Indica tus fechas de entrada y salida' },
-    { icon: '👤', title: 'Cuéntanos sobre ti',              subtitle: 'Tu perfil ayuda a los propietarios a elegirte' },
+    const STEP_META = [
+    { title: '¿Qué tipo de estancia buscas?', subtitle: 'Cuéntanos tus necesidades básicas' },
+    { title: '¿Dónde y con qué presupuesto?', subtitle: 'Selecciona zonas y tu límite mensual' },
+    { title: '¿Cuándo necesitas la habitación?', subtitle: 'Indica tus fechas de entrada y salida' },
+    { title: 'Cuéntanos sobre ti', subtitle: 'Tu perfil ayuda a los propietarios a elegirte' },
   ]
 
   return (
@@ -352,8 +353,10 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
         {/* Hero header */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0ea5a0] to-[#0c8e8a] flex items-center justify-center text-2xl shadow-md">
-              🔍
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0ea5a0] to-[#0c8e8a] flex items-center justify-center shadow-md text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[#1a3c5e]">Encuéntrame habitación</h1>
@@ -371,8 +374,8 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Header del paso */}
           <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#f8fafc] to-white">
-            <div className="w-10 h-10 rounded-2xl bg-[#1a3c5e] flex items-center justify-center text-lg flex-shrink-0">
-              {STEP_META[step].icon}
+            <div className="w-10 h-10 rounded-2xl bg-[#1a3c5e] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              {step + 1}
             </div>
             <div>
               <p className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">Paso {step + 1} de {TOTAL_STEPS}</p>
@@ -422,7 +425,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
               <div className="flex flex-col gap-6">
                 <div>
                   <p className="text-sm font-bold text-[#1a3c5e] mb-3">
-                    📍 Parroquias de interés
+                    Parroquias de interés
                     <span className="text-xs font-normal text-[#9ca3af] ml-2">Puedes elegir varias</span>
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -453,7 +456,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
 
                 <div>
                   <p className="text-sm font-bold text-[#1a3c5e] mb-3">
-                    💶 Presupuesto máximo mensual
+                    Presupuesto máximo mensual
                   </p>
                   {/* Precio destacado */}
                   <div className="text-center mb-4 py-3 bg-gradient-to-r from-[#f0f4f8] to-[#f8fafc] rounded-2xl">
@@ -516,7 +519,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                 {data.fecha_entrada && (
                   <div className="bg-gradient-to-r from-[#e6f7f7] to-[#f0fafa] border border-[#0ea5a0]/20 rounded-2xl p-4">
                     <p className="text-sm font-semibold text-[#0ea5a0]">
-                      📅 Entrada el {new Date(data.fecha_entrada).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                      Entrada el {new Date(data.fecha_entrada).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                     {data.fecha_salida && (
                       <p className="text-xs text-[#6b7280] mt-1">
@@ -527,8 +530,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                 )}
 
                 {data.tipo_busqueda === 'anual' && (
-                  <div className="flex items-start gap-3 bg-[#f0f4f8] rounded-2xl p-4">
-                    <span className="text-lg">💡</span>
+                  <div className="bg-[#f0f4f8] rounded-2xl p-4">
                     <p className="text-xs text-[#6b7280] leading-relaxed">
                       Para estancias de todo el año solo necesitamos la fecha de entrada.
                     </p>
@@ -542,7 +544,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
               <div className="flex flex-col gap-5">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-[#1a3c5e] ml-1">👤 Nombre</label>
+                    <label className="text-xs font-bold text-[#1a3c5e] ml-1">Nombre</label>
                     <input
                       type="text"
                       value={data.nombre}
@@ -552,7 +554,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-[#1a3c5e] ml-1">🎂 Edad</label>
+                    <label className="text-xs font-bold text-[#1a3c5e] ml-1">Edad</label>
                     <input
                       type="number"
                       value={data.edad}
@@ -595,7 +597,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                 {/* Sector */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-[#1a3c5e] ml-1">
-                    💼 Sector / campo profesional
+                    Sector / campo profesional
                     <span className="text-[#9ca3af] font-normal ml-1">(opcional)</span>
                   </label>
                   <input
@@ -609,15 +611,15 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
 
                 {/* Toggles */}
                 <div className="flex flex-col gap-2">
-                  <Toggle checked={data.fumador}    onChange={(v) => set('fumador', v)}    label="Fumador/a"          icon="🚬" />
-                  <Toggle checked={data.mascotas}   onChange={(v) => set('mascotas', v)}   label="Tengo mascotas"     icon="🐾" />
-                  <Toggle checked={data.acompanado} onChange={(v) => set('acompanado', v)} label="Vengo acompañado/a" icon="👫" />
+                  <Toggle checked={data.fumador}    onChange={(v) => set('fumador', v)}    label="Fumador/a" />
+                  <Toggle checked={data.mascotas}   onChange={(v) => set('mascotas', v)}   label="Tengo mascotas" />
+                  <Toggle checked={data.acompanado} onChange={(v) => set('acompanado', v)} label="Vengo acompañado/a" />
                 </div>
 
                 {/* Descripción libre */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-[#1a3c5e] ml-1">
-                    ✍️ Preséntate
+                    Preséntate
                     <span className="text-[#9ca3af] font-normal ml-1">(opcional pero recomendado)</span>
                   </label>
                   <textarea
@@ -666,7 +668,6 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
               disabled={!canNext}
               className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[#0ea5a0] to-[#0c8e8a] text-white font-bold text-sm hover:from-[#0c8e8a] transition-all shadow-md disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
             >
-              <span>👁️</span>
               Ver mi perfil →
             </button>
           )}
