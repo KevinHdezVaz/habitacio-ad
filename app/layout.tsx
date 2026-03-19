@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import CookieBanner from '@/components/layout/CookieBanner'
 import PageTransition from '@/components/layout/PageTransition'
 import { createClient } from '@/lib/supabase-server'
 import NextTopLoader from 'nextjs-toploader'
@@ -120,6 +121,7 @@ export default async function RootLayout({
             <PageTransition>{children}</PageTransition>
           </main>
           <Footer />
+          <CookieBanner />
         </NextIntlClientProvider>
       </body>
     </html>
