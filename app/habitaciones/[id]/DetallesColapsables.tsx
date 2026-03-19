@@ -166,29 +166,6 @@ export default function DetallesColapsables({ anuncio, disponibleDesde }: Props)
   return (
     <div className="flex flex-col gap-3">
 
-      {/* ── Quick stats chips (siempre visibles) ── */}
-      {/* ── Chips informativos básicos ── */}
-      <div className="flex flex-wrap gap-2">
-        {superficie && (
-          <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
-            {superficie} m²
-          </span>
-        )}
-        {anuncio.tipo_cama && (
-          <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
-            Cama {anuncio.tipo_cama.toLowerCase()}
-          </span>
-        )}
-        <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
-          Baño {anuncio.bano_privado ? 'privado' : 'compartido'}
-        </span>
-        {anuncio.num_personas && (
-          <span className="text-xs font-semibold bg-[#f4f5f7] text-[#374151] px-3 py-1.5 rounded-xl">
-            {anuncio.num_personas} personas
-          </span>
-        )}
-      </div>
-
       {/* ── 5 características principales (siempre visibles) ── */}
       <div className="grid grid-cols-5 gap-2">
         {/* WiFi */}
