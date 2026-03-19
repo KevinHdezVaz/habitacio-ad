@@ -376,7 +376,7 @@ export default async function FichaHabitacionPage({
 
       {/* ── MOBILE: contacto fijo al fondo ──────────────────────────────── */}
       {!isOwner && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center gap-3">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[50] bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center gap-3 translate-z-0 will-change-transform" style={{ transform: 'translateZ(0)', paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
           <div className="flex-1">
             <p className="text-xl font-bold text-[#1a3c5e] leading-none">{anuncio.precio}€<span className="text-sm font-normal text-[#9ca3af]">/mes</span></p>
             <p className="text-xs text-[#9ca3af] mt-0.5">{anuncio.parroquia}</p>
