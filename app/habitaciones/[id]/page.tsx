@@ -5,6 +5,7 @@ import ContactarButton from '@/components/habitaciones/ContactarButton'
 import Avatar from '@/components/ui/Avatar'
 import GaleriaImagenes from './GaleriaImagenes'
 import DetallesColapsables from './DetallesColapsables'
+import DescripcionExpandible from './DescripcionExpandible'
 
 const ETIQUETA_TIPO: Record<string, string> = {
   anual:     'Todo el año',
@@ -191,12 +192,9 @@ export default async function FichaHabitacionPage({
 
 
           {/* ANUNCIANTE ── solo mobile, arriba del contenido */}
-          <div className="lg:hidden flex items-center gap-3 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
-            <Avatar nombre={nombreAnunciante} avatarUrl={avatarAnunciante} size="md" />
-            <div>
-              <p className="text-xs text-[#9ca3af] font-medium">Publicado por</p>
-              <p className="font-bold text-[#1a3c5e]">{nombreAnunciante}</p>
-            </div>
+          <div className="lg:hidden flex items-center gap-2">
+            <Avatar nombre={nombreAnunciante} avatarUrl={avatarAnunciante} size="sm" />
+            <p className="text-xs text-[#9ca3af]">Publicado por <span className="font-semibold text-[#1a3c5e]">{nombreAnunciante}</span></p>
           </div>
 
           {/* DESCRIPCIÓN */}
@@ -206,9 +204,7 @@ export default async function FichaHabitacionPage({
                 <span className="w-1 h-5 rounded-full bg-[#0ea5a0] inline-block" />
                 Descripción
               </h2>
-              <p className="text-[#4b5563] leading-relaxed whitespace-pre-line text-[15px]">
-                {anuncio.descripcion}
-              </p>
+              <DescripcionExpandible texto={anuncio.descripcion} />
             </section>
           )}
 
@@ -368,13 +364,10 @@ export default async function FichaHabitacionPage({
               </div>
             </div>
 
-            {/* Tarjeta anunciante */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-3">
-              <Avatar nombre={nombreAnunciante} avatarUrl={avatarAnunciante} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-[#9ca3af] font-medium uppercase tracking-wide">Publicado por</p>
-                <p className="font-bold text-[#1a3c5e] truncate">{nombreAnunciante}</p>
-              </div>
+            {/* Anunciante */}
+            <div className="flex items-center gap-2 px-1">
+              <Avatar nombre={nombreAnunciante} avatarUrl={avatarAnunciante} size="sm" />
+              <p className="text-xs text-[#9ca3af]">Publicado por <span className="font-semibold text-[#1a3c5e]">{nombreAnunciante}</span></p>
             </div>
 
           </div>
