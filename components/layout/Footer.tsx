@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="Habitacio.ad" className="h-10 w-auto rounded-xl" />
+            <img src="/icon.png" alt="Habitacio.ad" className="h-10 w-auto rounded-xl" />
             <span className="font-bold text-xl">Habitacio.ad</span>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed">

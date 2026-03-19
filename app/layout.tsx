@@ -14,8 +14,13 @@ export const metadata: Metadata = {
     template: '%s | Habitacio.ad',
   },
   icons: {
-    icon: '/logo.jpeg',
-    apple: '/logo.jpeg',
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/icon.png',
   },
   description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí. La plataforma de habitaciones más completa del Principat.',
   metadataBase: new URL('https://habitacio.ad'),
