@@ -41,28 +41,11 @@ export default function TarjetaHabitacion({ anuncio }: Props) {
           {anuncio.titulo}
         </p>
         <p className="text-[#6b7280] text-xs">{anuncio.parroquia}</p>
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className="bg-[#e8f4fd] text-[#2980b9] text-xs px-2 py-0.5 rounded-full font-medium">
-            {anuncio.tipo_estancia ? etiquetaTipo[anuncio.tipo_estancia] : null}
+        {anuncio.tipo_estancia && (
+          <span className="bg-[#e8f4fd] text-[#2980b9] text-xs px-2 py-0.5 rounded-full font-medium w-fit mt-1">
+            {etiquetaTipo[anuncio.tipo_estancia]}
           </span>
-          {anuncio.gastos_incluidos && (
-            <span className="bg-[#e6f7f7] text-[#0ea5a0] text-xs px-2 py-0.5 rounded-full font-medium">
-              Gastos incl.
-            </span>
-          )}
-          {anuncio.bano_privado && (
-            <span className="bg-[#f4f5f7] text-[#6b7280] text-xs px-2 py-0.5 rounded-full font-medium">
-              Baño privado
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3 mt-1 text-xs text-[#9ca3af]">
-          <span>👥 {anuncio.num_personas} personas</span>
-          {anuncio.metros_habitacion && (
-            <span>📐 {anuncio.metros_habitacion}m²</span>
-          )}
-          {anuncio.fianza && <span>🔒 Con fianza</span>}
-        </div>
+        )}
       </div>
     </a >
   )

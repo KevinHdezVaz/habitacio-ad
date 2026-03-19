@@ -76,36 +76,33 @@ export default function HabitacionesPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Cabecera */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Habitaciones</h1>
-          <p className="text-[#6b7280] text-sm">{anuncios.length} anuncios disponibles</p>
-        </div>
-        <button
-          onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
-          className="flex items-center gap-2 bg-white border border-[#e5e7eb] px-4 py-2 rounded-xl text-sm font-medium text-[#1a3c5e] shadow-sm"
-        >
-          🔧 Filtros
-        </button>
+      <div>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]">Habitaciones</h1>
+        <p className="text-[#6b7280] text-sm">{anuncios.length} anuncios disponibles</p>
       </div>
 
-      {/* Ordenación */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {[
-          { label: 'Más recientes', valor: 'recientes' },
-          { label: 'Precio ↑', valor: 'precio_asc' },
-          { label: 'Precio ↓', valor: 'precio_desc' },
-        ].map((op) => (
-          <button
-            key={op.valor}
-            onClick={() => actualizarFiltro('orden', op.valor)}
-            className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              filtros.orden === op.valor ? 'bg-[#1a3c5e] text-white' : 'bg-white text-[#6b7280] border border-[#e5e7eb]'
-            }`}
-          >
-            {op.label}
-          </button>
-        ))}
+      {/* Ordenación + Filtros en la misma línea */}
+      <div className="flex items-center gap-2">
+        <select
+          value={filtros.orden}
+          onChange={(e) => actualizarFiltro('orden', e.target.value)}
+          className="flex-1 bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm font-medium text-[#1a3c5e] shadow-sm appearance-none"
+        >
+          <option value="recientes">Más recientes</option>
+          <option value="precio_asc">Precio: menor a mayor</option>
+          <option value="precio_desc">Precio: mayor a menor</option>
+        </select>
+        <button
+          onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border shadow-sm transition-colors ${
+            filtrosAbiertos ? 'bg-[#1a3c5e] text-white border-[#1a3c5e]' : 'bg-white text-[#1a3c5e] border-[#e5e7eb]'
+          }`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+          </svg>
+          Filtros
+        </button>
       </div>
 
       {/* Panel de filtros */}
@@ -113,8 +110,8 @@ export default function HabitacionesPage() {
         <div className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <p className="font-bold text-[#1a3c5e]">Filtros</p>
-            <button onClick={limpiarFiltros} className="text-[#0ea5a0] text-sm font-medium">
-              Limpiar
+            <button onClick={limpiarFiltros} className="text-sm font-medium text-[#6b7280] underline underline-offset-2">
+              Borrar filtros
             </button>
           </div>
 
@@ -185,6 +182,13 @@ export default function HabitacionesPage() {
               </div>
             ))}
           </div>
+
+          <button
+            onClick={() => setFiltrosAbiertos(false)}
+            className="w-full bg-[#1a3c5e] text-white font-semibold py-3 rounded-xl text-sm"
+          >
+            Aplicar filtros
+          </button>
         </div>
       )}
 
@@ -202,11 +206,15 @@ export default function HabitacionesPage() {
           ))}
         </div>
       ) : anuncios.length === 0 ? (
-        <div className="text-center py-20 flex flex-col items-center gap-3">
-          <span className="text-5xl">🏠</span>
+        <div className="text-center py-16 flex flex-col items-center gap-3">
+          <div className="w-14 h-14 bg-[#eef2f8] rounded-2xl flex items-center justify-center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1a3c5e" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/>
+            </svg>
+          </div>
           <p className="font-bold text-[#1a3c5e]">No hay habitaciones con estos filtros</p>
-          <button onClick={limpiarFiltros} className="text-[#0ea5a0] text-sm font-medium underline">
-            Limpiar filtros
+          <button onClick={limpiarFiltros} className="text-sm font-medium text-[#6b7280] underline underline-offset-2">
+            Borrar filtros
           </button>
         </div>
       ) : (
@@ -214,6 +222,22 @@ export default function HabitacionesPage() {
           {anuncios.map((anuncio) => (
             <TarjetaHabitacion key={anuncio.id} anuncio={anuncio} />
           ))}
+        </div>
+      )}
+
+      {/* Banner CTA al pie de los resultados */}
+      {!cargando && anuncios.length > 0 && (
+        <div className="mt-2 bg-[#eef2f8] border border-[#c7d4e8] rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex-1 text-center sm:text-left">
+            <p className="font-bold text-[#1a3c5e] text-sm">¿No encuentras lo que buscas?</p>
+            <p className="text-[#6b7280] text-xs mt-0.5">Crea tu perfil con tus preferencias y los propietarios te contactarán directamente.</p>
+          </div>
+          <a
+            href="/buscar-habitacion"
+            className="shrink-0 bg-[#1a3c5e] text-white text-sm font-semibold px-5 py-2.5 rounded-xl whitespace-nowrap"
+          >
+            Crear mi perfil
+          </a>
         </div>
       )}
     </div>
