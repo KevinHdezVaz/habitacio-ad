@@ -94,8 +94,8 @@ export default async function PerfilInquilinoPage({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-bold text-[#1a3c5e] flex items-center flex-wrap">
-                <span className={esPropio ? "" : "blur-[3px] select-none opacity-80 transition-all"}>
-                  {p.nombre || 'Inquilino/a'}
+                <span>
+                  {esPropio ? (p.nombre || 'Inquilino/a') : 'Inquilino/a'}
                 </span>
                 {p.edad && <span>, {p.edad} años</span>}
               </h1>
