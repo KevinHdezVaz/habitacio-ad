@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { Mensaje } from '@/types'
 import { enviarMensaje } from '@/app/actions/chat'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   conversacionId: string
@@ -16,14 +17,14 @@ function formatHora(fecha: string) {
   return new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
 }
 
-function formatFecha(fecha: string) {
+function formatFecha(fecha: string, today: string, yesterday: string) {
   const d = new Date(fecha)
   const hoy = new Date()
   const ayer = new Date(hoy)
   ayer.setDate(hoy.getDate() - 1)
 
-  if (d.toDateString() === hoy.toDateString()) return 'Hoy'
-  if (d.toDateString() === ayer.toDateString()) return 'Ayer'
+  if (d.toDateString() === hoy.toDateString()) return today
+  if (d.toDateString() === ayer.toDateString()) return yesterday
   return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
@@ -32,6 +33,7 @@ function esMismoDia(a: string, b: string) {
 }
 
 export default function VistaChat({ conversacionId, currentUserId, mensajesIniciales }: Props) {
+  const t = useTranslations('chat')
   const [mensajes, setMensajes] = useState<Mensaje[]>(mensajesIniciales)
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -167,8 +169,8 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
             <div className="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-3xl">
               💬
             </div>
-            <p className="text-[#6b7280] text-base font-medium">Empieza la conversación</p>
-            <p className="text-[#9ca3af] text-sm">Di hola 👋</p>
+            <p className="text-[#6b7280] text-base font-medium">{t('emptyState')}</p>
+            <p className="text-[#9ca3af] text-sm">{t('sayHello')} 👋</p>
           </div>
         )}
 
@@ -200,7 +202,7 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
                 <div className="flex items-center gap-3 my-5">
                   <div className="flex-1 h-px bg-[#e5eaf0]" />
                   <span className="text-[11px] font-semibold text-[#9ca3af] tracking-wide uppercase px-2">
-                    {formatFecha(msg.created_at)}
+                    {formatFecha(msg.created_at, t('today'), t('yesterday'))}
                   </span>
                   <div className="flex-1 h-px bg-[#e5eaf0]" />
                 </div>
@@ -242,7 +244,7 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
           value={texto}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="Escribe un mensaje…"
+          placeholder={t('inputPlaceholder')}
           rows={1}
           className="flex-1 resize-none border border-[#e5e7eb] rounded-2xl px-4 py-3 text-[15px] text-[#1a3c5e] placeholder-[#b0b9c4] focus:outline-none focus:ring-2 focus:ring-[#0ea5a0] focus:border-transparent overflow-y-auto leading-relaxed bg-[#f9fafc] transition-colors"
           style={{ maxHeight: '140px' }}
@@ -250,7 +252,7 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
         <button
           onClick={enviar}
           disabled={!texto.trim() || enviando}
-          aria-label="Enviar mensaje"
+          aria-label={t('sendMessage')}
           className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
             texto.trim() && !enviando
               ? 'bg-gradient-to-br from-[#0ea5a0] to-[#0d8f8a] text-white shadow-md hover:shadow-lg active:scale-95'
@@ -273,7 +275,7 @@ export default function VistaChat({ conversacionId, currentUserId, mensajesInici
       {/* Hint debajo del input */}
       <div className="bg-white px-4 pb-2 flex-shrink-0">
         <p className="text-[10px] text-[#c0c8d2] text-center">
-          Intro para enviar · Shift+Intro para nueva línea
+          {t('sendHint')}
         </p>
       </div>
     </div>

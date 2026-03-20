@@ -6,10 +6,12 @@ import MisAnuncios from './components/MisAnuncios'
 import AvatarUpload from './components/AvatarUpload'
 import MiPerfilBusqueda from './components/MiPerfilBusqueda'
 import type { Anuncio, Profile, PerfilInquilino } from '@/types'
+import { getTranslations } from 'next-intl/server'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const t = await getTranslations('profile')
 
   if (!user) redirect('/login?next=/perfil')
 
@@ -45,15 +47,15 @@ export default async function PerfilPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Mi Perfil</h1>
-          <p className="text-[#6b7280] text-sm mt-0.5">Gestiona tu información y tus anuncios.</p>
+          <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
+          <p className="text-[#6b7280] text-sm mt-0.5">{t('subtitle')}</p>
         </div>
         <form action={logout}>
           <button
             type="submit"
             className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-[#6b7280] hover:border-red-200 hover:text-red-600 transition-colors"
           >
-            Cerrar sesión
+            {t('logout')}
           </button>
         </form>
       </div>
@@ -71,7 +73,7 @@ export default async function PerfilPage() {
             />
             <div>
               <p className="font-bold text-[#1a3c5e] leading-tight">{profile.nombre}</p>
-              <p className="text-xs text-[#9ca3af] mt-0.5">Miembro desde {miembro}</p>
+              <p className="text-xs text-[#9ca3af] mt-0.5">{t('memberSince')} {miembro}</p>
             </div>
 
             {/* Stats rápidos */}
@@ -80,13 +82,13 @@ export default async function PerfilPage() {
                 <p className="text-xl font-bold text-[#1a3c5e]">
                   {anuncios?.filter((a) => a.estado === 'activo').length ?? 0}
                 </p>
-                <p className="text-[10px] text-[#6b7280]">Activos</p>
+                <p className="text-[10px] text-[#6b7280]">{t('active')}</p>
               </div>
               <div>
                 <p className="text-xl font-bold text-[#1a3c5e]">
                   {anuncios?.length ?? 0}
                 </p>
-                <p className="text-[10px] text-[#6b7280]">Total</p>
+                <p className="text-[10px] text-[#6b7280]">{t('total')}</p>
               </div>
             </div>
           </div>
@@ -109,14 +111,14 @@ export default async function PerfilPage() {
             <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-6 flex flex-col items-center gap-3 text-center">
               <div className="w-12 h-12 rounded-2xl bg-[#f4f5f7] flex items-center justify-center text-2xl">🔍</div>
               <div>
-                <p className="font-bold text-[#1a3c5e]">¿Buscas habitación?</p>
-                <p className="text-xs text-[#6b7280] mt-1">Publica tu perfil gratis y que los propietarios te contacten.</p>
+                <p className="font-bold text-[#1a3c5e]">{t('lookingForRoom')}</p>
+                <p className="text-xs text-[#6b7280] mt-1">{t('publishProfileDesc')}</p>
               </div>
               <a
                 href="/buscar-habitacion"
                 className="px-5 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
               >
-                Publicar mi perfil — Gratis
+                {t('publishProfileBtn')}
               </a>
             </div>
           )}
@@ -124,9 +126,9 @@ export default async function PerfilPage() {
           {/* Mis anuncios */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
-              <h2 className="font-bold text-[#1a3c5e] text-lg">Mis anuncios</h2>
+              <h2 className="font-bold text-[#1a3c5e] text-lg">{t('myAds')}</h2>
               {(anuncios?.length ?? 0) > 0 && (
-                <span className="text-xs text-[#6b7280]">{anuncios?.length} publicación{(anuncios?.length ?? 0) !== 1 ? 'es' : ''}</span>
+                <span className="text-xs text-[#6b7280]">{anuncios?.length} {(anuncios?.length ?? 0) !== 1 ? t('publications') : t('publication')}</span>
               )}
             </div>
             <MisAnuncios anuncios={(anuncios ?? []) as Anuncio[]} />

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Anuncio } from '@/types'
 
 type AnuncioCard = Pick<Anuncio, 'id' | 'titulo' | 'precio' | 'parroquia'> &
@@ -8,12 +11,13 @@ interface Props {
 }
 
 export default function TarjetaHabitacion({ anuncio }: Props) {
+  const t = useTranslations('card')
   const imagen = anuncio.imagenes_anuncio?.[0]?.url || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400'
 
   const etiquetaTipo: Record<string, string> = {
-    anual: 'Todo el año',
-    temporero: 'Temporero',
-    ambos: 'Anual / Temporero',
+    anual: t('typeAnnual'),
+    temporero: t('typeSeasonal'),
+    ambos: t('typeBoth'),
   }
 
   return (
@@ -29,7 +33,7 @@ export default function TarjetaHabitacion({ anuncio }: Props) {
         />
         {anuncio.destacado && (
           <div className="absolute top-2 left-2 bg-[#0ea5a0] text-white text-xs font-bold px-2 py-1 rounded-full">
-            Destacado
+            {t('featured')}
           </div>
         )}
         <div className="absolute bottom-2 left-2 bg-white rounded-full px-3 py-1 text-xs font-bold text-[#1a3c5e] shadow">

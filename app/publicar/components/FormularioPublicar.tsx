@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Input from '@/components/ui/Input'
 import MapaPicker from '@/components/maps/MapaPicker'
 import { createClient } from '@/lib/supabase-browser'
@@ -16,9 +17,9 @@ const PARROQUIAS = [
 // ─── Componentes auxiliares ────────────────────────────────────────────────
 
 function Seccion({
-  num, icon, title, subtitle, children,
+  num, icon, title, subtitle, children, stepLabel,
 }: {
-  num: number; icon?: string; title: string; subtitle?: string; children: React.ReactNode
+  num: number; icon?: string; title: string; subtitle?: string; children: React.ReactNode; stepLabel: string
 }) {
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -27,7 +28,7 @@ function Seccion({
           {num}
         </div>
         <div className="flex-1 min-w-0">
-          <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">Paso {num}</span>
+          <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">{stepLabel}</span>
           <h2 className="font-bold text-[#1a3c5e] text-base leading-tight">{title}</h2>
           {subtitle && <p className="text-xs text-[#6b7280] mt-0.5">{subtitle}</p>}
         </div>
@@ -61,7 +62,7 @@ function Toggle({
   )
 }
 
-function LoadingOverlay({ visible }: { visible: boolean }) {
+function LoadingOverlay({ visible, title, subtitle }: { visible: boolean; title: string; subtitle: string }) {
   if (!visible) return null
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
@@ -75,8 +76,8 @@ function LoadingOverlay({ visible }: { visible: boolean }) {
           />
         </div>
         <div className="text-center">
-          <p className="text-xl font-bold text-[#1a3c5e]">Publicando tu anuncio…</p>
-          <p className="text-sm text-[#6b7280] mt-1">Subiendo imágenes y guardando información</p>
+          <p className="text-xl font-bold text-[#1a3c5e]">{title}</p>
+          <p className="text-sm text-[#6b7280] mt-1">{subtitle}</p>
         </div>
       </div>
     </div>
@@ -86,6 +87,7 @@ function LoadingOverlay({ visible }: { visible: boolean }) {
 // ─── Componente principal ──────────────────────────────────────────────────
 
 export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) {
+  const t = useTranslations('publish')
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
@@ -143,7 +145,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.titulo || !form.parroquia || !form.precio) {
-      setError('Título, parroquia y precio son obligatorios.')
+      setError(t('errorRequired'))
       return
     }
     setLoading(true)
@@ -221,7 +223,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
       }
       router.push('/publicar/enviado')
     } catch {
-      setError('Error inesperado. Inténtalo de nuevo.')
+      setError(t('errorGeneric'))
       setLoading(false)
     }
   }
@@ -230,7 +232,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
   return (
     <>
-      <LoadingOverlay visible={loading} />
+      <LoadingOverlay visible={loading} title={t('publishingAd')} subtitle={t('uploadingImages')} />
 
       <div className="max-w-2xl mx-auto flex flex-col gap-6">
 
@@ -241,8 +243,8 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
               🏠
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[#1a3c5e]">Publica tu habitación</h1>
-              <p className="text-sm text-[#6b7280]">Completa los detalles · Completamente gratis</p>
+              <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('publishYourRoom')}</h1>
+              <p className="text-sm text-[#6b7280]">{t('completeDetails')}</p>
             </div>
           </div>
           {/* Barra decorativa de pasos */}
@@ -258,11 +260,11 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
           <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5">
             <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-base">📞</div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-800">Añade tu teléfono para recibir más contactos</p>
+              <p className="text-sm font-semibold text-amber-800">{t('addPhonePrompt')}</p>
               <p className="text-xs text-amber-700 mt-0.5">
-                Los interesados podrán llamarte o escribirte por WhatsApp.{' '}
+                {t('addPhoneDesc')}{' '}
                 <Link href="/perfil" className="font-bold underline underline-offset-2 hover:text-amber-900">
-                  Añadirlo ahora →
+                  {t('addPhoneLink')}
                 </Link>
               </p>
             </div>
@@ -272,10 +274,10 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
           {/* ── 1. Información básica ── */}
-          <Seccion num={1} title="Información básica" subtitle="Título, precio y ubicación">
+          <Seccion num={1} title={t('basicInfo')} subtitle={t('basicInfoSubtitle')} stepLabel={t('step', { num: 1 })}>
             <Input
-              label="Título del anuncio *"
-              placeholder="Ej: Habitación luminosa con balcón en el centro"
+              label={t('adTitle')}
+              placeholder={t('titlePlaceholder')}
               value={form.titulo}
               onChange={(e) => set('titulo', e.target.value)}
               required
@@ -283,7 +285,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Precio mensual *</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('monthlyPriceLabel')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -297,14 +299,14 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Parroquia *</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('parish')}</label>
                 <select
                   value={form.parroquia}
                   onChange={(e) => set('parroquia', e.target.value)}
                   required
                   className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                 >
-                  <option value="">Selecciona…</option>
+                  <option value="">{t('selectParish')}</option>
                   {PARROQUIAS.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
@@ -312,13 +314,13 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Zona / referencia"
-                placeholder="Ej: Cerca del centro comercial"
+                label={t('zoneLabel')}
+                placeholder={t('zonePlaceholder2')}
                 value={form.zona}
                 onChange={(e) => set('zona', e.target.value)}
               />
               <Input
-                label="Disponible desde"
+                label={t('availableFrom')}
                 type="date"
                 value={form.disponible_desde}
                 onChange={(e) => set('disponible_desde', e.target.value)}
@@ -327,12 +329,12 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             {/* Tipo estancia — cards visuales */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de estancia</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('stayType')}</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { label: 'Todo el año',  sub: 'Residencia habitual', v: 'anual' },
-                  { label: 'Temporero',    sub: 'Esquí, verano…',      v: 'temporero' },
-                  { label: 'Me adapto',    sub: 'Flexible',            v: 'ambos' },
+                  { label: t('stayTypeAnnual'),   sub: t('stayTypeAnnualDesc'),   v: 'anual' },
+                  { label: t('stayTypeSeasonal'),  sub: t('stayTypeSeasonalDesc'), v: 'temporero' },
+                  { label: t('stayTypeBoth'),      sub: t('stayTypeBothDesc'),     v: 'ambos' },
                 ].map(({ label, sub, v }) => (
                   <button
                     type="button"
@@ -352,11 +354,11 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
           </Seccion>
 
           {/* ── 2. La habitación ── */}
-          <Seccion num={2} title="La habitación" subtitle="Características y equipamiento">
+          <Seccion num={2} title={t('roomSectionTitle')} subtitle={t('roomSectionSubtitle')} stepLabel={t('step', { num: 2 })}>
             {/* Row 1: metros + tipo cama */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Superficie (m²)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('surfaceLabel')}</label>
                 <input
                   type="number"
                   placeholder="12"
@@ -366,15 +368,15 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de cama</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('bedType')}</label>
                 <select
                   value={form.tipo_cama}
                   onChange={(e) => set('tipo_cama', e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                 >
-                  <option value="">Selecciona…</option>
-                  <option value="Individual">Individual</option>
-                  <option value="Doble">Doble</option>
+                  <option value="">{t('selectParish').replace('...', '…')}</option>
+                  <option value="Individual">{t('bedTypeIndividual')}</option>
+                  <option value="Doble">{t('bedTypeDouble')}</option>
                 </select>
               </div>
             </div>
@@ -382,7 +384,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
             {/* Row 2: estancia mínima + máxima */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia mínima (meses)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('minStayLabel')}</label>
                 <input
                   type="number"
                   placeholder="1"
@@ -393,7 +395,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia máxima (meses)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('maxStayLabel')}</label>
                 <input
                   type="number"
                   placeholder="12"
@@ -407,21 +409,21 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             {/* Toggles grid 2 por fila */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.amueblada}     onToggle={() => toggle('amueblada')}     label="Amueblada" />
-              <Toggle checked={form.exterior}      onToggle={() => toggle('exterior')}      label="Habitación exterior" />
-              <Toggle checked={form.armario}       onToggle={() => toggle('armario')}       label="Armario" />
-              <Toggle checked={form.escritorio}    onToggle={() => toggle('escritorio')}    label="Escritorio" />
-              <Toggle checked={form.balcon_ventana} onToggle={() => toggle('balcon_ventana')} label="Balcón o ventana" />
-              <Toggle checked={form.bano_privado}  onToggle={() => toggle('bano_privado')}  label="Baño privado" />
+              <Toggle checked={form.amueblada}     onToggle={() => toggle('amueblada')}     label={t('toggleFurnished')} />
+              <Toggle checked={form.exterior}      onToggle={() => toggle('exterior')}      label={t('toggleExterior')} />
+              <Toggle checked={form.armario}       onToggle={() => toggle('armario')}       label={t('toggleWardrobe')} />
+              <Toggle checked={form.escritorio}    onToggle={() => toggle('escritorio')}    label={t('toggleDesk')} />
+              <Toggle checked={form.balcon_ventana} onToggle={() => toggle('balcon_ventana')} label={t('toggleBalcony')} />
+              <Toggle checked={form.bano_privado}  onToggle={() => toggle('bano_privado')}  label={t('togglePrivateBath')} />
             </div>
           </Seccion>
 
           {/* ── 3. La vivienda ── */}
-          <Seccion num={3} title="La vivienda" subtitle="Detalles del piso">
+          <Seccion num={3} title={t('houseSectionTitle')} subtitle={t('houseSectionSubtitle')} stepLabel={t('step', { num: 3 })}>
             {/* Row: habitaciones + baños + personas */}
             <div className="grid grid-cols-3 gap-3">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Habitaciones</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('roomsLabel')}</label>
                 <input
                   type="number"
                   placeholder="3"
@@ -432,7 +434,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Baños</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('bathroomsLabel')}</label>
                 <input
                   type="number"
                   placeholder="1"
@@ -443,7 +445,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Convivientes</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('housemates')}</label>
                 <input
                   type="number"
                   placeholder="3"
@@ -457,44 +459,44 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             {/* Calefacción */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Calefacción</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('heatingLabel')}</label>
               <select
                 value={form.calefaccion}
                 onChange={(e) => set('calefaccion', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               >
-                <option value="no">No incluida</option>
-                <option value="si">Sí, hay calefacción</option>
-                <option value="incluida">Incluida en el precio</option>
+                <option value="no">{t('heatingNo')}</option>
+                <option value="si">{t('heatingYes')}</option>
+                <option value="incluida">{t('heatingIncluded')}</option>
               </select>
             </div>
 
             {/* Toggles 2 por fila */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.ascensor}        onToggle={() => toggle('ascensor')}        label="Ascensor" />
-              <Toggle checked={form.parking}         onToggle={() => toggle('parking')}         label="Parking" />
-              <Toggle checked={form.terraza}         onToggle={() => toggle('terraza')}         label="Terraza" />
-              <Toggle checked={form.vive_propietario} onToggle={() => toggle('vive_propietario')} label="Propietario en la vivienda" />
+              <Toggle checked={form.ascensor}        onToggle={() => toggle('ascensor')}        label={t('toggleElevator')} />
+              <Toggle checked={form.parking}         onToggle={() => toggle('parking')}         label={t('toggleParking')} />
+              <Toggle checked={form.terraza}         onToggle={() => toggle('terraza')}         label={t('toggleTerrace')} />
+              <Toggle checked={form.vive_propietario} onToggle={() => toggle('vive_propietario')} label={t('toggleOwnerLives')} />
             </div>
           </Seccion>
 
           {/* ── 4. Condiciones ── */}
-          <Seccion num={4} title="Condiciones" subtitle="Qué incluye y qué se permite">
+          <Seccion num={4} title={t('conditionsSectionTitle')} subtitle={t('conditionsSectionSubtitle')} stepLabel={t('step', { num: 4 })}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label="Requiere fianza" />
-              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label="Gastos incluidos" />
-              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label="WiFi incluido" />
-              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label="Se aceptan parejas" />
-              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label="Se aceptan mascotas" />
-              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label="Se permite fumar" />
-              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label="Posibilidad de empadronamiento" />
+              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label={t('toggleDeposit')} />
+              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label={t('toggleExpenses')} />
+              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label={t('toggleWifi')} />
+              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label={t('toggleCouples')} />
+              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label={t('togglePets')} />
+              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label={t('toggleSmoking')} />
+              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label={t('toggleRegistration')} />
             </div>
 
             {form.fianza && (
               <Input
-                label="Importe de la fianza (€)"
+                label={t('depositAmountLabel')}
                 type="number"
-                placeholder="Ej: 600"
+                placeholder={t('depositAmountPlaceholder2')}
                 value={form.importe_fianza}
                 onChange={(e) => set('importe_fianza', e.target.value)}
               />
@@ -502,41 +504,48 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Duración mínima"
-                placeholder="Ej: 3 meses"
+                label={t('minDuration')}
+                placeholder={t('minDurationPlaceholder')}
                 value={form.duracion_minima}
                 onChange={(e) => set('duracion_minima', e.target.value)}
               />
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Perfil preferido</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('profileLabel')}</label>
                 <select
                   value={form.preferencia_sexo}
                   onChange={(e) => set('preferencia_sexo', e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                 >
-                  <option value="indiferente">Indiferente</option>
-                  <option value="chicas">Solo chicas</option>
-                  <option value="chicos">Solo chicos</option>
+                  <option value="indiferente">{t('profileIndifferent')}</option>
+                  <option value="chicas">{t('profileGirls')}</option>
+                  <option value="chicos">{t('profileBoys')}</option>
                 </select>
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Idiomas en la vivienda</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('languagesLabel')}</label>
               <select
                 value={form.idioma_vivienda}
                 onChange={(e) => set('idioma_vivienda', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               >
-                {['Español','Catalán','Francés','Portugués','Inglés','Indiferente'].map((l) => (
-                  <option key={l}>{l}</option>
+                {[
+                  { val: 'Español',    label: t('langSpanish') },
+                  { val: 'Catalán',    label: t('langCatalan') },
+                  { val: 'Francés',    label: t('langFrench') },
+                  { val: 'Portugués',  label: t('langPortuguese') },
+                  { val: 'Inglés',     label: t('langEnglish') },
+                  { val: 'Indiferente', label: t('langIndifferent') },
+                ].map(({ val, label }) => (
+                  <option key={val} value={val}>{label}</option>
                 ))}
               </select>
             </div>
           </Seccion>
 
           {/* ── 5. Ubicación ── */}
-          <Seccion num={5} title="Ubicación en el mapa" subtitle="Opcional · Solo se muestra el pin, no la dirección exacta">
+          <Seccion num={5} title={t('mapSectionTitle')} subtitle={t('mapSectionSubtitle')} stepLabel={t('step', { num: 5 })}>
             <MapaPicker
               lat={coords.lat}
               lng={coords.lng}
@@ -545,31 +554,31 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
           </Seccion>
 
           {/* ── 6. Descripción y normas ── */}
-          <Seccion num={6} title="Descripción y normas" subtitle="Cuéntanos más sobre la habitación">
+          <Seccion num={6} title={t('descSectionTitle')} subtitle={t('descSectionSubtitle')} stepLabel={t('step', { num: 6 })}>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Descripción</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('descLabel2')}</label>
               <textarea
                 value={form.descripcion}
                 onChange={(e) => set('descripcion', e.target.value)}
                 rows={5}
-                placeholder="Cuéntanos sobre la habitación, el piso, la zona y el tipo de persona que buscas…"
+                placeholder={t('descPlaceholder2')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Normas de convivencia</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('rulesLabel2')}</label>
               <textarea
                 value={form.normas}
                 onChange={(e) => set('normas', e.target.value)}
                 rows={3}
-                placeholder="Horarios, limpieza, visitas, ruido, mascotas…"
+                placeholder={t('rulesPlaceholder2')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               />
             </div>
           </Seccion>
 
           {/* ── 7. Fotos ── */}
-          <Seccion num={7} title="Fotos de la habitación" subtitle="Las fotos aumentan mucho el interés · Máximo 8">
+          <Seccion num={7} title={t('photosSectionTitle')} subtitle={t('photosSectionSubtitle')} stepLabel={t('step', { num: 7 })}>
             <input
               ref={fileRef}
               type="file"
@@ -590,7 +599,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                     <img src={preview} alt="" className="w-full h-full object-cover" />
                     {i === 0 && (
                       <div className="absolute bottom-0 inset-x-0 bg-[#0ea5a0]/90 text-white text-[9px] font-bold text-center py-1 uppercase tracking-wide">
-                        Portada
+                        {t('coverLabel')}
                       </div>
                     )}
                     <button
@@ -609,7 +618,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                     className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#0ea5a0] bg-[#f8fafc] flex flex-col items-center justify-center gap-1 transition-colors group"
                   >
                     <span className="text-2xl group-hover:scale-110 transition-transform">➕</span>
-                    <span className="text-[10px] text-[#9ca3af]">Añadir</span>
+                    <span className="text-[10px] text-[#9ca3af]">{t('addPhotoBtn')}</span>
                   </button>
                 )}
               </div>
@@ -630,15 +639,15 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                   📸
                 </div>
                 <div className="text-center">
-                  <p className="font-bold text-[#1a3c5e] text-sm">Arrastra fotos aquí o toca para seleccionar</p>
-                  <p className="text-xs text-[#9ca3af] mt-1">JPG, PNG · Hasta 8 fotos · La primera será la portada</p>
+                  <p className="font-bold text-[#1a3c5e] text-sm">{t('dropzoneText')}</p>
+                  <p className="text-xs text-[#9ca3af] mt-1">{t('dropzoneHint')}</p>
                 </div>
               </div>
             )}
 
             {imagePreviews.length > 0 && (
               <p className="text-xs text-[#9ca3af] text-center">
-                {imagePreviews.length}/8 fotos · La primera imagen es la portada del anuncio
+                {t('photoCount', { n: imagePreviews.length })}
               </p>
             )}
           </Seccion>
@@ -655,9 +664,9 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[#1a3c5e]">¿Todo listo?</p>
+                <p className="font-bold text-[#1a3c5e]">{t('readyTitle')}</p>
                 <p className="text-xs text-[#6b7280] mt-0.5">
-                  Tu anuncio se revisará antes de publicarse · Normalmente en menos de 24 h
+                  {t('readyDesc')}
                 </p>
               </div>
               <button
@@ -666,7 +675,7 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
                 className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#1a3c5e] to-[#1e4a72] text-white font-bold px-8 py-4 rounded-2xl hover:from-[#152e4a] hover:to-[#193d5e] transition-all shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-sm"
               >
                 <span className="text-base">🚀</span>
-                Enviar anuncio
+                {t('submitBtn')}
               </button>
             </div>
           </div>

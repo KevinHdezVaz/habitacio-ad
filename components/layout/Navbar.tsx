@@ -155,6 +155,12 @@ export default function Navbar({
               {t('iniciarSesion')}
             </Link>
           )}
+
+          {/* Selector de idioma en móvil */}
+          <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+            <span className="text-xs text-[#9ca3af] font-medium">Idioma</span>
+            <LanguageSwitcher currentLocale={locale} />
+          </div>
         </div>
       )}
     </header>
