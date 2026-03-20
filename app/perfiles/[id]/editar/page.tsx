@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase-browser'
 import type { TipoBusqueda, SituacionLaboral, SexoPerfil } from '@/types'
 
@@ -85,6 +86,7 @@ export default function EditarPerfilInquilinoPage() {
   const id = params.id
   const router = useRouter()
   const supabase = createClient()
+  const t = useTranslations('editarPerfil')
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -165,7 +167,7 @@ export default function EditarPerfilInquilinoPage() {
 
   async function handleSave() {
     if (!form.tipo_busqueda || !form.situacion || !form.nombre || !form.edad) {
-      setError('Por favor completa los campos obligatorios: nombre, edad, tipo de búsqueda y situación.')
+      setError(t('requiredError'))
       return
     }
     setSaving(true)
@@ -209,7 +211,7 @@ export default function EditarPerfilInquilinoPage() {
           <div className="absolute inset-0 rounded-full border-4 border-[#e8edf2]" />
           <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#1a3c5e] animate-spin" />
         </div>
-        <p className="text-sm text-[#6b7280] font-medium">Cargando perfil…</p>
+        <p className="text-sm text-[#6b7280] font-medium">{t('loading')}</p>
       </div>
     )
   }
@@ -226,8 +228,8 @@ export default function EditarPerfilInquilinoPage() {
           ←
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Editar perfil</h1>
-          <p className="text-sm text-[#6b7280]">Los cambios se aplican de inmediato</p>
+          <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
+          <p className="text-sm text-[#6b7280]">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -237,7 +239,7 @@ export default function EditarPerfilInquilinoPage() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-emerald-600 flex-shrink-0">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          <p className="text-sm font-semibold text-emerald-700">¡Cambios guardados! Redirigiendo…</p>
+          <p className="text-sm font-semibold text-emerald-700">{t('saved')}</p>
         </div>
       )}
 
@@ -245,12 +247,12 @@ export default function EditarPerfilInquilinoPage() {
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col gap-5">
 
         {/* Tipo de búsqueda */}
-        <SectionTitle>Tipo de búsqueda</SectionTitle>
+        <SectionTitle>{t('searchType')}</SectionTitle>
         <div className="flex flex-col gap-2">
           {([
-            { key: 'anual',     label: 'Todo el año',  sub: 'Residencia habitual' },
-            { key: 'temporero', label: 'Temporada',    sub: 'Esquí, verano…' },
-            { key: 'ambos',     label: 'Flexible',     sub: 'Me adapto' },
+            { key: 'anual',     label: t('annual'),   sub: t('annualSub') },
+            { key: 'temporero', label: t('seasonal'),  sub: t('seasonalSub') },
+            { key: 'ambos',     label: t('flexible'),  sub: t('flexibleSub') },
           ] as const).map(({ key, label, sub }) => {
             const selected = form.tipo_busqueda === key
             return (
@@ -277,7 +279,7 @@ export default function EditarPerfilInquilinoPage() {
         </div>
 
         {/* Parroquias */}
-        <SectionTitle>Parroquias</SectionTitle>
+        <SectionTitle>{t('parishes')}</SectionTitle>
         <div className="flex flex-wrap gap-2">
           {PARROQUIAS.map((p) => {
             const sel = form.parroquias.includes(p)
@@ -299,15 +301,17 @@ export default function EditarPerfilInquilinoPage() {
         </div>
         {form.parroquias.length > 0 && (
           <p className="text-xs text-[#0ea5a0] font-medium -mt-2">
-            {form.parroquias.length} zona{form.parroquias.length !== 1 ? 's' : ''} seleccionada{form.parroquias.length !== 1 ? 's' : ''}
+            {form.parroquias.length === 1
+              ? t('zonesSelected', { n: 1 })
+              : t('zonesSelectedPlural', { n: form.parroquias.length })}
           </p>
         )}
 
         {/* Presupuesto */}
-        <SectionTitle>Presupuesto máximo</SectionTitle>
+        <SectionTitle>{t('budget')}</SectionTitle>
         <div className="text-center py-3 bg-gradient-to-r from-[#f0f4f8] to-[#f8fafc] rounded-2xl">
           <p className="text-4xl font-bold text-[#1a3c5e]">{form.presupuesto_max}€</p>
-          <p className="text-xs text-[#6b7280] mt-0.5">al mes</p>
+          <p className="text-xs text-[#6b7280] mt-0.5">{t('perMonth')}</p>
         </div>
         <div className="grid grid-cols-5 gap-1.5">
           {PRESUPUESTOS.map((p) => (
@@ -326,10 +330,10 @@ export default function EditarPerfilInquilinoPage() {
         </div>
 
         {/* Fechas */}
-        <SectionTitle>Fechas</SectionTitle>
+        <SectionTitle>{t('dates')}</SectionTitle>
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-[#1a3c5e] ml-1">Disponible desde *</label>
+            <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('availableFrom')}</label>
             <input
               type="date"
               value={form.fecha_entrada}
@@ -341,9 +345,9 @@ export default function EditarPerfilInquilinoPage() {
           {(form.tipo_busqueda === 'temporero' || form.tipo_busqueda === 'ambos') && (
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-[#1a3c5e] ml-1">
-                Fecha de salida
+                {t('exitDate')}
                 {form.tipo_busqueda === 'ambos' && (
-                  <span className="text-[#9ca3af] font-normal ml-1">(opcional)</span>
+                  <span className="text-[#9ca3af] font-normal ml-1">{t('optional')}</span>
                 )}
               </label>
               <input
@@ -358,21 +362,21 @@ export default function EditarPerfilInquilinoPage() {
         </div>
 
         {/* Sobre ti */}
-        <SectionTitle>Sobre ti</SectionTitle>
+        <SectionTitle>{t('aboutYou')}</SectionTitle>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-[#1a3c5e] ml-1">Nombre *</label>
+            <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('nameLabel')}</label>
             <input
               type="text"
               value={form.nombre}
               onChange={(e) => set('nombre', e.target.value)}
-              placeholder="Tu nombre"
+              placeholder={t('namePlaceholder')}
               className="px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-[#1a3c5e] ml-1">Edad *</label>
+            <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('ageLabel')}</label>
             <input
               type="number"
               value={form.edad}
@@ -387,12 +391,12 @@ export default function EditarPerfilInquilinoPage() {
 
         {/* Sexo */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold text-[#1a3c5e] ml-1">Género</label>
+          <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('gender')}</label>
           <div className="grid grid-cols-3 gap-2">
             {([
-              { key: 'hombre',  label: 'Hombre' },
-              { key: 'mujer',   label: 'Mujer' },
-              { key: 'no_dice', label: 'Prefiero no decir' },
+              { key: 'hombre',  label: t('male') },
+              { key: 'mujer',   label: t('female') },
+              { key: 'no_dice', label: t('noSay') },
             ] as const).map(({ key, label }) => (
               <button
                 key={key}
@@ -413,12 +417,12 @@ export default function EditarPerfilInquilinoPage() {
 
         {/* Situación laboral */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold text-[#1a3c5e] ml-1">Situación laboral *</label>
+          <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('jobSituation')}</label>
           <div className="grid grid-cols-3 gap-2">
             {([
-              { key: 'trabajador', icon: '💼', label: 'Trabajador/a' },
-              { key: 'estudiante', icon: '🎓', label: 'Estudiante' },
-              { key: 'temporero',  icon: '⛷️', label: 'Temporero/a' },
+              { key: 'trabajador', icon: '💼', label: t('worker') },
+              { key: 'estudiante', icon: '🎓', label: t('student') },
+              { key: 'temporero',  icon: '⛷️', label: t('temporary') },
             ] as const).map(({ key, icon, label }) => (
               <button
                 key={key}
@@ -441,42 +445,42 @@ export default function EditarPerfilInquilinoPage() {
         {/* Sector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-[#1a3c5e] ml-1">
-            Sector profesional
-            <span className="text-[#9ca3af] font-normal ml-1">(opcional)</span>
+            {t('sector')}
+            <span className="text-[#9ca3af] font-normal ml-1">{t('optional')}</span>
           </label>
           <input
             type="text"
             value={form.sector}
             onChange={(e) => set('sector', e.target.value)}
-            placeholder="Ej: Hostelería, Construcción, IT…"
+            placeholder={t('sectorPlaceholder')}
             className="px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
           />
         </div>
 
         {/* Preferencias */}
-        <SectionTitle>Preferencias</SectionTitle>
+        <SectionTitle>{t('preferences')}</SectionTitle>
 
         <div className="flex flex-col gap-2">
-          <Toggle checked={form.fumador}    onChange={(v) => set('fumador', v)}    label="Soy fumador/a" />
-          <Toggle checked={form.mascotas}   onChange={(v) => set('mascotas', v)}   label="Tengo mascotas" />
-          <Toggle checked={form.acompanado} onChange={(v) => set('acompanado', v)} label="Vengo acompañado/a" />
+          <Toggle checked={form.fumador}    onChange={(v) => set('fumador', v)}    label={t('smoker')} />
+          <Toggle checked={form.mascotas}   onChange={(v) => set('mascotas', v)}   label={t('pets')} />
+          <Toggle checked={form.acompanado} onChange={(v) => set('acompanado', v)} label={t('accompanied')} />
         </div>
 
         {/* Descripción */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-[#1a3c5e] ml-1">
-            Sobre mí
-            <span className="text-[#9ca3af] font-normal ml-1">(opcional)</span>
+            {t('aboutMe')}
+            <span className="text-[#9ca3af] font-normal ml-1">{t('optional')}</span>
           </label>
           <textarea
             value={form.descripcion}
             onChange={(e) => set('descripcion', e.target.value)}
-            placeholder="Cuéntanos algo sobre ti, tu estilo de vida, qué buscas…"
+            placeholder={t('aboutMePlaceholder')}
             rows={4}
             className="px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
           />
           {form.descripcion.length > 0 && (
-            <p className="text-[10px] text-[#9ca3af] text-right mr-1">{form.descripcion.length} caracteres</p>
+            <p className="text-[10px] text-[#9ca3af] text-right mr-1">{t('chars', { n: form.descripcion.length })}</p>
           )}
         </div>
 
@@ -507,10 +511,10 @@ export default function EditarPerfilInquilinoPage() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
             </svg>
-            Guardando…
+            {t('saving')}
           </>
         ) : (
-          'Guardar cambios'
+          t('save')
         )}
       </button>
 

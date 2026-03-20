@@ -146,7 +146,7 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
           {t('viewProfile')}
         </a>
         <a
-          href={`/buscar-habitacion/editar/${perfil.id}`}
+          href={`/perfiles/${perfil.id}/editar`}
           className="flex-1 text-center py-2 rounded-xl border border-[#c7d4e8] bg-[#eef2f8] text-xs font-semibold text-[#1a3c5e] hover:bg-[#dde6f3] transition-colors"
         >
           {t('editProfile')}
