@@ -5,18 +5,18 @@ import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
 
 const labelTipo: Record<string, string> = {
-  anual:     'Todo el año',
+  anual: 'Todo el año',
   temporero: 'Temporada',
-  ambos:     'Flexible',
+  ambos: 'Flexible',
 }
 const labelSituacion: Record<string, string> = {
   trabajador: 'Trabajador/a',
   estudiante: 'Estudiante',
-  temporero:  'Temporero/a',
+  temporero: 'Temporero/a',
 }
 const labelSexo: Record<string, string> = {
-  hombre:  'Hombre',
-  mujer:   'Mujer',
+  hombre: 'Hombre',
+  mujer: 'Mujer',
   no_dice: 'Prefiero no decirlo',
 }
 export default async function PerfilInquilinoPage({
@@ -60,16 +60,16 @@ export default async function PerfilInquilinoPage({
     : null
 
   const chips = [
-    { label: 'Tipo de estancia',   value: labelTipo[p.tipo_busqueda] },
-    p.situacion ? { label: 'Situación',       value: labelSituacion[p.situacion] } : null,
-    p.sector    ? { label: 'Sector',           value: p.sector } : null,
+    { label: 'Tipo de estancia', value: labelTipo[p.tipo_busqueda] },
+    p.situacion ? { label: 'Situación', value: labelSituacion[p.situacion] } : null,
+    p.sector ? { label: 'Sector', value: p.sector } : null,
     (p as any).sexo ? { label: 'Sexo', value: labelSexo[(p as any).sexo] } : null,
     fechaEntrada ? { label: 'Disponible desde', value: fechaEntrada } : null,
-    fechaSalida  ? { label: 'Hasta',            value: fechaSalida } : null,
+    fechaSalida ? { label: 'Hasta', value: fechaSalida } : null,
     { label: 'Presupuesto máximo', value: `${p.presupuesto_max}€/mes` },
-    { label: 'Fumador/a',          value: p.fumador ? 'Sí' : 'No' },
-    { label: 'Mascotas',           value: p.mascotas ? 'Sí' : 'No' },
-    { label: 'Viene',              value: p.acompanado ? 'Acompañado/a' : 'Solo/a' },
+    { label: 'Fumador/a', value: p.fumador ? 'Sí' : 'No' },
+    { label: 'Mascotas', value: p.mascotas ? 'Sí' : 'No' },
+    { label: 'Viene', value: p.acompanado ? 'Acompañado/a' : 'Solo/a' },
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { actualizarPerfil } from '@/app/actions/perfil'
 import Input from '@/components/ui/Input'
 import PhoneInput from '@/components/ui/PhoneInput'
@@ -14,6 +15,7 @@ export default function FormularioPerfil({
   profile: Profile & { descripcion?: string }
   email: string
 }) {
+  const t = useTranslations('profile')
   const [loading, setLoading]   = useState(false)
   const [exito, setExito]       = useState(false)
   const [error, setError]       = useState<string | null>(null)
@@ -38,29 +40,29 @@ export default function FormularioPerfil({
     admin:      'bg-purple-100 text-purple-700',
   }
   const labelTipo: Record<string, string> = {
-    arrendador: 'Propietario',
-    inquilino:  'Inquilino',
-    admin:      'Admin',
+    arrendador: t('typeLandlord'),
+    inquilino:  t('typeTenant'),
+    admin:      t('typeAdmin'),
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-        <h2 className="font-bold text-[#1a3c5e] text-lg flex-1">Información personal</h2>
+        <h2 className="font-bold text-[#1a3c5e] text-lg flex-1">{t('personalInfo')}</h2>
         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ${badgeTipo[profile.tipo] ?? 'bg-gray-100 text-gray-600'}`}>
           {labelTipo[profile.tipo] ?? profile.tipo}
         </span>
       </div>
 
       <Input
-        label="Nombre completo"
+        label={t('fullName')}
         name="nombre"
         defaultValue={profile.nombre ?? ''}
         required
       />
 
       <Input
-        label="Email"
+        label={t('emailLabel')}
         name="email"
         defaultValue={email}
         readOnly
@@ -68,18 +70,18 @@ export default function FormularioPerfil({
       />
 
       <PhoneInput
-        label="Teléfono (opcional)"
+        label={t('phone')}
         name="telefono"
         defaultValue={profile.telefono ?? ''}
         placeholder="600 000"
       />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-bold text-[#1a3c5e] ml-1">Sobre mí (opcional)</label>
+        <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('aboutMe')}</label>
         <textarea
           name="descripcion"
           defaultValue={(profile as { descripcion?: string }).descripcion ?? ''}
-          placeholder="Cuéntanos un poco sobre ti, qué buscas, tu trabajo…"
+          placeholder={t('aboutMePlaceholder')}
           rows={4}
           className="w-full px-4 py-3 rounded-xl border-transparent bg-[#f4f5f7] text-sm focus:bg-white focus:ring-2 focus:ring-[#0ea5a0]/30 focus:outline-none transition-all resize-none"
         />
@@ -90,13 +92,13 @@ export default function FormularioPerfil({
       )}
       {exito && (
         <p className="text-sm text-emerald-700 bg-emerald-50 px-4 py-3 rounded-xl">
-          ✓ Cambios guardados correctamente.
+          {t('savedOk')}
         </p>
       )}
 
       <div className="flex justify-end pt-2">
         <Button type="submit" disabled={loading}>
-          {loading ? 'Guardando…' : 'Guardar cambios'}
+          {loading ? t('saving') : t('saveChanges')}
         </Button>
       </div>
     </form>

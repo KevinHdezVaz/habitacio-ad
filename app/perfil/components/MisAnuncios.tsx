@@ -2,16 +2,18 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { cambiarEstadoAnuncio } from '@/app/actions/perfil'
 import type { Anuncio } from '@/types'
 
-const badgeEstado: Record<string, { bg: string; label: string }> = {
-  activo:    { bg: 'bg-emerald-100 text-emerald-700', label: 'Activo' },
-  pendiente: { bg: 'bg-amber-100 text-amber-700',    label: 'Pendiente' },
-  inactivo:  { bg: 'bg-gray-100 text-gray-500',      label: 'Inactivo' },
+const badgeEstadoBg: Record<string, string> = {
+  activo:    'bg-emerald-100 text-emerald-700',
+  pendiente: 'bg-amber-100 text-amber-700',
+  inactivo:  'bg-gray-100 text-gray-500',
 }
 
 export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
+  const t = useTranslations('profile')
   const [estados, setEstados] = useState<Record<string, string>>(
     Object.fromEntries(anuncios.map((a) => [a.id, a.estado]))
   )
@@ -31,13 +33,17 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
   if (anuncios.length === 0) {
     return (
       <div className="text-center py-10 flex flex-col items-center gap-3">
-        <span className="text-4xl">📭</span>
-        <p className="text-[#6b7280] text-sm">Aún no has publicado ningún anuncio.</p>
+        <div className="w-12 h-12 bg-[#eef2f8] rounded-2xl flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1a3c5e" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/>
+          </svg>
+        </div>
+        <p className="text-[#6b7280] text-sm">{t('noAds')}</p>
         <Link
           href="/publicar"
           className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
         >
-          Publicar mi primer anuncio
+          {t('publishFirst')}
         </Link>
       </div>
     )
@@ -47,7 +53,8 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
     <div className="flex flex-col gap-3">
       {anuncios.map((anuncio) => {
         const estado = estados[anuncio.id] ?? anuncio.estado
-        const badge  = badgeEstado[estado] ?? badgeEstado.inactivo
+        const badgeBg = badgeEstadoBg[estado] ?? badgeEstadoBg.inactivo
+        const badgeLabel = estado === 'activo' ? t('statusActive') : estado === 'pendiente' ? t('statusPending') : t('statusInactive')
         const isPendiente = estado === 'pendiente'
 
         return (
@@ -72,15 +79,15 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="font-semibold text-[#1a3c5e] text-sm truncate">{anuncio.titulo}</p>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${badge.bg}`}>
-                  {badge.label}
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${badgeBg}`}>
+                  {badgeLabel}
                 </span>
               </div>
               <p className="text-xs text-[#6b7280] mt-0.5">
                 {anuncio.parroquia} · {anuncio.precio}€/mes
               </p>
               {isPendiente && (
-                <p className="text-xs text-amber-600 mt-1">⏳ En revisión por el equipo de habitacio.ad</p>
+                <p className="text-xs text-amber-600 mt-1">⏳ {t('underReview')}</p>
               )}
             </div>
 
@@ -90,13 +97,13 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
                 href={`/habitaciones/${anuncio.id}`}
                 className="px-3 py-1.5 rounded-lg bg-[#f4f5f7] hover:bg-gray-200 text-[#374151] text-xs font-medium transition-colors"
               >
-                Ver
+                {t('viewAd')}
               </Link>
               <Link
                 href={`/publicar/${anuncio.id}`}
                 className="px-3 py-1.5 rounded-lg bg-[#e8f0fa] hover:bg-[#d4e4f7] text-[#1a3c5e] text-xs font-medium transition-colors"
               >
-                ✏️ Editar
+                ✏️ {t('editAd')}
               </Link>
               {!isPendiente && (
                 <button
@@ -108,11 +115,7 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
                       : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
                   }`}
                 >
-                  {loading === anuncio.id
-                    ? '…'
-                    : estado === 'activo'
-                    ? 'Desactivar'
-                    : 'Activar'}
+                  {loading === anuncio.id ? '…' : estado === 'activo' ? t('deactivate') : t('activate')}
                 </button>
               )}
             </div>
@@ -125,7 +128,7 @@ export default function MisAnuncios({ anuncios }: { anuncios: Anuncio[] }) {
           href="/publicar"
           className="inline-flex items-center gap-2 text-sm text-[#0ea5a0] hover:text-[#1a3c5e] font-medium transition-colors"
         >
-          + Publicar otro anuncio
+          {t('publishAnother')}
         </Link>
       </div>
     </div>

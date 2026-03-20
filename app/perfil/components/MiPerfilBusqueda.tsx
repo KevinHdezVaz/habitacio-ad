@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { reactivarPerfilInquilino, ocultarPerfilInquilino, marcarPerfilCaducado } from '@/app/actions/perfiles-inquilino'
+import { useTranslations } from 'next-intl'
+import { reactivarPerfilInquilino, eliminarPerfilInquilino, marcarPerfilCaducado } from '@/app/actions/perfiles-inquilino'
 import type { PerfilInquilino } from '@/types'
 
 const labelTipo: Record<string, string> = {
@@ -16,6 +17,7 @@ function diasRestantes(fechaCaducidad: string) {
 
 export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }) {
   const router = useRouter()
+  const t = useTranslations('profile')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,9 +43,10 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
     else router.refresh()
   }
 
-  async function handleOcultar() {
+  async function handleEliminar() {
+    if (!window.confirm(t('deleteConfirm'))) return
     setLoading(true)
-    await ocultarPerfilInquilino(perfil.id)
+    await eliminarPerfilInquilino(perfil.id)
     setLoading(false)
     router.refresh()
   }
@@ -52,13 +55,9 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
     <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="font-bold text-[#1a3c5e] text-lg">Mi perfil de búsqueda</h2>
-        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-          esCaducado
-            ? 'bg-red-100 text-red-600'
-            : 'bg-green-100 text-green-700'
-        }`}>
-          {esCaducado ? 'Caducado' : 'Activo'}
+        <h2 className="font-bold text-[#1a3c5e] text-lg">{t('searchProfile')}</h2>
+        <span className={`text-xs font-bold px-3 py-1 rounded-full ${esCaducado ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+          {esCaducado ? t('statusExpired') : t('statusActive')}
         </span>
       </div>
 
@@ -86,10 +85,8 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
           <div className="flex items-start gap-3">
             <span className="text-xl">⏰</span>
             <div>
-              <p className="font-bold text-red-700 text-sm">Tu perfil ha caducado</p>
-              <p className="text-xs text-red-600 mt-0.5">
-                Ya no es visible para los propietarios. Reactívalo gratis para volver a aparecer.
-              </p>
+              <p className="font-bold text-red-700 text-sm">{t('profileExpiredTitle')}</p>
+              <p className="text-xs text-red-600 mt-0.5">{t('profileExpiredDesc')}</p>
             </div>
           </div>
           <button
@@ -97,7 +94,7 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
             disabled={loading}
             className="w-full py-3 rounded-xl bg-[#1a3c5e] text-white font-bold text-sm hover:bg-[#0ea5a0] transition-colors disabled:opacity-50"
           >
-            {loading ? 'Reactivando…' : 'Reactivar gratis — 30 días más'}
+            {loading ? t('reactivating') : t('reactivateFree')}
           </button>
         </div>
       ) : alertaDias ? (
@@ -106,10 +103,10 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
             <span className="text-xl">⚠️</span>
             <div>
               <p className="font-bold text-amber-700 text-sm">
-                Tu perfil caduca en {dias} día{dias !== 1 ? 's' : ''}
+                {t('searchProfile')} — {dias} {dias !== 1 ? 'días' : 'día'}
               </p>
               <p className="text-xs text-amber-600 mt-0.5">
-                Caduca el {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}. Renuévalo ahora para no perder visibilidad.
+                {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}. {t('renewDesc')}
               </p>
             </div>
           </div>
@@ -118,7 +115,7 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
             disabled={loading}
             className="w-full py-2.5 rounded-xl bg-amber-500 text-white font-bold text-sm hover:bg-amber-600 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Renovando…' : 'Renovar gratis — 30 días más'}
+            {loading ? t('renewing') : t('renewFree')}
           </button>
         </div>
       ) : (
@@ -126,9 +123,9 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
           <div className="flex items-center gap-2">
             <span className="text-green-600 text-lg">✓</span>
             <div>
-              <p className="text-sm font-semibold text-green-700">Visible para propietarios</p>
+              <p className="text-sm font-semibold text-green-700">{t('visibleToOwners')}</p>
               <p className="text-xs text-green-600">
-                Caduca el {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} ({dias} días)
+                {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} ({dias} días)
               </p>
             </div>
           </div>
@@ -146,14 +143,20 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
           href={`/perfiles/${perfil.id}`}
           className="flex-1 text-center py-2 rounded-xl border border-gray-200 text-xs font-semibold text-[#6b7280] hover:border-[#1a3c5e] hover:text-[#1a3c5e] transition-colors"
         >
-          Ver mi perfil
+          {t('viewProfile')}
+        </a>
+        <a
+          href={`/buscar-habitacion/editar/${perfil.id}`}
+          className="flex-1 text-center py-2 rounded-xl border border-[#c7d4e8] bg-[#eef2f8] text-xs font-semibold text-[#1a3c5e] hover:bg-[#dde6f3] transition-colors"
+        >
+          {t('editProfile')}
         </a>
         <button
-          onClick={handleOcultar}
+          onClick={handleEliminar}
           disabled={loading}
-          className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-[#6b7280] hover:border-red-300 hover:text-red-500 transition-colors disabled:opacity-40"
+          className="flex-1 py-2 rounded-xl border border-red-200 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors disabled:opacity-40"
         >
-          Ocultar perfil
+          {loading ? t('deleting') : t('deleteProfile')}
         </button>
       </div>
     </div>

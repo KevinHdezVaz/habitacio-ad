@@ -114,3 +114,33 @@ export async function ocultarPerfilInquilino(id: string) {
 
   return { ok: true }
 }
+
+export async function actualizarPerfilInquilino(id: string, datos: Partial<DatosPerfilInquilino>) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { error } = await supabase
+    .from('perfiles_inquilino')
+    .update(datos)
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  return { ok: true }
+}
+
+export async function eliminarPerfilInquilino(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { error } = await supabase
+    .from('perfiles_inquilino')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  return { ok: true }
+}

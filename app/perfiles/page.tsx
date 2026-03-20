@@ -14,14 +14,14 @@ export default async function PerfilesPage({
   const t = await getTranslations('profiles')
 
   const labelTipo: Record<string, string> = {
-    anual:     t('labelAnual'),
+    anual: t('labelAnual'),
     temporero: t('labelTemporero'),
-    ambos:     t('labelAmbos'),
+    ambos: t('labelAmbos'),
   }
   const labelSituacion: Record<string, string> = {
     trabajador: t('labelTrabajador'),
     estudiante: t('labelEstudiante'),
-    temporero:  t('labelTemporeroSit'),
+    temporero: t('labelTemporeroSit'),
   }
 
   const ahora = new Date().toISOString()
@@ -61,10 +61,10 @@ export default async function PerfilesPage({
   }
 
   const tabs = [
-    { key: 'todos',     label: t('all') },
-    { key: 'anual',     label: t('annual') },
+    { key: 'todos', label: t('all') },
+    { key: 'anual', label: t('annual') },
     { key: 'temporero', label: t('seasonal') },
-    { key: 'ambos',     label: t('both') },
+    { key: 'ambos', label: t('both') },
   ]
 
   return (
@@ -92,11 +92,10 @@ export default async function PerfilesPage({
             <a
               key={tab.key}
               href={`/perfiles?tipo=${tab.key}${q ? `&q=${q}` : ''}`}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                tipo === tab.key
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${tipo === tab.key
                   ? 'bg-[#1a3c5e] text-white'
                   : 'text-[#6b7280] hover:text-[#1a3c5e]'
-              }`}
+                }`}
             >
               {tab.label}
             </a>
@@ -156,9 +155,8 @@ export default async function PerfilesPage({
               <Link
                 key={perfil.id}
                 href={`/perfiles/${perfil.id}`}
-                className={`bg-white rounded-2xl border p-5 flex gap-4 hover:shadow-sm transition-all group ${
-                  perfil.destacado ? 'border-[#0ea5a0]/40 ring-1 ring-[#0ea5a0]/20' : 'border-gray-100 hover:border-[#0ea5a0]/30'
-                }`}
+                className={`bg-white rounded-2xl border p-5 flex gap-4 hover:shadow-sm transition-all group ${perfil.destacado ? 'border-[#0ea5a0]/40 ring-1 ring-[#0ea5a0]/20' : 'border-gray-100 hover:border-[#0ea5a0]/30'
+                  }`}
               >
                 <Avatar
                   nombre={perfil.nombre}
