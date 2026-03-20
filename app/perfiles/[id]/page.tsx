@@ -3,22 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
+import { getTranslations } from 'next-intl/server'
 
-const labelTipo: Record<string, string> = {
-  anual: 'Todo el año',
-  temporero: 'Temporada',
-  ambos: 'Flexible',
-}
-const labelSituacion: Record<string, string> = {
-  trabajador: 'Trabajador/a',
-  estudiante: 'Estudiante',
-  temporero: 'Temporero/a',
-}
-const labelSexo: Record<string, string> = {
-  hombre: 'Hombre',
-  mujer: 'Mujer',
-  no_dice: 'Prefiero no decirlo',
-}
 export default async function PerfilInquilinoPage({
   params,
 }: {
@@ -26,6 +12,23 @@ export default async function PerfilInquilinoPage({
 }) {
   const { id } = await params
   const supabase = await createClient()
+  const t = await getTranslations('perfilDetalle')
+
+  const labelTipo: Record<string, string> = {
+    anual: t('labelAnual'),
+    temporero: t('labelTemporero'),
+    ambos: t('labelAmbos'),
+  }
+  const labelSituacion: Record<string, string> = {
+    trabajador: t('labelTrabajador'),
+    estudiante: t('labelEstudiante'),
+    temporero: t('labelTemporeroSit'),
+  }
+  const labelSexo: Record<string, string> = {
+    hombre: t('labelHombre'),
+    mujer: t('labelMujer'),
+    no_dice: t('labelNoDice'),
+  }
 
   const ahora = new Date().toISOString()
 
@@ -52,33 +55,34 @@ export default async function PerfilInquilinoPage({
     .single()
   const avatarUrl = profileData?.avatar_url ?? null
 
+  const locale = 'es' // se podría detectar dinámicamente si se necesita
   const fechaEntrada = p.fecha_entrada
-    ? new Date(p.fecha_entrada).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(p.fecha_entrada).toLocaleDateString(locale === 'ca' ? 'ca-ES' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
     : null
   const fechaSalida = p.fecha_salida
-    ? new Date(p.fecha_salida).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(p.fecha_salida).toLocaleDateString(locale === 'ca' ? 'ca-ES' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
     : null
 
   const chips = [
-    { label: 'Tipo de estancia', value: labelTipo[p.tipo_busqueda] },
-    p.situacion ? { label: 'Situación', value: labelSituacion[p.situacion] } : null,
-    p.sector ? { label: 'Sector', value: p.sector } : null,
-    (p as any).sexo ? { label: 'Sexo', value: labelSexo[(p as any).sexo] } : null,
-    fechaEntrada ? { label: 'Disponible desde', value: fechaEntrada } : null,
-    fechaSalida ? { label: 'Hasta', value: fechaSalida } : null,
-    { label: 'Presupuesto máximo', value: `${p.presupuesto_max}€/mes` },
-    { label: 'Fumador/a', value: p.fumador ? 'Sí' : 'No' },
-    { label: 'Mascotas', value: p.mascotas ? 'Sí' : 'No' },
-    { label: 'Viene', value: p.acompanado ? 'Acompañado/a' : 'Solo/a' },
+    { label: t('chipTipoEstancia'), value: labelTipo[p.tipo_busqueda] },
+    p.situacion ? { label: t('chipSituacion'), value: labelSituacion[p.situacion] } : null,
+    p.sector ? { label: t('chipSector'), value: p.sector } : null,
+    (p as any).sexo ? { label: t('chipSexo'), value: labelSexo[(p as any).sexo] } : null,
+    fechaEntrada ? { label: t('chipDesde'), value: fechaEntrada } : null,
+    fechaSalida ? { label: t('chipHasta'), value: fechaSalida } : null,
+    { label: t('chipPresupuesto'), value: t('budgetValue', { n: p.presupuesto_max }) },
+    { label: t('chipFumador'), value: p.fumador ? t('chipSi') : t('chipNo') },
+    { label: t('chipMascotas'), value: p.mascotas ? t('chipSi') : t('chipNo') },
+    { label: t('chipViene'), value: p.acompanado ? t('chipAcompanado') : t('chipSolo') },
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
       {/* Breadcrumb */}
       <div className="text-sm text-[#6b7280]">
-        <Link href="/perfiles" className="hover:text-[#1a3c5e] transition-colors">Perfiles</Link>
+        <Link href="/perfiles" className="hover:text-[#1a3c5e] transition-colors">{t('breadcrumbProfiles')}</Link>
         <span className="mx-2">·</span>
-        <span className="text-[#1a3c5e] font-medium">Perfil</span>
+        <span className="text-[#1a3c5e] font-medium">{t('breadcrumbProfile')}</span>
       </div>
 
       {/* Tarjeta principal */}
@@ -97,7 +101,7 @@ export default async function PerfilInquilinoPage({
                 <span>
                   {esPropio ? (p.nombre || 'Inquilino/a') : 'Inquilino/a'}
                 </span>
-                {p.edad && <span>, {p.edad} años</span>}
+                {p.edad && <span>, {t('yearsOld', { n: p.edad })}</span>}
               </h1>
               {p.destacado && <span className="text-yellow-500 text-xl">⭐</span>}
             </div>
@@ -107,13 +111,13 @@ export default async function PerfilInquilinoPage({
                 {labelTipo[p.tipo_busqueda]}
               </span>
               <span className="text-[10px] font-bold bg-blue-100 text-[#1a3c5e] px-2.5 py-1 rounded-full uppercase">
-                Hasta {p.presupuesto_max}€/mes
+                {t('chipHasta')} {p.presupuesto_max}€/mes
               </span>
             </div>
 
             {p.parroquias?.length > 0 && (
               <p className="text-sm text-[#6b7280] mt-2">
-                📍 Busca en: <strong className="text-[#374151]">{p.parroquias.join(', ')}</strong>
+                📍 {t('searchesIn')} <strong className="text-[#374151]">{p.parroquias.join(', ')}</strong>
               </p>
             )}
           </div>
@@ -138,20 +142,20 @@ export default async function PerfilInquilinoPage({
                 href={`/perfiles/${id}/editar`}
                 className="px-4 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
               >
-                Editar mi perfil
+                {t('editMyProfile')}
               </Link>
-              <span className="text-xs text-[#9ca3af]">Este es tu perfil publicado</span>
+              <span className="text-xs text-[#9ca3af]">{t('ownProfileLabel')}</span>
             </div>
           ) : (
             <div className="bg-[#f8fafc] border border-gray-200 rounded-2xl p-5 flex flex-col gap-4">
               {/* Info bloqueada */}
               <div className="flex flex-col gap-2">
-                <p className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Contacto</p>
+                <p className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">{t('contactTitle')}</p>
                 <div className="flex flex-col gap-2">
                   {[
-                    { label: 'Teléfono', valor: '••• ••• •••' },
-                    { label: 'Email', valor: '••••••@••••.com' },
-                    { label: 'Chat directo', valor: 'Bloqueado' },
+                    { label: t('phone'), valor: '••• ••• •••' },
+                    { label: t('email'), valor: '••••••@••••.com' },
+                    { label: t('directChat'), valor: t('locked') },
                   ].map(({ label, valor }) => (
                     <div key={label} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-gray-100">
                       <span className="text-xs text-[#9ca3af] font-medium">{label}</span>
@@ -167,8 +171,8 @@ export default async function PerfilInquilinoPage({
                   <div className="flex items-start gap-3 bg-[#1a3c5e]/5 rounded-xl p-3">
                     <span className="text-lg">🔒</span>
                     <div>
-                      <p className="text-sm font-bold text-[#1a3c5e]">Desbloquea el contacto</p>
-                      <p className="text-xs text-[#6b7280] mt-0.5">Accede al teléfono, email y chat de este inquilino.</p>
+                      <p className="text-sm font-bold text-[#1a3c5e]">{t('unlockContact')}</p>
+                      <p className="text-xs text-[#6b7280] mt-0.5">{t('unlockDesc')}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
@@ -177,24 +181,24 @@ export default async function PerfilInquilinoPage({
                       className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#1a3c5e] text-white text-center opacity-70 cursor-not-allowed"
                     >
                       <span className="text-sm font-bold">6,90€</span>
-                      <span className="text-[10px] opacity-80">Este perfil</span>
+                      <span className="text-[10px] opacity-80">{t('thisProfile')}</span>
                     </button>
                     <button
                       disabled
                       className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#0ea5a0] text-white text-center opacity-70 cursor-not-allowed"
                     >
                       <span className="text-sm font-bold">19,90€</span>
-                      <span className="text-[10px] opacity-80">Todos · 7 días</span>
+                      <span className="text-[10px] opacity-80">{t('allProfiles')}</span>
                     </button>
                   </div>
-                  <p className="text-[10px] text-center text-[#9ca3af]">Pagos disponibles próximamente</p>
+                  <p className="text-[10px] text-center text-[#9ca3af]">{t('comingSoon')}</p>
                 </div>
               ) : (
                 <Link
                   href={`/login?next=/perfiles/${id}`}
                   className="w-full py-3 rounded-xl bg-[#1a3c5e] text-white text-sm font-bold text-center hover:bg-[#0ea5a0] transition-colors"
                 >
-                  Inicia sesión para ver el contacto
+                  {t('loginToContact')}
                 </Link>
               )}
             </div>

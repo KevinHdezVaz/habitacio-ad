@@ -6,9 +6,6 @@ import { useTranslations } from 'next-intl'
 import { reactivarPerfilInquilino, eliminarPerfilInquilino, marcarPerfilCaducado } from '@/app/actions/perfiles-inquilino'
 import type { PerfilInquilino } from '@/types'
 
-const labelTipo: Record<string, string> = {
-  anual: 'Todo el año', temporero: 'Temporada', ambos: 'Flexible',
-}
 
 function diasRestantes(fechaCaducidad: string) {
   const diff = new Date(fechaCaducidad).getTime() - Date.now()
@@ -18,6 +15,12 @@ function diasRestantes(fechaCaducidad: string) {
 export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }) {
   const router = useRouter()
   const t = useTranslations('profile')
+
+  const labelTipo: Record<string, string> = {
+    anual: t('labelAnualTipo'),
+    temporero: t('labelTemporeroTipo'),
+    ambos: t('labelAmbosTipo'),
+  }
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -67,9 +70,9 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
           {perfil.nombre?.[0]?.toUpperCase() ?? '?'}
         </div>
         <div>
-          <p className="font-bold text-[#1a3c5e]">{perfil.nombre}{perfil.edad ? `, ${perfil.edad} años` : ''}</p>
+          <p className="font-bold text-[#1a3c5e]">{perfil.nombre}{perfil.edad ? `, ${t('yearsOld', { n: perfil.edad })}` : ''}</p>
           <p className="text-xs text-[#6b7280]">
-            {labelTipo[perfil.tipo_busqueda]} · Hasta {perfil.presupuesto_max}€/mes
+            {labelTipo[perfil.tipo_busqueda]} · {t('upTo')} {perfil.presupuesto_max}€/mes
           </p>
           {perfil.parroquias?.length > 0 && (
             <p className="text-xs text-[#9ca3af] mt-0.5">
@@ -103,7 +106,7 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
             <span className="text-xl">⚠️</span>
             <div>
               <p className="font-bold text-amber-700 text-sm">
-                {t('searchProfile')} — {dias} {dias !== 1 ? 'días' : 'día'}
+                {t('searchProfile')} — {dias !== 1 ? t('daysLeft', { n: dias }) : t('dayLeft', { n: dias })}
               </p>
               <p className="text-xs text-amber-600 mt-0.5">
                 {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}. {t('renewDesc')}
@@ -125,7 +128,7 @@ export default function MiPerfilBusqueda({ perfil }: { perfil: PerfilInquilino }
             <div>
               <p className="text-sm font-semibold text-green-700">{t('visibleToOwners')}</p>
               <p className="text-xs text-green-600">
-                {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} ({dias} días)
+                {new Date(perfil.fecha_caducidad).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} ({dias !== 1 ? t('daysLeft', { n: dias }) : t('dayLeft', { n: dias })})
               </p>
             </div>
           </div>
