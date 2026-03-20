@@ -82,14 +82,14 @@ function Toggle({ checked, onChange, label }: {
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`flex items-center justify-between w-full px-4 py-3.5 rounded-2xl border-2 transition-all
-        ${checked ? 'border-[#0ea5a0] bg-gradient-to-r from-[#e6f7f7] to-[#f0fafa]' : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
+      className={`flex items-center justify-between w-full px-4 py-3.5 rounded-2xl border-2 transition-all overflow-hidden
+        ${checked ? 'border-[#1a3c5e] bg-[#eef2f8]' : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
     >
-      <span className="flex items-center gap-2 text-sm font-semibold text-[#374151]">
+      <span className={`flex items-center gap-2 text-sm font-semibold ${checked ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>
         {label}
       </span>
       <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0
-        ${checked ? 'bg-[#0ea5a0]' : 'bg-gray-200'}`}>
+        ${checked ? 'bg-[#1a3c5e]' : 'bg-gray-200'}`}>
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200
           ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
@@ -577,20 +577,19 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                   <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('sexoLabel')}</label>
                   <div className="grid grid-cols-3 gap-2">
                     {([
-                      { key: 'hombre',  icon: '👨', label: t('sexoHombre') },
-                      { key: 'mujer',   icon: '👩', label: t('sexoMujer') },
-                      { key: 'no_dice', icon: '🤐', label: t('sexoNoDice') },
-                    ] as const).map(({ key, icon, label }) => (
+                      { key: 'hombre',  label: t('sexoHombre') },
+                      { key: 'mujer',   label: t('sexoMujer') },
+                      { key: 'no_dice', label: t('sexoNoDice') },
+                    ] as const).map(({ key, label }) => (
                       <button
                         key={key}
                         type="button"
                         onClick={() => set('sexo', key)}
-                        className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border-2 transition-all text-center
+                        className={`flex items-center justify-center py-3 px-2 rounded-2xl border-2 transition-all text-center
                           ${data.sexo === key
                             ? 'border-[#1a3c5e] bg-[#f0f4f8]'
                             : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
                       >
-                        <span className="text-xl">{icon}</span>
                         <span className={`text-[11px] font-bold leading-tight ${data.sexo === key ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>
                           {label}
                         </span>
