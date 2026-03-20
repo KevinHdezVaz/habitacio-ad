@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 export default async function PerfilInquilinoPage({
   params,
@@ -13,6 +13,7 @@ export default async function PerfilInquilinoPage({
   const { id } = await params
   const supabase = await createClient()
   const t = await getTranslations('perfilDetalle')
+  const locale = await getLocale()
 
   const labelTipo: Record<string, string> = {
     anual: t('labelAnual'),
@@ -55,12 +56,12 @@ export default async function PerfilInquilinoPage({
     .single()
   const avatarUrl = profileData?.avatar_url ?? null
 
-  const locale = 'es' // se podría detectar dinámicamente si se necesita
+  const dateLocale = locale === 'ca' ? 'ca-ES' : 'es-ES'
   const fechaEntrada = p.fecha_entrada
-    ? new Date(p.fecha_entrada).toLocaleDateString(locale === 'ca' ? 'ca-ES' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(p.fecha_entrada).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })
     : null
   const fechaSalida = p.fecha_salida
-    ? new Date(p.fecha_salida).toLocaleDateString(locale === 'ca' ? 'ca-ES' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(p.fecha_salida).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })
     : null
 
   const chips = [
@@ -122,7 +123,6 @@ export default async function PerfilInquilinoPage({
             )}
           </div>
         </div>
-
 
         {/* Grid de detalles */}
         <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 gap-3">
