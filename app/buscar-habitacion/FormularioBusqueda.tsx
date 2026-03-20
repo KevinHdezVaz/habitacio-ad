@@ -79,21 +79,22 @@ function Toggle({ checked, onChange, label }: {
   checked: boolean; onChange: (v: boolean) => void; label: string; icon?: string
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => onChange(!checked)}
-      className={`flex items-center justify-between w-full px-4 py-3.5 rounded-2xl border-2 transition-all overflow-hidden
-        ${checked ? 'border-[#1a3c5e] bg-[#eef2f8]' : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
+    <label className={`flex items-center justify-between w-full px-4 py-3.5 rounded-2xl border-2 transition-all cursor-pointer
+      ${checked ? 'border-[#0ea5a0] bg-gradient-to-r from-[#e6f7f7] to-[#f0fafa]' : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
     >
-      <span className={`flex items-center gap-2 text-sm font-semibold ${checked ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>
-        {label}
-      </span>
-      <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0
-        ${checked ? 'bg-[#1a3c5e]' : 'bg-gray-200'}`}>
-        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200
-          ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
-      </div>
-    </button>
+      <span className="text-sm font-semibold text-[#374151]">{label}</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`relative w-11 h-6 rounded-full transition-all duration-200 flex-shrink-0 focus:outline-none overflow-hidden
+          ${checked ? 'bg-[#0ea5a0]' : 'bg-gray-200'}`}
+      >
+        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200
+          ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+      </button>
+    </label>
   )
 }
 
