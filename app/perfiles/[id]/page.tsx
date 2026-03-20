@@ -132,7 +132,7 @@ export default async function PerfilInquilinoPage({
           {esPropio ? (
             <div className="flex items-center gap-3">
               <Link
-                href="/perfil"
+                href={`/perfiles/${id}/editar`}
                 className="px-4 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
               >
                 Editar mi perfil
