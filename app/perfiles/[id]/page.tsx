@@ -14,6 +14,11 @@ const labelSituacion: Record<string, string> = {
   estudiante: 'Estudiante',
   temporero:  'Temporero/a',
 }
+const labelSexo: Record<string, string> = {
+  hombre:  'Hombre',
+  mujer:   'Mujer',
+  no_dice: 'Prefiero no decirlo',
+}
 export default async function PerfilInquilinoPage({
   params,
 }: {
@@ -58,6 +63,7 @@ export default async function PerfilInquilinoPage({
     { label: 'Tipo de estancia',   value: labelTipo[p.tipo_busqueda] },
     p.situacion ? { label: 'Situación',       value: labelSituacion[p.situacion] } : null,
     p.sector    ? { label: 'Sector',           value: p.sector } : null,
+    (p as any).sexo ? { label: 'Sexo', value: labelSexo[(p as any).sexo] } : null,
     fechaEntrada ? { label: 'Disponible desde', value: fechaEntrada } : null,
     fechaSalida  ? { label: 'Hasta',            value: fechaSalida } : null,
     { label: 'Presupuesto máximo', value: `${p.presupuesto_max}€/mes` },
@@ -72,7 +78,7 @@ export default async function PerfilInquilinoPage({
       <div className="text-sm text-[#6b7280]">
         <Link href="/perfiles" className="hover:text-[#1a3c5e] transition-colors">Perfiles</Link>
         <span className="mx-2">·</span>
-        <span className="text-[#1a3c5e] font-medium">{p.nombre}</span>
+        <span className="text-[#1a3c5e] font-medium">Perfil</span>
       </div>
 
       {/* Tarjeta principal */}
@@ -88,7 +94,7 @@ export default async function PerfilInquilinoPage({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-[#1a3c5e]">
-                {p.nombre}{p.edad ? `, ${p.edad} años` : ''}
+                {p.edad ? `${p.edad} años` : 'Inquilino/a'}
               </h1>
               {p.destacado && <span className="text-yellow-500 text-xl">⭐</span>}
             </div>
@@ -110,12 +116,6 @@ export default async function PerfilInquilinoPage({
           </div>
         </div>
 
-        {p.descripcion && (
-          <div className="mt-5 pt-5 border-t border-gray-100">
-            <p className="text-sm font-semibold text-[#374151] mb-2">Sobre mí</p>
-            <p className="text-sm text-[#6b7280] leading-relaxed">{p.descripcion}</p>
-          </div>
-        )}
 
         {/* Grid de detalles */}
         <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 gap-3">
