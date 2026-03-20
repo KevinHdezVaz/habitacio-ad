@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import ListaConversaciones from '@/components/chat/ListaConversaciones'
+import { getTranslations } from 'next-intl/server'
 
 export default async function ChatPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const t = await getTranslations('chat')
 
   if (!user) redirect('/login?next=/chat')
 
@@ -60,8 +62,8 @@ export default async function ChatPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-[#1a3c5e]">Mensajes</h1>
-        <p className="text-[#6b7280] text-sm">{convConNombres.length} conversaciones</p>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
+        <p className="text-[#6b7280] text-sm">{t('conversations', { count: convConNombres.length })}</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">

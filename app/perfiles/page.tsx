@@ -42,7 +42,10 @@ export default async function PerfilesPage({
     query = query.or(`sector.ilike.%${q}%,parroquias.cs.{${q}}`)
   }
 
-  const { data: perfiles } = await query
+  const [{ data: perfiles }, { data: { user } }] = await Promise.all([
+    query,
+    supabase.auth.getUser(),
+  ])
 
   // Fetch avatars desde profiles para todos los perfiles encontrados
   const userIds = (perfiles ?? []).map((p) => p.user_id).filter(Boolean)
@@ -135,8 +138,8 @@ export default async function PerfilesPage({
               t('hastaPresupuesto', { n: perfil.presupuesto_max }),
             ].filter(Boolean)
 
-            const infoLine = [
-              perfil.edad ? `${perfil.edad} ${t('anosLabel')}` : null,
+            const esPropio = user?.id === perfil.user_id
+            const infoRestante = [
               perfil.sector || null,
               perfil.parroquias?.length > 0
                 ? perfil.parroquias.slice(0, 2).join(', ') + (perfil.parroquias.length > 2 ? '…' : '')
@@ -166,11 +169,13 @@ export default async function PerfilesPage({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      {infoLine.length > 0 && (
-                        <p className="font-bold text-[#1a3c5e] group-hover:text-[#0ea5a0] transition-colors text-sm">
-                          {infoLine.join(' · ')}
-                        </p>
-                      )}
+                      <p className="font-bold text-[#1a3c5e] group-hover:text-[#0ea5a0] transition-colors text-sm flex items-center flex-wrap gap-1">
+                        <span className={esPropio ? "" : "blur-sm select-none opacity-80 transition-all delay-100"}>
+                          {perfil.nombre || 'Inquilino/a'}
+                        </span>
+                        {perfil.edad && <span>, {perfil.edad} {t('anosLabel')}</span>}
+                        {infoRestante.length > 0 && <span> · {infoRestante.join(' · ')}</span>}
+                      </p>
                     </div>
                     {perfil.destacado && <span className="text-yellow-500 text-sm shrink-0">⭐</span>}
                   </div>

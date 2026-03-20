@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
 import { setLocale } from '@/app/actions/locale'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
@@ -44,7 +44,17 @@ export default function Navbar({
   const [isOpen, setIsOpen] = useState(false)
   const [isPendingLang, startLangTransition] = useTransition()
   const router = useRouter()
+  const pathname = usePathname()
   const t = useTranslations('nav')
+
+  function navClass(href: string) {
+    const active = pathname === href || pathname.startsWith(href + '/')
+    return `text-sm font-medium transition-colors ${active ? 'text-[#0ea5a0] font-semibold' : 'text-[#1a3c5e] hover:text-[#0ea5a0]'}`
+  }
+  function mobileNavClass(href: string) {
+    const active = pathname === href || pathname.startsWith(href + '/')
+    return `text-sm font-medium py-2 transition-colors ${active ? 'text-[#0ea5a0] font-semibold' : 'text-[#1a3c5e]'}`
+  }
 
   function handleLang(l: string) {
     startLangTransition(async () => {
@@ -63,19 +73,19 @@ export default function Navbar({
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/habitaciones" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+          <Link href="/habitaciones" className={navClass('/habitaciones')}>
             {t('buscar')}
           </Link>
-          <Link href="/perfiles" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+          <Link href="/perfiles" className={navClass('/perfiles')}>
             {t('perfiles')}
           </Link>
-          <Link href="/publicar" className="text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+          <Link href="/publicar" className={navClass('/publicar')}>
             {t('publicar')}
           </Link>
 
           {user ? (
             <div className="flex items-center gap-5">
-              <Link href="/chat" className="relative text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+              <Link href="/chat" className={`relative ${navClass('/chat')}`}>
                 {t('mensajes')}
                 {unreadCount > 0 && (
                   <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
@@ -83,7 +93,7 @@ export default function Navbar({
                   </span>
                 )}
               </Link>
-              <Link href="/perfil" className="flex items-center gap-2 text-sm font-medium text-[#1a3c5e] hover:text-[#0ea5a0] transition-colors">
+              <Link href="/perfil" className={`flex items-center gap-2 ${navClass('/perfil')}`}>
                 <MiniAvatar avatarUrl={avatarUrl} userName={userName} />
                 {t('miPerfil')}
               </Link>
@@ -145,18 +155,18 @@ export default function Navbar({
       {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-3">
-          <Link href="/habitaciones" onClick={() => setIsOpen(false)} className="text-sm font-medium text-[#1a3c5e] py-2">
+          <Link href="/habitaciones" onClick={() => setIsOpen(false)} className={mobileNavClass('/habitaciones')}>
             {t('buscar')}
           </Link>
-          <Link href="/perfiles" onClick={() => setIsOpen(false)} className="text-sm font-medium text-[#1a3c5e] py-2">
+          <Link href="/perfiles" onClick={() => setIsOpen(false)} className={mobileNavClass('/perfiles')}>
             {t('perfiles')}
           </Link>
-          <Link href="/publicar" onClick={() => setIsOpen(false)} className="text-sm font-medium text-[#1a3c5e] py-2">
+          <Link href="/publicar" onClick={() => setIsOpen(false)} className={mobileNavClass('/publicar')}>
             {t('publicar')}
           </Link>
           {user ? (
             <>
-              <Link href="/chat" onClick={() => setIsOpen(false)} className="text-sm font-medium text-[#1a3c5e] py-2 flex items-center gap-2">
+              <Link href="/chat" onClick={() => setIsOpen(false)} className={`flex items-center gap-2 ${mobileNavClass('/chat')}`}>
                 {t('mensajes')}
                 {unreadCount > 0 && (
                   <span className="min-w-[18px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
@@ -164,7 +174,7 @@ export default function Navbar({
                   </span>
                 )}
               </Link>
-              <Link href="/perfil" onClick={() => setIsOpen(false)} className="text-sm font-medium text-[#1a3c5e] py-2">
+              <Link href="/perfil" onClick={() => setIsOpen(false)} className={mobileNavClass('/perfil')}>
                 {t('miPerfil')}
               </Link>
               {isAdmin && (

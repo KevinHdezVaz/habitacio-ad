@@ -77,8 +77,8 @@ export default function HabitacionesPage() {
     <div className="flex flex-col gap-4">
       {/* Cabecera */}
       <div>
-        <h1 className="text-2xl font-bold text-[#1a3c5e]">Habitaciones</h1>
-        <p className="text-[#6b7280] text-sm">{anuncios.length} anuncios disponibles</p>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
+        <p className="text-[#6b7280] text-sm">{t('available', { count: anuncios.length })}</p>
       </div>
 
       {/* Ordenación + Filtros en la misma línea */}
@@ -88,9 +88,9 @@ export default function HabitacionesPage() {
           onChange={(e) => actualizarFiltro('orden', e.target.value)}
           className="flex-1 bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm font-medium text-[#1a3c5e] shadow-sm appearance-none"
         >
-          <option value="recientes">Más recientes</option>
-          <option value="precio_asc">Precio: menor a mayor</option>
-          <option value="precio_desc">Precio: mayor a menor</option>
+          <option value="recientes">{t('sortRecent')}</option>
+          <option value="precio_asc">{t('sortPriceAsc')}</option>
+          <option value="precio_desc">{t('sortPriceDesc')}</option>
         </select>
         <button
           onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
@@ -101,7 +101,7 @@ export default function HabitacionesPage() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
             <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
           </svg>
-          Filtros
+          {t('filters')}
         </button>
       </div>
 
@@ -109,43 +109,43 @@ export default function HabitacionesPage() {
       {filtrosAbiertos && (
         <div className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <p className="font-bold text-[#1a3c5e]">Filtros</p>
+            <p className="font-bold text-[#1a3c5e]">{t('filters')}</p>
             <button onClick={limpiarFiltros} className="text-sm font-medium text-[#6b7280] underline underline-offset-2">
-              Borrar filtros
+              {t('clearFilters')}
             </button>
           </div>
 
           <div>
-            <label className="text-xs font-medium text-[#6b7280] mb-1 block">Parroquia</label>
+            <label className="text-xs font-medium text-[#6b7280] mb-1 block">{t('parish')}</label>
             <select
               value={filtros.parroquia}
               onChange={(e) => actualizarFiltro('parroquia', e.target.value)}
               className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]"
             >
-              <option value="">Todas</option>
+              <option value="">{t('allParishes')}</option>
               {PARROQUIAS.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-[#6b7280] mb-1 block">Precio mín (€)</label>
+              <label className="text-xs font-medium text-[#6b7280] mb-1 block">{t('minPrice')}</label>
               <input type="number" value={filtros.precioMin} onChange={(e) => actualizarFiltro('precioMin', e.target.value)} placeholder="0" className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]" />
             </div>
             <div>
-              <label className="text-xs font-medium text-[#6b7280] mb-1 block">Precio máx (€)</label>
+              <label className="text-xs font-medium text-[#6b7280] mb-1 block">{t('maxPrice')}</label>
               <input type="number" value={filtros.precioMax} onChange={(e) => actualizarFiltro('precioMax', e.target.value)} placeholder="2000" className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]" />
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-medium text-[#6b7280] mb-2 block">Tipo de estancia</label>
+            <label className="text-xs font-medium text-[#6b7280] mb-2 block">{t('stayType')}</label>
             <div className="flex gap-2">
               {[
-                { label: 'Todos', valor: '' },
-                { label: 'Anual', valor: 'anual' },
-                { label: 'Temporero', valor: 'temporero' },
-                { label: 'Ambos', valor: 'ambos' },
+                { label: t('all'), valor: '' },
+                { label: t('annual'), valor: 'anual' },
+                { label: t('seasonal'), valor: 'temporero' },
+                { label: t('both'), valor: 'ambos' },
               ].map((op) => (
                 <button
                   key={op.valor}
@@ -162,11 +162,11 @@ export default function HabitacionesPage() {
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              { key: 'gastosIncluidos', label: 'Gastos incluidos' },
-              { key: 'fianza', label: 'Con fianza' },
-              { key: 'admitePareja', label: 'Admite pareja' },
-              { key: 'admiteMascotas', label: 'Admite mascotas' },
-              { key: 'fumadores', label: 'Fumadores' },
+              { key: 'gastosIncluidos', label: t('expensesIncluded') },
+              { key: 'fianza', label: t('withDeposit') },
+              { key: 'admitePareja', label: t('coupleAllowed') },
+              { key: 'admiteMascotas', label: t('petsAllowed') },
+              { key: 'fumadores', label: t('smoking') },
             ].map(({ key, label }) => (
               <div key={key}>
                 <label className="text-xs font-medium text-[#6b7280] mb-1 block">{label}</label>
@@ -175,9 +175,9 @@ export default function HabitacionesPage() {
                   onChange={(e) => actualizarFiltro(key, e.target.value)}
                   className="w-full border border-[#e5e7eb] rounded-xl px-3 py-2 text-sm text-[#1a3c5e]"
                 >
-                  <option value="">Indiferente</option>
-                  <option value="si">Sí</option>
-                  <option value="no">No</option>
+                  <option value="">{t('indifferent')}</option>
+                  <option value="si">{t('yes')}</option>
+                  <option value="no">{t('no')}</option>
                 </select>
               </div>
             ))}
@@ -187,7 +187,7 @@ export default function HabitacionesPage() {
             onClick={() => setFiltrosAbiertos(false)}
             className="w-full bg-[#1a3c5e] text-white font-semibold py-3 rounded-xl text-sm"
           >
-            Aplicar filtros
+            {t('applyFilters')}
           </button>
         </div>
       )}
@@ -212,9 +212,9 @@ export default function HabitacionesPage() {
               <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/>
             </svg>
           </div>
-          <p className="font-bold text-[#1a3c5e]">No hay habitaciones con estos filtros</p>
+          <p className="font-bold text-[#1a3c5e]">{t('noResults')}</p>
           <button onClick={limpiarFiltros} className="text-sm font-medium text-[#6b7280] underline underline-offset-2">
-            Borrar filtros
+            {t('clearFilters')}
           </button>
         </div>
       ) : (
@@ -229,14 +229,14 @@ export default function HabitacionesPage() {
       {!cargando && anuncios.length > 0 && (
         <div className="mt-2 bg-[#eef2f8] border border-[#c7d4e8] rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-4">
           <div className="flex-1 text-center sm:text-left">
-            <p className="font-bold text-[#1a3c5e] text-sm">¿No encuentras lo que buscas?</p>
-            <p className="text-[#6b7280] text-xs mt-0.5">Crea tu perfil con tus preferencias y los propietarios te contactarán directamente.</p>
+            <p className="font-bold text-[#1a3c5e] text-sm">{t('ctaTitle')}</p>
+            <p className="text-[#6b7280] text-xs mt-0.5">{t('ctaText')}</p>
           </div>
           <a
             href="/buscar-habitacion"
             className="shrink-0 bg-[#1a3c5e] text-white text-sm font-semibold px-5 py-2.5 rounded-xl whitespace-nowrap"
           >
-            Crear mi perfil
+            {t('ctaBtn')}
           </a>
         </div>
       )}
