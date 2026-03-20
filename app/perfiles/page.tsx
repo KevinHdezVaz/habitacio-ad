@@ -170,7 +170,7 @@ export default async function PerfilesPage({
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-bold text-[#1a3c5e] group-hover:text-[#0ea5a0] transition-colors text-sm flex items-center flex-wrap gap-1">
-                        <span className={esPropio ? "" : "blur-sm select-none opacity-80 transition-all delay-100"}>
+                        <span className={esPropio ? "" : "blur-[3px] select-none opacity-80 transition-all delay-100"}>
                           {perfil.nombre || 'Inquilino/a'}
                         </span>
                         {perfil.edad && <span>, {perfil.edad} {t('anosLabel')}</span>}
