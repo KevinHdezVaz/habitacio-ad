@@ -14,6 +14,8 @@
     "heroTitle": "Encuentra habitación en",
     "andorra": "Andorra",
     "heroSubtitle": "Habitaciones para todo el año o temporada, con información clara desde el principio.",
+    "heroSubtitleShort": "sin perder tiempo",
+    "heroDesc": "Anuncios claros, perfiles reales y opciones para todo el año o temporada",
     "buscarHabitacion": "Busco habitación",
     "publicarHabitacionHero": "Publicar habitación",
     "queNecesitas": "¿Qué necesitas?",
@@ -23,7 +25,7 @@
     "encontrarme": "Encuéntrame habitación",
     "encontrarmeSub": "Indica que habitación buscas y deja que te contacten",
     "verPerfiles": "Ver personas que buscan habitación",
-    "verPerfilesSub": "Arrendadores, mira aquí",
+    "verPerfilesSub": "Accede a perfiles que ya buscan una habitación como la tuya",
     "ultimasHabitaciones": "Últimas habitaciones",
     "verTodas": "Ver todas",
     "porqueTitle": "¿Por qué usar habitacio.ad?",
@@ -37,7 +39,23 @@
     "noEncuentrasBtn": "Crear mi perfil",
     "ctaTitle": "¿Tienes una habitación libre?",
     "ctaSubtitle": "Publica tu anuncio y encuentra inquilino rápidamente.",
-    "ctaBtn": "Publicar habitación"
+    "ctaBtn": "Publicar habitación",
+    "heroZona": "Zona",
+    "heroPresupuesto": "Presupuesto",
+    "heroTipoEstancia": "Tipo de estancia",
+    "heroBuscar": "Buscar",
+    "heroHasta": "Hasta {n} €",
+    "statPerfilesActivos": "perfiles activos",
+    "statNuevasHabitaciones": "Nuevas habitaciones cada semana",
+    "noRoomsYet": "Aún no hay habitaciones publicadas.",
+    "disponibleAhora": "Disponible ahora",
+    "disponibleDesde": "Disponible: {fecha}",
+    "gastosIncluidos": "Gastos incluidos",
+    "gastosNoIncluidos": "Gastos no incluidos",
+    "tipoAnual": "Todo el año",
+    "tipoTemporero": "Temporada",
+    "tipoAmbos": "Anual / Temporada",
+    "destacado": "Destacado"
   },
   "rooms": {
     "title": "Habitaciones",
@@ -295,6 +313,7 @@
     "title": "Personas buscando habitación",
     "subtitle": "Encuentra inquilinos que buscan habitación en Andorra.",
     "publishProfile": "+ Publicar mi perfil",
+    "publishProfileEmpty": "Publicar mi perfil",
     "all": "Todos",
     "annual": "Todo el año",
     "seasonal": "Temporada",
@@ -311,7 +330,12 @@
     "smoker": "Fumador",
     "nonSmoker": "No fumador",
     "withPets": "Con mascotas",
-    "accompanied": "Acompañado"
+    "accompanied": "Acompañado",
+    "hastaPresupuesto": "Hasta {n}€",
+    "anosLabel": "años",
+    "sexoHombre": "Hombre",
+    "sexoMujer": "Mujer",
+    "sexoNoDice": "No especificado"
   },
   "buscar": {
     "title": "Encuéntrame habitación",
@@ -417,7 +441,11 @@
     "immediateEntry": "Entrada inmediata",
     "accompanied": "Viene acompañado",
     "nonSmoker2": "No fumador",
-    "withPets2": "Con mascotas"
+    "withPets2": "Con mascotas",
+    "sexoLabel": "Sexo",
+    "sexoHombre": "Hombre",
+    "sexoMujer": "Mujer",
+    "sexoNoDice": "Prefiero no decirlo"
   },
   "common": {
     "loading": "Cargando...",

@@ -74,11 +74,14 @@ export interface Conversacion {
 export type TipoBusqueda   = 'anual' | 'temporero' | 'ambos'
 export type SituacionLaboral = 'trabajador' | 'estudiante' | 'temporero'
 
+export type SexoPerfil = 'hombre' | 'mujer' | 'no_dice'
+
 export interface PerfilInquilino {
   id: string
   user_id: string
   nombre: string
   edad: number
+  sexo?: SexoPerfil | null
   tipo_busqueda: TipoBusqueda
   parroquias: string[]
   presupuesto_max: number

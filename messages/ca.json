@@ -14,6 +14,8 @@
     "heroTitle": "Troba habitació a",
     "andorra": "Andorra",
     "heroSubtitle": "Habitacions per a tot l'any o temporada, amb informació clara des del principi.",
+    "heroSubtitleShort": "sense perdre temps",
+    "heroDesc": "Anuncis clars, perfils reals i opcions per a tot l'any o temporada",
     "buscarHabitacion": "Cercar habitació",
     "publicarHabitacionHero": "Publicar habitació",
     "publicarGratis": "Publicar gratis",
@@ -24,7 +26,7 @@
     "encontrarme": "Troba'm habitació",
     "encontrarmeSub": "Indica que habitació busques i deixa que et contactin",
     "verPerfiles": "Veure perfils",
-    "verPerfilesSub": "Persones interessades",
+    "verPerfilesSub": "Accedeix a perfils que ja cerquen una habitació com la teva",
     "ultimasHabitaciones": "Últimes habitacions",
     "verTodas": "Veure-les totes",
     "porqueTitle": "Per què Habitacio.ad?",
@@ -46,7 +48,23 @@
     "facilMovilText": "Publica o cerca habitació en segons.",
     "ctaTitle": "Tens una habitació lliure?",
     "ctaSubtitle": "Publica gratis i troba inquilí ràpidament.",
-    "ctaBtn": "Publicar habitació gratis"
+    "ctaBtn": "Publicar habitació gratis",
+    "heroZona": "Zona",
+    "heroPresupuesto": "Pressupost",
+    "heroTipoEstancia": "Tipus d'estada",
+    "heroBuscar": "Cercar",
+    "heroHasta": "Fins a {n} €",
+    "statPerfilesActivos": "perfils actius",
+    "statNuevasHabitaciones": "Noves habitacions cada setmana",
+    "noRoomsYet": "Encara no hi ha habitacions publicades.",
+    "disponibleAhora": "Disponible ara",
+    "disponibleDesde": "Disponible: {fecha}",
+    "gastosIncluidos": "Despeses incloses",
+    "gastosNoIncluidos": "Despeses no incloses",
+    "tipoAnual": "Tot l'any",
+    "tipoTemporero": "Temporada",
+    "tipoAmbos": "Anual / Temporada",
+    "destacado": "Destacat"
   },
   "rooms": {
     "title": "Habitacions",
@@ -304,6 +322,7 @@
     "title": "Persones cercant habitació",
     "subtitle": "Troba inquilins que cerquen habitació a Andorra.",
     "publishProfile": "+ Publicar el meu perfil",
+    "publishProfileEmpty": "Publicar el meu perfil",
     "all": "Tots",
     "annual": "Tot l'any",
     "seasonal": "Temporada",
@@ -320,7 +339,12 @@
     "smoker": "Fumador",
     "nonSmoker": "No fumador",
     "withPets": "Amb mascotes",
-    "accompanied": "Acompanyat"
+    "accompanied": "Acompanyat",
+    "hastaPresupuesto": "Fins a {n}€",
+    "anosLabel": "anys",
+    "sexoHombre": "Home",
+    "sexoMujer": "Dona",
+    "sexoNoDice": "No especificat"
   },
   "buscar": {
     "title": "Troba'm habitació",
@@ -426,7 +450,11 @@
     "immediateEntry": "Entrada immediata",
     "accompanied": "Ve acompanyat",
     "nonSmoker2": "No fumador",
-    "withPets2": "Amb mascotes"
+    "withPets2": "Amb mascotes",
+    "sexoLabel": "Sexe",
+    "sexoHombre": "Home",
+    "sexoMujer": "Dona",
+    "sexoNoDice": "Prefereixo no dir-ho"
   },
   "common": {
     "loading": "Carregant...",

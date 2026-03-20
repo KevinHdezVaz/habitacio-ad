@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { publicarPerfilInquilino } from '@/app/actions/perfiles-inquilino'
 import Avatar from '@/components/ui/Avatar'
-import type { TipoBusqueda, SituacionLaboral } from '@/types'
+import type { TipoBusqueda, SituacionLaboral, SexoPerfil } from '@/types'
 
 const PARROQUIAS = [
   'Andorra la Vella', 'Escaldes-Engordany', 'Encamp',
@@ -22,6 +22,7 @@ type FormState = {
   fecha_salida: string
   nombre: string
   edad: string
+  sexo: SexoPerfil | null
   situacion: SituacionLaboral | ''
   sector: string
   fumador: boolean
@@ -33,7 +34,7 @@ type FormState = {
 const INITIAL: FormState = {
   tipo_busqueda: null, parroquias: [], presupuesto_max: 700,
   fecha_entrada: '', fecha_salida: '', nombre: '', edad: '',
-  situacion: '', sector: '', fumador: false, mascotas: false,
+  sexo: null, situacion: '', sector: '', fumador: false, mascotas: false,
   acompanado: false, descripcion: '',
 }
 
@@ -257,6 +258,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
       fecha_salida:    data.fecha_salida || null,
       nombre:          data.nombre,
       edad:            parseInt(data.edad),
+      sexo:            data.sexo,
       situacion:       data.situacion as SituacionLaboral,
       sector:          data.sector,
       fumador:         data.fumador,
@@ -567,6 +569,33 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
                       max={99}
                       className="px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                     />
+                  </div>
+                </div>
+
+                {/* Sexo */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('sexoLabel')}</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { key: 'hombre',  icon: '👨', label: t('sexoHombre') },
+                      { key: 'mujer',   icon: '👩', label: t('sexoMujer') },
+                      { key: 'no_dice', icon: '🤐', label: t('sexoNoDice') },
+                    ] as const).map(({ key, icon, label }) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => set('sexo', key)}
+                        className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border-2 transition-all text-center
+                          ${data.sexo === key
+                            ? 'border-[#1a3c5e] bg-[#f0f4f8]'
+                            : 'border-gray-100 bg-[#f8fafc] hover:border-gray-200'}`}
+                      >
+                        <span className="text-xl">{icon}</span>
+                        <span className={`text-[11px] font-bold leading-tight ${data.sexo === key ? 'text-[#1a3c5e]' : 'text-[#374151]'}`}>
+                          {label}
+                        </span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 

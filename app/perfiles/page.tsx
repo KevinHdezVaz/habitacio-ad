@@ -1,18 +1,8 @@
+import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
-
-const labelTipo: Record<string, string> = {
-  anual:     'Todo el año',
-  temporero: 'Temporada',
-  ambos:     'Flexible',
-}
-const labelSituacion: Record<string, string> = {
-  trabajador: 'Trabajador/a',
-  estudiante: 'Estudiante',
-  temporero:  'Temporero/a',
-}
 
 export default async function PerfilesPage({
   searchParams,
@@ -21,6 +11,18 @@ export default async function PerfilesPage({
 }) {
   const { tipo = 'todos', q = '' } = await searchParams
   const supabase = await createClient()
+  const t = await getTranslations('profiles')
+
+  const labelTipo: Record<string, string> = {
+    anual:     t('labelAnual'),
+    temporero: t('labelTemporero'),
+    ambos:     t('labelAmbos'),
+  }
+  const labelSituacion: Record<string, string> = {
+    trabajador: t('labelTrabajador'),
+    estudiante: t('labelEstudiante'),
+    temporero:  t('labelTemporeroSit'),
+  }
 
   const ahora = new Date().toISOString()
 
@@ -37,7 +39,7 @@ export default async function PerfilesPage({
   }
 
   if (q) {
-    query = query.or(`nombre.ilike.%${q}%,descripcion.ilike.%${q}%,sector.ilike.%${q}%`)
+    query = query.or(`sector.ilike.%${q}%,parroquias.cs.{${q}}`)
   }
 
   const { data: perfiles } = await query
@@ -56,10 +58,10 @@ export default async function PerfilesPage({
   }
 
   const tabs = [
-    { key: 'todos',     label: 'Todos' },
-    { key: 'anual',     label: 'Todo el año' },
-    { key: 'temporero', label: 'Temporada' },
-    { key: 'ambos',     label: 'Flexible' },
+    { key: 'todos',     label: t('all') },
+    { key: 'anual',     label: t('annual') },
+    { key: 'temporero', label: t('seasonal') },
+    { key: 'ambos',     label: t('both') },
   ]
 
   return (
@@ -67,16 +69,16 @@ export default async function PerfilesPage({
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">Personas buscando habitación</h1>
+          <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
           <p className="text-[#6b7280] text-sm mt-1">
-            Encuentra inquilinos que buscan habitación en Andorra.
+            {t('subtitle')}
           </p>
         </div>
         <Link
           href="/buscar-habitacion"
           className="px-4 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors whitespace-nowrap"
         >
-          + Publicar mi perfil
+          {t('publishProfile')}
         </Link>
       </div>
 
@@ -102,7 +104,7 @@ export default async function PerfilesPage({
           <input
             name="q"
             defaultValue={q}
-            placeholder="Buscar por nombre o sector…"
+            placeholder={t('searchPlaceholder')}
             className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0ea5a0]"
           />
           <input type="hidden" name="tipo" value={tipo} />
@@ -114,33 +116,37 @@ export default async function PerfilesPage({
         <div className="text-center py-16 flex flex-col items-center gap-4">
           <span className="text-5xl">👤</span>
           <div>
-            <p className="text-[#6b7280] font-medium">No hay perfiles publicados aún</p>
-            <p className="text-xs text-[#9ca3af] mt-1">¡Sé el primero en publicar tu perfil!</p>
+            <p className="text-[#6b7280] font-medium">{t('noResults')}</p>
+            <p className="text-xs text-[#9ca3af] mt-1">{t('beFirst')}</p>
           </div>
           <Link
             href="/buscar-habitacion"
             className="px-5 py-2.5 rounded-xl bg-[#1a3c5e] text-white text-sm font-semibold hover:bg-[#0ea5a0] transition-colors"
           >
-            Publicar mi perfil
+            {t('publishProfileEmpty')}
           </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {(perfiles as PerfilInquilino[]).map((perfil) => {
-            const miembro = new Date(perfil.created_at).toLocaleDateString('es-ES', {
-              day: 'numeric', month: 'short',
-            })
-
             const tags = [
               labelTipo[perfil.tipo_busqueda],
               perfil.situacion ? labelSituacion[perfil.situacion] : null,
-              `Hasta ${perfil.presupuesto_max}€`,
+              t('hastaPresupuesto', { n: perfil.presupuesto_max }),
+            ].filter(Boolean)
+
+            const infoLine = [
+              perfil.edad ? `${perfil.edad} ${t('anosLabel')}` : null,
+              perfil.sector || null,
+              perfil.parroquias?.length > 0
+                ? perfil.parroquias.slice(0, 2).join(', ') + (perfil.parroquias.length > 2 ? '…' : '')
+                : null,
             ].filter(Boolean)
 
             const extras = [
-              perfil.fumador ? 'Fumador' : 'No fumador',
-              perfil.mascotas ? 'Con mascotas' : null,
-              perfil.acompanado ? 'Acompañado' : null,
+              perfil.fumador ? t('smoker') : t('nonSmoker'),
+              perfil.mascotas ? t('withPets') : null,
+              perfil.acompanado ? t('accompanied') : null,
             ].filter(Boolean)
 
             return (
@@ -160,13 +166,9 @@ export default async function PerfilesPage({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-[#1a3c5e] group-hover:text-[#0ea5a0] transition-colors">
-                        {perfil.nombre}
-                        {perfil.edad ? `, ${perfil.edad}` : ''}
-                      </p>
-                      {perfil.parroquias?.length > 0 && (
-                        <p className="text-xs text-[#6b7280] mt-0.5">
-                          {perfil.parroquias.slice(0, 2).join(', ')}{perfil.parroquias.length > 2 ? '…' : ''}
+                      {infoLine.length > 0 && (
+                        <p className="font-bold text-[#1a3c5e] group-hover:text-[#0ea5a0] transition-colors text-sm">
+                          {infoLine.join(' · ')}
                         </p>
                       )}
                     </div>
@@ -181,14 +183,8 @@ export default async function PerfilesPage({
                     ))}
                   </div>
 
-                  {perfil.descripcion && (
-                    <p className="text-xs text-[#6b7280] mt-2 line-clamp-2 leading-relaxed">
-                      {perfil.descripcion}
-                    </p>
-                  )}
-
                   <p className="text-[10px] text-[#9ca3af] mt-2">
-                    {extras.filter(Boolean).join(' · ')} · {miembro}
+                    {extras.filter(Boolean).join(' · ')}
                   </p>
                 </div>
               </Link>

@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
+import { setLocale } from '@/app/actions/locale'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import type { User } from '@supabase/supabase-js'
 
@@ -40,7 +42,16 @@ export default function Navbar({
   userName?: string | null
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isPendingLang, startLangTransition] = useTransition()
+  const router = useRouter()
   const t = useTranslations('nav')
+
+  function handleLang(l: string) {
+    startLangTransition(async () => {
+      await setLocale(l)
+      router.refresh()
+    })
+  }
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -104,14 +115,31 @@ export default function Navbar({
           <LanguageSwitcher currentLocale={locale} />
         </nav>
 
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden text-[#1a3c5e] text-2xl"
-          aria-label="Menú"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? '✕' : '☰'}
-        </button>
+        {/* Mobile: language pills + hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          <div className={`flex items-center gap-0.5 transition-opacity ${isPendingLang ? 'opacity-50' : ''}`}>
+            {(['es', 'ca'] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => handleLang(l)}
+                className={`text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors ${
+                  locale === l
+                    ? 'bg-[#1a3c5e] text-white'
+                    : 'text-[#6b7280]'
+                }`}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          <button
+            className="text-[#1a3c5e] text-2xl"
+            aria-label="Menú"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

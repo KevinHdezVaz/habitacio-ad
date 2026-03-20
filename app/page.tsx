@@ -61,7 +61,7 @@ export default async function Home() {
         </svg>
       ),
       titulo: t('verPerfiles'),
-      subtitulo: "Accede a perfiles que ya buscan una habitación como la tuya",
+      subtitulo: t('verPerfilesSub'),
       href: '/perfiles',
       color: '#1a3c5e',
       bg: '#e8edf2',
@@ -95,10 +95,10 @@ export default async function Home() {
             {t('heroTitle')}{' '}
             <span className="text-[#0ea5a0]">{t('andorra')},</span>
             <br />
-            sin perder tiempo
+            {t('heroSubtitleShort')}
           </h1>
           <p className="text-[#4b5563] mt-2 text-sm leading-relaxed">
-            Anuncios claros, perfiles reales y opciones para todo el año o temporada
+            {t('heroDesc')}
           </p>
 
           {/* Buscador rápido */}
@@ -113,7 +113,7 @@ export default async function Home() {
                 name="parroquia"
                 className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
               >
-                <option value="">Zona</option>
+                <option value="">{t('heroZona')}</option>
                 <option value="Andorra la Vella">Andorra la Vella</option>
                 <option value="Escaldes-Engordany">Escaldes-Engordany</option>
                 <option value="Encamp">Encamp</option>
@@ -127,11 +127,11 @@ export default async function Home() {
                 name="precio_max"
                 className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
               >
-                <option value="">Presupuesto</option>
-                <option value="400">Hasta 400 €</option>
-                <option value="600">Hasta 600 €</option>
-                <option value="800">Hasta 800 €</option>
-                <option value="1200">Hasta 1.200 €</option>
+                <option value="">{t('heroPresupuesto')}</option>
+                <option value="400">{t('heroHasta', { n: '400' })}</option>
+                <option value="600">{t('heroHasta', { n: '600' })}</option>
+                <option value="800">{t('heroHasta', { n: '800' })}</option>
+                <option value="1200">{t('heroHasta', { n: '1.200' })}</option>
               </select>
             </div>
 
@@ -141,9 +141,9 @@ export default async function Home() {
                 name="tipo_estancia"
                 className="flex-1 text-sm text-[#1a3c5e] font-medium bg-[#f4f7fa] border-0 outline-none cursor-pointer rounded-xl px-3 py-2.5"
               >
-                <option value="">Tipo de estancia</option>
-                <option value="anual">Todo el año</option>
-                <option value="temporero">Temporada</option>
+                <option value="">{t('heroTipoEstancia')}</option>
+                <option value="anual">{t('tipoAnual')}</option>
+                <option value="temporero">{t('tipoTemporero')}</option>
               </select>
 
               <button
@@ -153,7 +153,7 @@ export default async function Home() {
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                   <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                 </svg>
-                Buscar
+                {t('heroBuscar')}
               </button>
             </div>
           </form>
@@ -161,14 +161,14 @@ export default async function Home() {
           {/* Stats bar */}
           <div className="mt-3 bg-[#1a3c5e]/90 backdrop-blur-sm rounded-xl px-4 py-2.5 flex items-center gap-4">
             <span className="text-xs font-semibold text-white">
-              +&nbsp;<span className="text-white font-bold">120</span> perfiles activos
+              +&nbsp;<span className="text-white font-bold">120</span> {t('statPerfilesActivos')}
             </span>
             <div className="w-px h-3.5 bg-white/20" />
             <span className="text-xs font-medium text-white flex items-center gap-1.5" id="stats-habitaciones">
               <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
-              Nuevas habitaciones cada semana
+              {t('statNuevasHabitaciones')}
             </span>
           </div>
         </div>
@@ -209,17 +209,17 @@ export default async function Home() {
         </div>
 
         {ultimasHabitaciones.length === 0 ? (
-          <p className="text-center text-[#9ca3af] text-sm py-8">Aún no hay habitaciones publicadas.</p>
+          <p className="text-center text-[#9ca3af] text-sm py-8">{t('noRoomsYet')}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {ultimasHabitaciones.map((hab) => {
               const imagen = hab.imagenes_anuncio?.[0]?.url ?? null
-              const tipoLabel = hab.tipo_estancia === 'anual' ? 'Todo el año' : hab.tipo_estancia === 'temporero' ? 'Temporada' : 'Anual / Temporada'
+              const tipoLabel = hab.tipo_estancia === 'anual' ? t('tipoAnual') : hab.tipo_estancia === 'temporero' ? t('tipoTemporero') : t('tipoAmbos')
               const disponibleLabel = hab.disponible_desde
                 ? new Date(hab.disponible_desde) <= new Date()
-                  ? 'Disponible ahora'
-                  : `Disponible: ${new Date(hab.disponible_desde).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}`
-                : 'Disponible ahora'
+                  ? t('disponibleAhora')
+                  : t('disponibleDesde', { fecha: new Date(hab.disponible_desde).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) })
+                : t('disponibleAhora')
 
               return (
                 <a
@@ -243,7 +243,7 @@ export default async function Home() {
                     </div>
                     {hab.destacado && (
                       <div className="absolute top-2 right-2 bg-[#f59e0b] rounded-full px-2 py-0.5 text-[10px] font-bold text-white shadow">
-                        Destacado
+                        {t('destacado')}
                       </div>
                     )}
                   </div>
@@ -255,7 +255,7 @@ export default async function Home() {
                     <p className="text-[11px] text-[#6b7280] truncate">{tipoLabel} →</p>
                     <p className="text-[11px] text-[#6b7280] truncate">{disponibleLabel}</p>
                     <p className="text-[11px] text-[#6b7280] truncate">
-                      {hab.gastos_incluidos ? 'Gastos incluidos' : 'Gastos no incluidos'} →
+                      {hab.gastos_incluidos ? t('gastosIncluidos') : t('gastosNoIncluidos')} →
                     </p>
                   </div>
                 </a>

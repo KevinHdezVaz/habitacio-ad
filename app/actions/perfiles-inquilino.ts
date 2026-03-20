@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import type { TipoBusqueda, SituacionLaboral } from '@/types'
+import type { TipoBusqueda, SituacionLaboral, SexoPerfil } from '@/types'
 
 export type DatosPerfilInquilino = {
   tipo_busqueda: TipoBusqueda
@@ -12,6 +12,7 @@ export type DatosPerfilInquilino = {
   fecha_salida: string | null
   nombre: string
   edad: number
+  sexo: SexoPerfil | null
   situacion: SituacionLaboral
   sector: string
   fumador: boolean
