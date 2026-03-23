@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Input from '@/components/ui/Input'
 import MapaPicker from '@/components/maps/MapaPicker'
 import { createClient } from '@/lib/supabase-browser'
@@ -15,6 +16,7 @@ const PARROQUIAS = [
 function Seccion({ num, title, subtitle, children }: {
   num: number; icon?: string; title: string; subtitle?: string; children: React.ReactNode
 }) {
+  const t = useTranslations('editarAnuncio')
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#f8fafc] to-white">
@@ -22,7 +24,7 @@ function Seccion({ num, title, subtitle, children }: {
           {num}
         </div>
         <div className="flex-1 min-w-0">
-          <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">Paso {num}</span>
+          <span className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-widest">{t('paso')} {num}</span>
           <h2 className="font-bold text-[#1a3c5e] text-base leading-tight">{title}</h2>
           {subtitle && <p className="text-xs text-[#6b7280] mt-0.5">{subtitle}</p>}
         </div>
@@ -89,7 +91,6 @@ interface Props {
     normas: string | null
     latitud: number | null
     longitud: number | null
-    // Nuevos campos
     estancia_minima: number | null
     estancia_maxima: number | null
     amueblada: boolean | null
@@ -109,6 +110,7 @@ interface Props {
 
 export default function FormularioEditar({ anuncio }: Props) {
   const router = useRouter()
+  const t = useTranslations('editarAnuncio')
   const fileRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -149,7 +151,6 @@ export default function FormularioEditar({ anuncio }: Props) {
     idioma_vivienda:   anuncio.idioma_vivienda   ?? 'Español',
     descripcion:       anuncio.descripcion       ?? '',
     normas:            anuncio.normas            ?? '',
-    // Nuevos campos
     estancia_minima:   anuncio.estancia_minima   ? String(anuncio.estancia_minima)   : '',
     estancia_maxima:   anuncio.estancia_maxima   ? String(anuncio.estancia_maxima)   : '',
     amueblada:         anuncio.amueblada         ?? false,
@@ -190,7 +191,7 @@ export default function FormularioEditar({ anuncio }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.titulo || !form.parroquia || !form.precio) {
-      setError('Título, parroquia y precio son obligatorios.')
+      setError(t('requiredError'))
       return
     }
     setLoading(true)
@@ -201,7 +202,6 @@ export default function FormularioEditar({ anuncio }: Props) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
 
-      // Subir nuevas fotos
       const nuevasUrls: string[] = []
       for (const { file } of nuevasPreviews) {
         const ext = file.name.split('.').pop()
@@ -243,7 +243,6 @@ export default function FormularioEditar({ anuncio }: Props) {
         normas:            form.normas            || null,
         latitud:           coords.lat,
         longitud:          coords.lng,
-        // Nuevos campos
         estancia_minima:   form.estancia_minima   ? Number(form.estancia_minima)   : null,
         estancia_maxima:   form.estancia_maxima   ? Number(form.estancia_maxima)   : null,
         amueblada:         form.amueblada,
@@ -292,7 +291,7 @@ export default function FormularioEditar({ anuncio }: Props) {
       setLoading(false)
       setTimeout(() => router.push(`/habitaciones/${anuncio.id}`), 1500)
     } catch {
-      setError('Error inesperado. Inténtalo de nuevo.')
+      setError(t('unexpectedError'))
       setLoading(false)
     }
   }
@@ -312,8 +311,8 @@ export default function FormularioEditar({ anuncio }: Props) {
             ←
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a3c5e]">Editar anuncio</h1>
-            <p className="text-sm text-[#6b7280]">Los cambios se guardan de inmediato · Sin revisión adicional</p>
+            <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('title')}</h1>
+            <p className="text-sm text-[#6b7280]">{t('subtitle')}</p>
           </div>
         </div>
 
@@ -322,24 +321,24 @@ export default function FormularioEditar({ anuncio }: Props) {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-emerald-600 flex-shrink-0">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            <p className="text-sm font-semibold text-emerald-700">¡Cambios guardados! Redirigiendo…</p>
+            <p className="text-sm font-semibold text-emerald-700">{t('saved')}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
           {/* ── 1. Información básica ── */}
-          <Seccion num={1} title="Información básica" subtitle="Título, precio y ubicación">
+          <Seccion num={1} title={t('sec1Title')} subtitle={t('sec1Sub')}>
             <Input
-              label="Título del anuncio *"
-              placeholder="Ej: Habitación luminosa con balcón en el centro"
+              label={t('titleLabel')}
+              placeholder={t('titlePlaceholder')}
               value={form.titulo}
               onChange={(e) => set('titulo', e.target.value)}
               required
             />
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Precio mensual *</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('priceLabel')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -353,7 +352,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Parroquia *</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('parishLabel')}</label>
                 <select
                   value={form.parroquia}
                   onChange={(e) => set('parroquia', e.target.value)}
@@ -367,13 +366,13 @@ export default function FormularioEditar({ anuncio }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Zona / referencia"
-                placeholder="Ej: Cerca del centro comercial"
+                label={t('zoneLabel')}
+                placeholder={t('zonePlaceholder')}
                 value={form.zona}
                 onChange={(e) => set('zona', e.target.value)}
               />
               <Input
-                label="Disponible desde"
+                label={t('availableFrom')}
                 type="date"
                 value={form.disponible_desde}
                 onChange={(e) => set('disponible_desde', e.target.value)}
@@ -381,12 +380,12 @@ export default function FormularioEditar({ anuncio }: Props) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de estancia</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('stayType')}</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { label: 'Todo el año', sub: 'Residencia habitual', v: 'anual' },
-                  { label: 'Temporero',   sub: 'Esquí, verano…',      v: 'temporero' },
-                  { label: 'Me adapto',   sub: 'Flexible',            v: 'ambos' },
+                  { label: t('stayAnnual'),   sub: t('stayAnnualSub'),   v: 'anual' },
+                  { label: t('staySeasonal'),  sub: t('staySeasonalSub'), v: 'temporero' },
+                  { label: t('stayFlexible'),  sub: t('stayFlexibleSub'), v: 'ambos' },
                 ].map(({ label, sub, v }) => (
                   <button
                     type="button"
@@ -404,10 +403,10 @@ export default function FormularioEditar({ anuncio }: Props) {
           </Seccion>
 
           {/* ── 2. La habitación ── */}
-          <Seccion num={2} title="La habitación" subtitle="Características y equipamiento">
+          <Seccion num={2} title={t('sec2Title')} subtitle={t('sec2Sub')}>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Superficie (m²)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('surface')}</label>
                 <input
                   type="number"
                   placeholder="12"
@@ -417,22 +416,22 @@ export default function FormularioEditar({ anuncio }: Props) {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Tipo de cama</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('bedType')}</label>
                 <select
                   value={form.tipo_cama}
                   onChange={(e) => set('tipo_cama', e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                 >
-                  <option value="">Selecciona…</option>
-                  <option value="Individual">Individual</option>
-                  <option value="Doble">Doble</option>
+                  <option value="">{t('bedSelect')}</option>
+                  <option value="Individual">{t('bedSingle')}</option>
+                  <option value="Doble">{t('bedDouble')}</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia mínima (meses)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('minStay')}</label>
                 <input
                   type="number"
                   placeholder="1"
@@ -443,7 +442,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Estancia máxima (meses)</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('maxStay')}</label>
                 <input
                   type="number"
                   placeholder="12"
@@ -456,20 +455,20 @@ export default function FormularioEditar({ anuncio }: Props) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.amueblada}      onToggle={() => toggle('amueblada')}      label="Amueblada" />
-              <Toggle checked={form.exterior}       onToggle={() => toggle('exterior')}       label="Habitación exterior" />
-              <Toggle checked={form.armario}        onToggle={() => toggle('armario')}        label="Armario" />
-              <Toggle checked={form.escritorio}     onToggle={() => toggle('escritorio')}     label="Escritorio" />
-              <Toggle checked={form.balcon_ventana} onToggle={() => toggle('balcon_ventana')} label="Balcón o ventana" />
-              <Toggle checked={form.bano_privado}   onToggle={() => toggle('bano_privado')}   label="Baño privado" />
+              <Toggle checked={form.amueblada}      onToggle={() => toggle('amueblada')}      label={t('furnished')} />
+              <Toggle checked={form.exterior}       onToggle={() => toggle('exterior')}       label={t('exterior')} />
+              <Toggle checked={form.armario}        onToggle={() => toggle('armario')}        label={t('wardrobe')} />
+              <Toggle checked={form.escritorio}     onToggle={() => toggle('escritorio')}     label={t('desk')} />
+              <Toggle checked={form.balcon_ventana} onToggle={() => toggle('balcon_ventana')} label={t('balcony')} />
+              <Toggle checked={form.bano_privado}   onToggle={() => toggle('bano_privado')}   label={t('privateBath')} />
             </div>
           </Seccion>
 
           {/* ── 3. La vivienda ── */}
-          <Seccion num={3} title="La vivienda" subtitle="Detalles del piso">
+          <Seccion num={3} title={t('sec3Title')} subtitle={t('sec3Sub')}>
             <div className="grid grid-cols-3 gap-3">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Habitaciones</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('rooms')}</label>
                 <input
                   type="number"
                   placeholder="3"
@@ -480,7 +479,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Baños</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('baths')}</label>
                 <input
                   type="number"
                   placeholder="1"
@@ -491,7 +490,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#1a3c5e] ml-1">Convivientes</label>
+                <label className="text-xs font-bold text-[#1a3c5e] ml-1">{t('cohabitants')}</label>
                 <input
                   type="number"
                   placeholder="3"
@@ -504,43 +503,43 @@ export default function FormularioEditar({ anuncio }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Calefacción</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('heating')}</label>
               <select
                 value={form.calefaccion}
                 onChange={(e) => set('calefaccion', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               >
-                <option value="no">No incluida</option>
-                <option value="si">Sí, hay calefacción</option>
-                <option value="incluida">Incluida en el precio</option>
+                <option value="no">{t('heatingNo')}</option>
+                <option value="si">{t('heatingYes')}</option>
+                <option value="incluida">{t('heatingIncluded')}</option>
               </select>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.ascensor}         onToggle={() => toggle('ascensor')}         label="Ascensor" />
-              <Toggle checked={form.parking}          onToggle={() => toggle('parking')}          label="Parking" />
-              <Toggle checked={form.terraza}          onToggle={() => toggle('terraza')}          label="Terraza" />
-              <Toggle checked={form.vive_propietario} onToggle={() => toggle('vive_propietario')} label="Propietario en la vivienda" />
+              <Toggle checked={form.ascensor}         onToggle={() => toggle('ascensor')}         label={t('elevator')} />
+              <Toggle checked={form.parking}          onToggle={() => toggle('parking')}          label={t('parking')} />
+              <Toggle checked={form.terraza}          onToggle={() => toggle('terraza')}          label={t('terrace')} />
+              <Toggle checked={form.vive_propietario} onToggle={() => toggle('vive_propietario')} label={t('ownerLives')} />
             </div>
           </Seccion>
 
           {/* ── 4. Condiciones ── */}
-          <Seccion num={4} title="Condiciones" subtitle="Qué incluye y qué se permite">
+          <Seccion num={4} title={t('sec4Title')} subtitle={t('sec4Sub')}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label="Requiere fianza" />
-              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label="Gastos incluidos" />
-              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label="WiFi incluido" />
-              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label="Se aceptan parejas" />
-              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label="Se aceptan mascotas" />
-              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label="Se permite fumar" />
-              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label="Posibilidad de empadronamiento" />
+              <Toggle checked={form.fianza}           onToggle={() => toggle('fianza')}           label={t('deposit')} />
+              <Toggle checked={form.gastos_incluidos} onToggle={() => toggle('gastos_incluidos')} label={t('expensesIncluded')} />
+              <Toggle checked={form.wifi}             onToggle={() => toggle('wifi')}             label={t('wifi')} />
+              <Toggle checked={form.admite_pareja}    onToggle={() => toggle('admite_pareja')}    label={t('couples')} />
+              <Toggle checked={form.admite_mascotas}  onToggle={() => toggle('admite_mascotas')}  label={t('pets')} />
+              <Toggle checked={form.fumadores}        onToggle={() => toggle('fumadores')}        label={t('smoking')} />
+              <Toggle checked={form.empadronamiento}  onToggle={() => toggle('empadronamiento')}  label={t('empadronamiento')} />
             </div>
 
             {form.fianza && (
               <Input
-                label="Importe de la fianza (€)"
+                label={t('depositAmount')}
                 type="number"
-                placeholder="Ej: 600"
+                placeholder="600"
                 value={form.importe_fianza}
                 onChange={(e) => set('importe_fianza', e.target.value)}
               />
@@ -548,27 +547,27 @@ export default function FormularioEditar({ anuncio }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Duración mínima"
-                placeholder="Ej: 3 meses"
+                label={t('minDuration')}
+                placeholder={t('minDurationPlaceholder')}
                 value={form.duracion_minima}
                 onChange={(e) => set('duracion_minima', e.target.value)}
               />
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-[#1a3c5e] ml-1">Perfil preferido</label>
+                <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('preferredProfile')}</label>
                 <select
                   value={form.preferencia_sexo}
                   onChange={(e) => set('preferencia_sexo', e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none focus:border-[#1a3c5e] focus:bg-white transition-all"
                 >
-                  <option value="indiferente">Indiferente</option>
-                  <option value="chicas">Solo chicas</option>
-                  <option value="chicos">Solo chicos</option>
+                  <option value="indiferente">{t('profileAny')}</option>
+                  <option value="chicas">{t('profileGirls')}</option>
+                  <option value="chicos">{t('profileBoys')}</option>
                 </select>
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Idiomas en la vivienda</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('language')}</label>
               <select
                 value={form.idioma_vivienda}
                 onChange={(e) => set('idioma_vivienda', e.target.value)}
@@ -582,7 +581,7 @@ export default function FormularioEditar({ anuncio }: Props) {
           </Seccion>
 
           {/* ── 5. Ubicación ── */}
-          <Seccion num={5} title="Ubicación en el mapa" subtitle="Opcional · Solo se muestra el pin, no la dirección exacta">
+          <Seccion num={5} title={t('sec5Title')} subtitle={t('sec5Sub')}>
             <MapaPicker
               lat={coords.lat}
               lng={coords.lng}
@@ -591,31 +590,31 @@ export default function FormularioEditar({ anuncio }: Props) {
           </Seccion>
 
           {/* ── 6. Descripción ── */}
-          <Seccion num={6} title="Descripción y normas" subtitle="Cuéntanos más sobre la habitación">
+          <Seccion num={6} title={t('sec6Title')} subtitle={t('sec6Sub')}>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Descripción</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('description')}</label>
               <textarea
                 value={form.descripcion}
                 onChange={(e) => set('descripcion', e.target.value)}
                 rows={5}
-                placeholder="Cuéntanos sobre la habitación, el piso, la zona…"
+                placeholder={t('descPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold text-[#1a3c5e] ml-1">Normas de convivencia</label>
+              <label className="text-sm font-bold text-[#1a3c5e] ml-1">{t('rules')}</label>
               <textarea
                 value={form.normas}
                 onChange={(e) => set('normas', e.target.value)}
                 rows={3}
-                placeholder="Horarios, limpieza, visitas, ruido…"
+                placeholder={t('rulesPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-transparent bg-[#f4f5f7] text-sm outline-none resize-none focus:border-[#1a3c5e] focus:bg-white transition-all"
               />
             </div>
           </Seccion>
 
           {/* ── 7. Fotos ── */}
-          <Seccion num={7} title="Fotos de la habitación" subtitle={`${totalFotos}/8 fotos · La primera es la portada`}>
+          <Seccion num={7} title={t('sec7Title')} subtitle={t('sec7Sub', { n: totalFotos })}>
             <input
               ref={fileRef}
               type="file"
@@ -635,7 +634,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                     <img src={img.url} alt="" className="w-full h-full object-cover" />
                     {i === 0 && nuevasPreviews.length === 0 && (
                       <div className="absolute bottom-0 inset-x-0 bg-[#0ea5a0]/90 text-white text-[9px] font-bold text-center py-1 uppercase tracking-wide">
-                        Portada
+                        {t('cover')}
                       </div>
                     )}
                     <button
@@ -653,7 +652,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                   >
                     <img src={preview} alt="" className="w-full h-full object-cover" />
                     <div className="absolute top-1.5 left-1.5 bg-[#0ea5a0] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase">
-                      Nueva
+                      {t('newPhoto')}
                     </div>
                     <button
                       type="button"
@@ -672,7 +671,7 @@ export default function FormularioEditar({ anuncio }: Props) {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" className="w-5 h-5 text-[#9ca3af] group-hover:text-[#0ea5a0] transition-colors">
                       <path d="M12 4v16m8-8H4"/>
                     </svg>
-                    <span className="text-[10px] text-[#9ca3af]">Añadir</span>
+                    <span className="text-[10px] text-[#9ca3af]">{t('addPhoto')}</span>
                   </button>
                 )}
               </div>
@@ -688,8 +687,8 @@ export default function FormularioEditar({ anuncio }: Props) {
                   </svg>
                 </div>
                 <div className="text-center">
-                  <p className="font-bold text-[#1a3c5e] text-sm">Arrastra fotos aquí o toca para seleccionar</p>
-                  <p className="text-xs text-[#9ca3af] mt-1">JPG, PNG · Hasta 8 fotos</p>
+                  <p className="font-bold text-[#1a3c5e] text-sm">{t('dragPhotos')}</p>
+                  <p className="text-xs text-[#9ca3af] mt-1">{t('photoFormats')}</p>
                 </div>
               </div>
             )}
@@ -708,10 +707,8 @@ export default function FormularioEditar({ anuncio }: Props) {
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[#1a3c5e]">¿Todo listo?</p>
-                <p className="text-xs text-[#6b7280] mt-0.5">
-                  Los cambios se aplicarán de inmediato en tu anuncio publicado.
-                </p>
+                <p className="font-bold text-[#1a3c5e]">{t('readyTitle')}</p>
+                <p className="text-xs text-[#6b7280] mt-0.5">{t('readyDesc')}</p>
               </div>
               <button
                 type="submit"
@@ -724,10 +721,10 @@ export default function FormularioEditar({ anuncio }: Props) {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"/>
                     </svg>
-                    Guardando…
+                    {t('saving')}
                   </>
                 ) : (
-                  'Guardar cambios'
+                  t('save')
                 )}
               </button>
             </div>
