@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import AdminAnuncioRow from '../components/AdminAnuncioRow'
+import { getTranslations } from 'next-intl/server'
 
 type FiltroEstado = 'todos' | 'pendiente' | 'activo' | 'inactivo'
 
@@ -10,6 +11,7 @@ export default async function AdminAnunciosPage({
 }) {
   const { estado = 'todos', q = '' } = await searchParams
   const supabase = await createClient()
+  const t = await getTranslations('admin')
 
   let query = supabase
     .from('anuncios')
@@ -28,22 +30,21 @@ export default async function AdminAnunciosPage({
   const { data: anuncios } = await query
 
   const tabs: { key: FiltroEstado; label: string }[] = [
-    { key: 'todos', label: 'Todos' },
-    { key: 'pendiente', label: 'Pendientes' },
-    { key: 'activo', label: 'Activos' },
-    { key: 'inactivo', label: 'Inactivos' },
+    { key: 'todos',    label: t('tabAll') },
+    { key: 'pendiente', label: t('tabPending') },
+    { key: 'activo',   label: t('tabActive') },
+    { key: 'inactivo', label: t('tabInactive') },
   ]
 
   return (
     <div className="flex flex-col gap-6 max-w-5xl">
       <div>
-        <h1 className="text-2xl font-bold text-[#1a3c5e]">Anuncios</h1>
-        <p className="text-[#6b7280] text-sm mt-0.5">Gestiona todos los anuncios de la plataforma.</p>
+        <h1 className="text-2xl font-bold text-[#1a3c5e]">{t('adsTitle')}</h1>
+        <p className="text-[#6b7280] text-sm mt-0.5">{t('adsDesc')}</p>
       </div>
 
       {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-3">
-        {/* Tabs estado */}
         <div className="flex gap-1 bg-white border border-gray-100 rounded-xl p-1 w-fit">
           {tabs.map((tab) => (
             <a
@@ -60,12 +61,11 @@ export default async function AdminAnunciosPage({
           ))}
         </div>
 
-        {/* Búsqueda */}
         <form className="flex-1 sm:max-w-xs">
           <input
             name="q"
             defaultValue={q}
-            placeholder="Buscar por título…"
+            placeholder={t('searchByTitle')}
             className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0ea5a0]"
           />
           <input type="hidden" name="estado" value={estado} />
@@ -77,16 +77,16 @@ export default async function AdminAnunciosPage({
         {!anuncios || anuncios.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <div className="text-4xl mb-3">🔍</div>
-            <p className="text-[#6b7280] font-medium">No hay anuncios</p>
+            <p className="text-[#6b7280] font-medium">{t('noAds')}</p>
             <p className="text-xs text-[#9ca3af] mt-1">
-              {estado !== 'todos' ? `No hay anuncios en estado "${estado}".` : 'Aún no hay ningún anuncio publicado.'}
+              {estado !== 'todos' ? t('noAdsFiltered', { estado }) : t('noAdsAll')}
             </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
             <div className="px-6 py-3 bg-gray-50 grid grid-cols-[1fr_auto] text-xs font-semibold text-[#6b7280] uppercase tracking-wide">
-              <span>Anuncio</span>
-              <span>Acciones</span>
+              <span>{t('adColumnHeader')}</span>
+              <span>{t('actionsColumnHeader')}</span>
             </div>
             {anuncios.map((anuncio) => (
               <AdminAnuncioRow key={anuncio.id} anuncio={anuncio as never} />

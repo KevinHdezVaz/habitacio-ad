@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import CambiarTipoUsuario from './CambiarTipoUsuario'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 export default async function AdminUsuariosPage({
   searchParams,
@@ -8,6 +9,8 @@ export default async function AdminUsuariosPage({
 }) {
   const { q = '', tipo = 'todos' } = await searchParams
   const supabase = await createClient()
+  const t = await getTranslations('admin')
+  const locale = await getLocale()
 
   let query = supabase
     .from('profiles')
@@ -24,17 +27,20 @@ export default async function AdminUsuariosPage({
   const { data: usuarios } = await query
 
   const tabs = [
-    { key: 'todos',     label: 'Todos' },
-    { key: 'inquilino', label: 'Inquilinos' },
-    { key: 'admin',     label: 'Admins' },
+    { key: 'todos',     label: t('tabAll') },
+    { key: 'inquilino', label: t('tabInquilinos') },
+    { key: 'admin',     label: t('tabAdmins') },
   ]
+
+  const n = usuarios?.length ?? 0
+  const dateLocale = locale === 'ca' ? 'ca-ES' : 'es-ES'
 
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-xl font-bold text-[#1a3c5e]">Usuarios</h1>
+        <h1 className="text-xl font-bold text-[#1a3c5e]">{t('usersTitle')}</h1>
         <p className="text-[#6b7280] text-sm mt-0.5">
-          {usuarios?.length ?? 0} usuario{(usuarios?.length ?? 0) !== 1 ? 's' : ''} registrado{(usuarios?.length ?? 0) !== 1 ? 's' : ''}
+          {n === 1 ? t('usersCount', { n }) : t('usersCountPlural', { n })}
         </p>
       </div>
 
@@ -60,7 +66,7 @@ export default async function AdminUsuariosPage({
           <input
             name="q"
             defaultValue={q}
-            placeholder="Buscar por nombre…"
+            placeholder={t('searchByName')}
             className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0ea5a0]"
           />
           <input type="hidden" name="tipo" value={tipo} />
@@ -72,12 +78,12 @@ export default async function AdminUsuariosPage({
         {!usuarios || usuarios.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <div className="text-4xl mb-3">👤</div>
-            <p className="text-[#6b7280] font-medium">No hay usuarios</p>
+            <p className="text-[#6b7280] font-medium">{t('noUsers')}</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
             {usuarios.map((u) => {
-              const fecha = new Date(u.created_at).toLocaleDateString('es-ES', {
+              const fecha = new Date(u.created_at).toLocaleDateString(dateLocale, {
                 day: '2-digit', month: 'short', year: 'numeric',
               })
               const iniciales = (u.nombre ?? '?')
@@ -85,20 +91,15 @@ export default async function AdminUsuariosPage({
 
               return (
                 <div key={u.id} className="px-4 py-3 flex items-center gap-3">
-                  {/* Avatar */}
                   <div className="w-9 h-9 rounded-full bg-[#1a3c5e] flex items-center justify-center text-white text-xs font-bold shrink-0 select-none">
                     {iniciales}
                   </div>
-
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-[#1a3c5e] text-sm truncate">{u.nombre ?? '—'}</p>
                     <p className="text-xs text-[#9ca3af]">
                       {u.telefono ? `${u.telefono} · ` : ''}{fecha}
                     </p>
                   </div>
-
-                  {/* Tipo + cambiar */}
                   <CambiarTipoUsuario userId={u.id} tipoActual={u.tipo} />
                 </div>
               )

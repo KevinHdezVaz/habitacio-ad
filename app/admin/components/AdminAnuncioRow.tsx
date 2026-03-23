@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Spinner from '@/components/ui/Spinner'
+import { useTranslations } from 'next-intl'
 import { aprobarAnuncio, rechazarAnuncio, destacarAnuncio } from '@/app/actions/admin'
 
 type AnuncioAdmin = {
@@ -16,6 +17,7 @@ type AnuncioAdmin = {
 }
 
 export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) {
+  const t = useTranslations('admin')
   const [estado, setEstado]       = useState(anuncio.estado)
   const [destacado, setDestacado] = useState(false)
   const [loading, setLoading]     = useState<string | null>(null)
@@ -64,11 +66,11 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
             {estado}
           </span>
           {destacado && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 uppercase">⭐ Destacado</span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 uppercase">⭐ {t('featured')}</span>
           )}
         </div>
         <p className="text-xs text-[#6b7280] mt-0.5">
-          {anuncio.profiles?.nombre ?? 'Desconocido'} · {anuncio.parroquia} · {anuncio.precio}€/mes · {fecha}
+          {anuncio.profiles?.nombre ?? t('unknown')} · {anuncio.parroquia} · {anuncio.precio}€/mes · {fecha}
         </p>
       </div>
 
@@ -77,11 +79,11 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
           <>
             <button onClick={handleAprobar} disabled={loading !== null}
               className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
-              {loading === 'aprobar' ? <Spinner size="xs" color="white" /> : '✓'} Aprobar
+              {loading === 'aprobar' ? <Spinner size="xs" color="white" /> : '✓'} {t('approve')}
             </button>
             <button onClick={handleRechazar} disabled={loading !== null}
               className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
-              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : '✕'} Rechazar
+              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : '✕'} {t('reject')}
             </button>
           </>
         )}
@@ -90,18 +92,18 @@ export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) 
             <button onClick={handleDestacar} disabled={loading !== null}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5 ${destacado ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
               {loading === 'destacar' ? <Spinner size="xs" color="blue" /> : (destacado ? '★' : '☆')}
-              {destacado ? 'Quitar' : 'Destacar'}
+              {destacado ? t('unfeatureBtn') : t('featureBtn')}
             </button>
             <button onClick={handleRechazar} disabled={loading !== null}
               className="px-3 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
-              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : null} Desactivar
+              {loading === 'rechazar' ? <Spinner size="xs" color="blue" /> : null} {t('deactivate')}
             </button>
           </>
         )}
         {estado === 'inactivo' && (
           <button onClick={handleAprobar} disabled={loading !== null}
             className="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center gap-1.5">
-            {loading === 'aprobar' ? <Spinner size="xs" color="teal" /> : null} Reactivar
+            {loading === 'aprobar' ? <Spinner size="xs" color="teal" /> : null} {t('reactivate')}
           </button>
         )}
       </div>

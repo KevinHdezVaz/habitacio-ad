@@ -2,13 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cambiarTipoUsuario } from '@/app/actions/admin'
-
-const labelTipo: Record<string, string> = {
-  inquilino:  'Inquilino',
-  arrendador: 'Propietario',
-  admin:      'Admin',
-}
 
 const badgeTipo: Record<string, string> = {
   arrendador: 'bg-blue-100 text-blue-700',
@@ -24,8 +19,15 @@ export default function CambiarTipoUsuario({
   tipoActual: string
 }) {
   const router                = useRouter()
+  const t                     = useTranslations('admin')
   const [tipo, setTipo]       = useState(tipoActual)
   const [loading, setLoading] = useState(false)
+
+  const labelTipo: Record<string, string> = {
+    inquilino:  t('typeInquilino'),
+    arrendador: t('typeArrendador'),
+    admin:      t('typeAdmin'),
+  }
 
   async function handleChange(nuevoTipo: string) {
     if (nuevoTipo === tipo) return
@@ -49,9 +51,9 @@ export default function CambiarTipoUsuario({
         disabled={loading}
         className="text-xs rounded-lg border border-gray-200 px-2 py-1.5 focus:outline-none focus:border-[#0ea5a0] bg-white text-[#374151] disabled:opacity-40 cursor-pointer"
       >
-        <option value="inquilino">Inquilino</option>
-        <option value="arrendador">Propietario</option>
-        <option value="admin">Admin</option>
+        <option value="inquilino">{t('typeInquilino')}</option>
+        <option value="arrendador">{t('typeArrendador')}</option>
+        <option value="admin">{t('typeAdmin')}</option>
       </select>
     </div>
   )
