@@ -1,17 +1,27 @@
 import type { Metadata } from 'next'
+import { getLocale } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'Contacto — Habitacio.ad',
   description: 'Contacta con el equipo de Habitacio.ad.',
 }
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const locale = await getLocale()
+  const ca = locale === 'ca'
+
   return (
     <div className="max-w-xl mx-auto py-10 flex flex-col gap-8">
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold text-[#1a3c5e]">Contacto</h1>
-        <p className="text-sm text-[#6b7280]">¿Tienes alguna duda, sugerencia o problema? Escríbenos y te responderemos lo antes posible.</p>
+        <h1 className="text-3xl font-bold text-[#1a3c5e]">
+          {ca ? 'Contacte' : 'Contacto'}
+        </h1>
+        <p className="text-sm text-[#6b7280]">
+          {ca
+            ? "Tens alguna pregunta, suggeriment o problema? Escriu-nos i et respondrem tan aviat com puguem."
+            : "¿Tienes alguna duda, sugerencia o problema? Escríbenos y te responderemos lo antes posible."}
+        </p>
       </div>
 
       {/* Canales directos */}
@@ -35,8 +45,12 @@ export default function ContactoPage() {
             </svg>
           </div>
           <div>
-            <p className="text-xs text-[#9ca3af] font-medium">Tiempo de respuesta</p>
-            <p className="text-sm font-semibold text-[#1a3c5e]">Menos de 24 horas</p>
+            <p className="text-xs text-[#9ca3af] font-medium">
+              {ca ? 'Temps de resposta' : 'Tiempo de respuesta'}
+            </p>
+            <p className="text-sm font-semibold text-[#1a3c5e]">
+              {ca ? 'Menys de 24 hores' : 'Menos de 24 horas'}
+            </p>
           </div>
         </div>
       </div>
@@ -49,9 +63,17 @@ export default function ContactoPage() {
           </svg>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#9ca3af]">Próximamente</span>
-          <p className="font-bold text-[#1a3c5e] text-lg">Formulario de contacto</p>
-          <p className="text-sm text-[#6b7280]">Estamos preparando el formulario. De momento puedes escribirnos directamente a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] font-semibold underline underline-offset-2">hola@habitacio.ad</a>.</p>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#9ca3af]">
+            {ca ? 'Properament' : 'Próximamente'}
+          </span>
+          <p className="font-bold text-[#1a3c5e] text-lg">
+            {ca ? 'Formulari de contacte' : 'Formulario de contacto'}
+          </p>
+          <p className="text-sm text-[#6b7280]">
+            {ca
+              ? <span>Estem preparant el formulari. De moment pots escriure&apos;ns directament a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] font-semibold underline underline-offset-2">hola@habitacio.ad</a>.</span>
+              : <span>Estamos preparando el formulario. De momento puedes escribirnos directamente a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] font-semibold underline underline-offset-2">hola@habitacio.ad</a>.</span>}
+          </p>
         </div>
       </div>
 
