@@ -15,7 +15,7 @@ export default async function AdminAnunciosPage({
 
   let query = supabase
     .from('anuncios')
-    .select('id, titulo, parroquia, precio, estado, created_at, profiles(nombre)')
+    .select('id, titulo, parroquia, precio, estado, destacado, created_at, profiles(nombre)')
     .order('created_at', { ascending: false })
     .limit(50)
 

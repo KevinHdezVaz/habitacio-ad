@@ -12,6 +12,7 @@ type AnuncioAdmin = {
   parroquia: string
   precio: number
   estado: string
+  destacado: boolean
   created_at: string
   profiles: { nombre: string } | null
 }
@@ -19,7 +20,7 @@ type AnuncioAdmin = {
 export default function AdminAnuncioRow({ anuncio }: { anuncio: AnuncioAdmin }) {
   const t = useTranslations('admin')
   const [estado, setEstado]       = useState(anuncio.estado)
-  const [destacado, setDestacado] = useState(false)
+  const [destacado, setDestacado] = useState(anuncio.destacado ?? false)
   const [loading, setLoading]     = useState<string | null>(null)
 
   const fecha = new Date(anuncio.created_at).toLocaleDateString('es-ES', {
