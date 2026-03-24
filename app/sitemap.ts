@@ -78,5 +78,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  return [...rutasEstaticas, ...fichasHabitacion]
+  const parroquiaSlugs = [
+    'andorra-la-vella',
+    'escaldes-engordany',
+    'encamp',
+    'la-massana',
+    'canillo',
+    'ordino',
+    'sant-julia-de-loria',
+  ]
+
+  const rutasParroquia: MetadataRoute.Sitemap = parroquiaSlugs.map((slug) => ({
+    url: `${BASE_URL}/habitaciones/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.85,
+  }))
+
+  return [...rutasEstaticas, ...rutasParroquia, ...fichasHabitacion]
 }

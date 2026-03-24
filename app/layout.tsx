@@ -50,6 +50,14 @@ export const metadata: Metadata = {
     description: 'Encuentra habitación en alquiler en Andorra. Pisos para todo el año o temporada de esquí.',
     images: ['/og-image.png'],
   },
+  alternates: {
+    canonical: 'https://habitacio.ad',
+    languages: {
+      'es': 'https://habitacio.ad',
+      'ca': 'https://habitacio.ad',
+      'x-default': 'https://habitacio.ad',
+    },
+  },
   robots: {
     index: true,
     follow: true,

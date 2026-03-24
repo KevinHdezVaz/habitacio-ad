@@ -1,8 +1,23 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Perfiles de inquilinos en Andorra',
+    description: 'Encuentra inquilinos que buscan habitación en Andorra. Residentes anuales y temporeros. Contacta directamente con perfiles verificados.',
+    alternates: {
+      canonical: 'https://habitacio.ad/perfiles',
+      languages: {
+        'es': 'https://habitacio.ad/perfiles',
+        'ca': 'https://habitacio.ad/perfiles',
+      },
+    },
+  }
+}
 
 export default async function PerfilesPage({
   searchParams,
