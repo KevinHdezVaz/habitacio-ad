@@ -30,6 +30,7 @@ export default async function Footer() {
         <div>
           <h3 className="font-bold text-lg mb-4">{t('legalTitle')}</h3>
           <nav className="flex flex-col gap-3 text-sm text-gray-400">
+            <Link href="/preguntas-frecuentes" className="hover:text-[#0ea5a0] transition-colors">{t('faq')}</Link>
             <Link href="/aviso-legal" className="hover:text-[#0ea5a0] transition-colors">{t('legalNotice')}</Link>
             <Link href="/privacidad" className="hover:text-[#0ea5a0] transition-colors">{t('privacyPolicy')}</Link>
             <Link href="/cookies" className="hover:text-[#0ea5a0] transition-colors">{t('cookiesPolicy')}</Link>

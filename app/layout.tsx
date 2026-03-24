@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CookieBanner from '@/components/layout/CookieBanner'
 import PageTransition from '@/components/layout/PageTransition'
+import LaunchBanner from '@/components/layout/LaunchBanner'
 import { createClient } from '@/lib/supabase-server'
 import NextTopLoader from 'nextjs-toploader'
 import { NextIntlClientProvider } from 'next-intl'
@@ -124,6 +125,7 @@ export default async function RootLayout({
             showSpinner={false}
             shadow="0 0 10px #0ea5a0,0 0 5px #0ea5a0"
           />
+          <LaunchBanner locale={locale} />
           <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} avatarUrl={avatarUrl} userName={userName} />
           <main className="max-w-5xl mx-auto px-4 py-6">
             <PageTransition>{children}</PageTransition>

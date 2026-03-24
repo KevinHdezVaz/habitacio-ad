@@ -82,6 +82,9 @@ export default function Navbar({
           <Link href="/publicar" className={navClass('/publicar')}>
             {t('publicar')}
           </Link>
+          <Link href="/preguntas-frecuentes" className={navClass('/preguntas-frecuentes')}>
+            {t('faq')}
+          </Link>
 
           {user ? (
             <div className="flex items-center gap-5">
@@ -163,6 +166,9 @@ export default function Navbar({
           </Link>
           <Link href="/publicar" onClick={() => setIsOpen(false)} className={mobileNavClass('/publicar')}>
             {t('publicar')}
+          </Link>
+          <Link href="/preguntas-frecuentes" onClick={() => setIsOpen(false)} className={mobileNavClass('/preguntas-frecuentes')}>
+            {t('faq')}
           </Link>
           {user ? (
             <>
