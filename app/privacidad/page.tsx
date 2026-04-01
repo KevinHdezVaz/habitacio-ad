@@ -33,15 +33,29 @@ export default async function PrivacidadPage() {
 
       <Section title={ca ? '1. Responsable del tractament' : '1. Responsable del tratamiento'}>
         {ca ? (
-          <>
-            <p>El responsable del tractament de les teves dades personals és <strong>Habitacio.ad</strong>, plataforma operada al Principat d&apos;Andorra.</p>
-            <p>Contacte: <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></p>
-          </>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead><tr><th colSpan={2} className="border border-gray-300 p-2 bg-gray-50 text-center font-semibold">Informació sobre protecció de dades</th></tr></thead>
+              <tbody>
+                <tr><td className="border border-gray-300 p-2 font-medium w-36">Identitat</td><td className="border border-gray-300 p-2">ALBERT ALFOCEA URBANO</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Adreça postal</td><td className="border border-gray-300 p-2">Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Telèfon</td><td className="border border-gray-300 p-2">+376 378 606</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Correu electrònic</td><td className="border border-gray-300 p-2"><a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></td></tr>
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <>
-            <p>El responsable del tratamiento de tus datos personales es <strong>Habitacio.ad</strong>, plataforma operada en el Principado de Andorra.</p>
-            <p>Contacto: <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></p>
-          </>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead><tr><th colSpan={2} className="border border-gray-300 p-2 bg-gray-50 text-center font-semibold">Información sobre protección de datos</th></tr></thead>
+              <tbody>
+                <tr><td className="border border-gray-300 p-2 font-medium w-36">Identidad</td><td className="border border-gray-300 p-2">ALBERT ALFOCEA URBANO</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Dirección postal</td><td className="border border-gray-300 p-2">Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Teléfono</td><td className="border border-gray-300 p-2">+376 378 606</td></tr>
+                <tr><td className="border border-gray-300 p-2 font-medium">Correo electrónico</td><td className="border border-gray-300 p-2"><a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></td></tr>
+              </tbody>
+            </table>
+          </div>
         )}
       </Section>
 
