@@ -27,193 +27,225 @@ export default async function PrivacidadPage() {
           {ca ? 'Política de Privadesa' : 'Política de Privacidad'}
         </h1>
         <p className="text-sm text-[#9ca3af]">
-          {ca ? 'Darrera actualització: març de 2026' : 'Última actualización: marzo de 2026'}
+          {ca ? 'Darrera actualització: abril de 2026' : 'Última actualización: abril de 2026'}
         </p>
       </div>
 
-      <Section title={ca ? '1. Responsable del tractament' : '1. Responsable del tratamiento'}>
-        {ca ? (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead><tr><th colSpan={2} className="border border-gray-300 p-2 bg-gray-50 text-center font-semibold">Informació sobre protecció de dades</th></tr></thead>
-              <tbody>
-                <tr><td className="border border-gray-300 p-2 font-medium w-36">Identitat</td><td className="border border-gray-300 p-2">ALBERT ALFOCEA URBANO</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Adreça postal</td><td className="border border-gray-300 p-2">Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Telèfon</td><td className="border border-gray-300 p-2">+376 378 606</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Correu electrònic</td><td className="border border-gray-300 p-2"><a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></td></tr>
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead><tr><th colSpan={2} className="border border-gray-300 p-2 bg-gray-50 text-center font-semibold">Información sobre protección de datos</th></tr></thead>
-              <tbody>
-                <tr><td className="border border-gray-300 p-2 font-medium w-36">Identidad</td><td className="border border-gray-300 p-2">ALBERT ALFOCEA URBANO</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Dirección postal</td><td className="border border-gray-300 p-2">Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Teléfono</td><td className="border border-gray-300 p-2">+376 378 606</td></tr>
-                <tr><td className="border border-gray-300 p-2 font-medium">Correo electrónico</td><td className="border border-gray-300 p-2"><a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></td></tr>
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Section>
+      {/* Tabla responsable */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr>
+              <th colSpan={2} className="border border-gray-300 p-2 bg-gray-50 text-center font-semibold">
+                {ca ? 'Informació sobre protecció de dades' : 'Información sobre protección de datos'}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="border border-gray-300 p-2 font-medium w-36 align-top">
+                {ca ? 'Denominació social' : 'Denominación social'}
+              </td>
+              <td className="border border-gray-300 p-2">
+                <div className="flex flex-col gap-1">
+                  <span><strong>{ca ? 'Identitat' : 'Identidad'}:</strong> ALBERT ALFOCEA URBANO</span>
+                  <span><strong>{ca ? 'Adreça postal' : 'Dir. Postal'}:</strong> Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</span>
+                  <span><strong>{ca ? 'Telèfon' : 'Tfno'}:</strong> +376 378 606</span>
+                  <span><strong>Email:</strong> <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <Section title={ca ? '2. Dades que recopilem' : '2. Datos que recopilamos'}>
+      <Section title={ca ? 'Finalitat — Per a què fem servir les dades?' : 'Finalidad — ¿Para qué usamos los datos?'}>
         {ca ? (
           <>
-            <p>Recopilem les següents dades personals:</p>
-            <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>En registrar-te:</strong> nom, correu electrònic, foto de perfil (opcional), número de telèfon (opcional).</li>
-              <li><strong>En publicar un anunci:</strong> descripció de l&apos;immoble, fotos, ubicació aproximada, preu i condicions.</li>
-              <li><strong>En crear un perfil de cerca:</strong> preferències d&apos;habitació, pressupost, situació laboral, descripció personal.</li>
-              <li><strong>En usar el xat:</strong> contingut dels missatges intercanviats amb altres usuaris.</li>
-              <li><strong>Dades de navegació:</strong> adreça IP, tipus de navegador, pàgines visitades i cookies tècniques.</li>
-            </ul>
-          </>
-        ) : (
-          <>
-            <p>Recopilamos los siguientes datos personales:</p>
-            <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Al registrarte:</strong> nombre, correo electrónico, foto de perfil (opcional), número de teléfono (opcional).</li>
-              <li><strong>Al publicar un anuncio:</strong> descripción del inmueble, fotos, ubicación aproximada, precio y condiciones.</li>
-              <li><strong>Al crear un perfil de búsqueda:</strong> preferencias de habitación, presupuesto, situación laboral, descripción personal.</li>
-              <li><strong>Al usar el chat:</strong> contenido de los mensajes intercambiados con otros usuarios.</li>
-              <li><strong>Datos de navegación:</strong> dirección IP, tipo de navegador, páginas visitadas y cookies técnicas.</li>
-            </ul>
-          </>
-        )}
-      </Section>
+            <p>La present Política de privadesa estableix els termes en què tractarem les dades personals a HABITACIO.AD; això inclou qualsevol dada personal recollida a través del nostre lloc web, així com qualsevol altra dada que tractem en l&apos;exercici de les nostres activitats empresarials.</p>
 
-      <Section title={ca ? '3. Finalitat del tractament' : '3. Finalidad del tratamiento'}>
-        {ca ? (
-          <>
-            <p>Utilitzem les teves dades per a:</p>
+            <p className="font-semibold">ANUNCIANTS (propietaris o usuaris que publiquen habitacions)</p>
+            <p>Les dades personals recollides seran utilitzades per a:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li>Gestionar el teu compte i accés a la plataforma.</li>
-              <li>Publicar i mostrar els teus anuncis o perfil de cerca.</li>
-              <li>Facilitar la comunicació entre usuaris a través del xat intern.</li>
-              <li>Enviar-te notificacions relacionades amb el servei (nous missatges, estat de l&apos;anunci).</li>
-              <li>Millorar la plataforma mitjançant anàlisi d&apos;ús anònim.</li>
-              <li>Complir amb obligacions legals aplicables.</li>
+              <li>Crear i gestionar el compte d&apos;usuari.</li>
+              <li>Publicar anuncis d&apos;habitacions (zona, preu, descripció, fotos i disponibilitat).</li>
+              <li>Gestionar la visibilitat dels anuncis.</li>
+              <li>Contractar serveis de pagament (publicació, destacats, promocions).</li>
+              <li>Permetre l&apos;accés a perfils de persones interessades en llogar.</li>
+              <li>Facilitar el contacte amb usuaris interessats.</li>
+              <li>Gestionar pagaments realitzats a través de la plataforma.</li>
             </ul>
-          </>
-        ) : (
-          <>
-            <p>Utilizamos tus datos para:</p>
-            <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li>Gestionar tu cuenta y acceso a la plataforma.</li>
-              <li>Publicar y mostrar tus anuncios o perfil de búsqueda.</li>
-              <li>Facilitar la comunicación entre usuarios a través del chat interno.</li>
-              <li>Enviarte notificaciones relacionadas con el servicio (nuevos mensajes, estado del anuncio).</li>
-              <li>Mejorar la plataforma mediante análisis de uso anónimo.</li>
-              <li>Cumplir con obligaciones legales aplicables.</li>
-            </ul>
-          </>
-        )}
-      </Section>
 
-      <Section title={ca ? '4. Base legal del tractament' : '4. Base legal del tratamiento'}>
-        {ca ? (
-          <>
-            <p>El tractament de les teves dades es basa en:</p>
+            <p className="font-semibold">HOSTES (usuaris que busquen habitació)</p>
+            <p>Les dades personals recollides seran utilitzades per a:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Execució de contracte:</strong> per prestar-te el servei sol·licitat en registrar-te.</li>
-              <li><strong>Consentiment:</strong> per a l&apos;enviament de comunicacions opcionals.</li>
-              <li><strong>Interès legítim:</strong> per a la millora del servei i seguretat de la plataforma.</li>
+              <li>Crear i gestionar el compte d&apos;usuari.</li>
+              <li>Buscar habitacions mitjançant filtres.</li>
+              <li>Crear un perfil de demanda (zona, pressupost, data d&apos;entrada, preferències).</li>
+              <li>Permetre la visibilitat del perfil als anunciants.</li>
+              <li>Facilitar el contacte amb propietaris.</li>
+              <li>Gestionar serveis addicionals en cas de contractació.</li>
             </ul>
           </>
         ) : (
           <>
-            <p>El tratamiento de tus datos se basa en:</p>
+            <p>La siguiente Política de privacidad establece los términos en que trataremos los datos personales en HABITACIO.AD; esto incluye cualquier dato personal recogido a través de nuestra página web, así como cualquier otro dato que tratemos en ejercicio de nuestras actividades empresariales.</p>
+
+            <p className="font-semibold">ANUNCIANTES (propietarios o usuarios que publican habitaciones)</p>
+            <p>Los datos personales recogidos serán utilizados para:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Ejecución de contrato:</strong> para prestarte el servicio solicitado al registrarte.</li>
-              <li><strong>Consentimiento:</strong> para el envío de comunicaciones opcionales.</li>
-              <li><strong>Interés legítimo:</strong> para la mejora del servicio y seguridad de la plataforma.</li>
+              <li>Crear y gestionar la cuenta de usuario.</li>
+              <li>Publicar anuncios de habitaciones (zona, precio, descripción, fotos y disponibilidad).</li>
+              <li>Gestionar la visibilidad de los anuncios.</li>
+              <li>Contratar servicios de pago (publicación, destacados, promociones).</li>
+              <li>Permitir el acceso a perfiles de personas interesadas en alquilar.</li>
+              <li>Facilitar el contacto con usuarios interesados.</li>
+              <li>Gestionar pagos realizados a través de la plataforma.</li>
+            </ul>
+
+            <p className="font-semibold">HUÉSPEDES (usuarios que buscan habitación)</p>
+            <p>Los datos personales recogidos serán utilizados para:</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Crear y gestionar la cuenta de usuario.</li>
+              <li>Buscar habitaciones mediante filtros.</li>
+              <li>Crear un perfil de demanda (zona, presupuesto, fecha de entrada, preferencias).</li>
+              <li>Permitir la visibilidad del perfil a los anunciantes.</li>
+              <li>Facilitar el contacto con propietarios.</li>
+              <li>Gestionar servicios adicionales en caso de contratación.</li>
             </ul>
           </>
         )}
       </Section>
 
-      <Section title={ca ? '5. Conservació de dades' : '5. Conservación de datos'}>
+      <Section title={ca ? 'Quant de temps custodiéem les seves dades?' : '¿Cuánto tiempo custodiamos sus datos?'}>
         {ca ? (
           <>
-            <p>Conservem les teves dades mentre mantinguis un compte actiu a la plataforma. Si elimines el teu compte, les teves dades personals seran suprimides en un termini màxim de 30 dies, tret que la llei n&apos;exigeixi la conservació per un període més llarg.</p>
-            <p>Els missatges de xat es conserven mentre tots dos usuaris mantinguin els seus comptes actius.</p>
+            <p className="font-semibold">ANUNCIANTS (propietaris o usuaris que publiquen habitacions)</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Les dades es conservaran mentre l&apos;usuari mantingui el seu compte actiu a la plataforma.</li>
+              <li>En relació amb els anuncis publicats, les dades es conservaran mentre l&apos;anunci estigui actiu i durant el temps necessari per gestionar possibles responsabilitats legals derivades del servei.</li>
+              <li>Les dades relacionades amb pagaments i facturació es conservaran durant els terminis legalment establerts (habitualment entre 5 i 6 anys).</li>
+            </ul>
+            <p className="font-semibold">HOSTES (usuaris que busquen habitació)</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Les dades es conservaran mentre l&apos;usuari mantingui el seu compte actiu o el seu perfil de cerca actiu.</li>
+              <li>En cas d&apos;inactivitat, les dades podran ser eliminades o anonimitzades després d&apos;un període raonable (per exemple, 12-24 mesos sense activitat).</li>
+              <li>Les dades relacionades amb serveis de pagament, si n&apos;hi hagués, es conservaran durant els terminis legals aplicables (5-6 anys).</li>
+            </ul>
           </>
         ) : (
           <>
-            <p>Conservamos tus datos mientras mantengas una cuenta activa en la plataforma. Si eliminas tu cuenta, tus datos personales serán suprimidos en un plazo máximo de 30 días, salvo que la ley exija su conservación por un período mayor.</p>
-            <p>Los mensajes de chat se conservan mientras ambos usuarios mantengan sus cuentas activas.</p>
+            <p className="font-semibold">ANUNCIANTES (propietarios o usuarios que publican habitaciones)</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Los datos se conservarán mientras el usuario mantenga su cuenta activa en la plataforma.</li>
+              <li>En relación con los anuncios publicados, los datos se conservarán mientras el anuncio esté activo y durante el tiempo necesario para gestionar posibles responsabilidades legales derivadas del servicio.</li>
+              <li>Los datos relacionados con pagos y facturación se conservarán durante los plazos legalmente establecidos (habitualmente entre 5 y 6 años).</li>
+            </ul>
+            <p className="font-semibold">HUÉSPEDES (usuarios que buscan habitación)</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Los datos se conservarán mientras el usuario mantenga su cuenta activa o su perfil de búsqueda activo.</li>
+              <li>En caso de inactividad, los datos podrán ser eliminados o anonimizados tras un período razonable (por ejemplo, 12-24 meses sin actividad).</li>
+              <li>Los datos relacionados con servicios de pago, si los hubiera, se conservarán durante los plazos legales aplicables (5-6 años).</li>
+            </ul>
           </>
         )}
       </Section>
 
-      <Section title={ca ? '6. Cessió de dades a tercers' : '6. Cesión de datos a terceros'}>
+      <Section title={ca ? 'Legitimació' : 'Legitimación'}>
+        <p>
+          {ca
+            ? "A continuació, l'informem de què ens permet tractar les seves dades, en funció de l'ús al qual siguin destinades. La base legal per tractar les dades recollides en els formularis és el consentiment de l'interessat, així com l'execució de la relació contractual en l'ús de la plataforma."
+            : "A continuación, le informamos qué nos permite tratar sus datos, en función del uso al que sean destinados. La base legal para tratar los datos recogidos en los formularios es el consentimiento del interesado, así como la ejecución de la relación contractual en el uso de la plataforma."}
+        </p>
+      </Section>
+
+      <Section title={ca ? 'Destinataris — Cessió de dades' : 'Destinatarios — Cesión de datos'}>
         {ca ? (
           <>
-            <p>No venem ni cedim les teves dades personals a tercers amb fins comercials. Només compartim dades amb:</p>
+            <p>Determinada informació dels usuaris podrà ser visible per a altres usuaris de la plataforma amb la finalitat de facilitar el contacte i la possible contractació d&apos;habitacions:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Supabase:</strong> proveïdor d&apos;infraestructura i base de dades (allotjament segur a la UE).</li>
-              <li><strong>Vercel:</strong> proveïdor d&apos;allotjament web.</li>
-              <li><strong>Google:</strong> per a autenticació OAuth (si uses &quot;Inicia sessió amb Google&quot;).</li>
+              <li>Els perfils dels hostes podran ser visibles total o parcialment per als anunciants.</li>
+              <li>Les dades dels anunciants seran visibles en els anuncis publicats.</li>
             </ul>
-            <p>Tots els proveïdors compleixen els estàndards de protecció de dades aplicables.</p>
           </>
         ) : (
           <>
-            <p>No vendemos ni cedemos tus datos personales a terceros con fines comerciales. Únicamente compartimos datos con:</p>
+            <p>Determinada información de los usuarios podrá ser visible para otros usuarios de la plataforma con la finalidad de facilitar el contacto y la posible contratación de habitaciones:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Supabase:</strong> proveedor de infraestructura y base de datos (alojamiento seguro en la UE).</li>
-              <li><strong>Vercel:</strong> proveedor de alojamiento web.</li>
-              <li><strong>Google:</strong> para autenticación OAuth (si usas &quot;Iniciar sesión con Google&quot;).</li>
+              <li>Los perfiles de los huéspedes podrán ser visibles total o parcialmente para los anunciantes.</li>
+              <li>Los datos de los anunciantes serán visibles en los anuncios publicados.</li>
             </ul>
-            <p>Todos los proveedores cumplen con los estándares de protección de datos aplicables.</p>
           </>
         )}
       </Section>
 
-      <Section title={ca ? '7. Els teus drets' : '7. Tus derechos'}>
+      <Section title={ca ? 'Categoria de dades' : 'Categoría de datos'}>
         {ca ? (
           <>
-            <p>Tens dret a:</p>
+            <p>Tipologia de dades tractades:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Accés:</strong> saber quines dades tenim sobre tu.</li>
-              <li><strong>Rectificació:</strong> corregir dades inexactes o incompletes.</li>
-              <li><strong>Supressió:</strong> sol·licitar l&apos;eliminació de les teves dades.</li>
-              <li><strong>Portabilitat:</strong> rebre les teves dades en format estructurat.</li>
-              <li><strong>Oposició:</strong> oposar-te al tractament basat en interès legítim.</li>
+              <li>Nom i cognoms.</li>
+              <li>Correu electrònic.</li>
+              <li>Telèfon.</li>
+              <li>Adreça postal.</li>
+              <li>Dades bancàries.</li>
+              <li>Dades relacionades amb l&apos;anunci o perfils (preferències, descripcions, etc.).</li>
             </ul>
-            <p>Per exercir aquests drets, escriu-nos a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a>.</p>
           </>
         ) : (
           <>
-            <p>Tienes derecho a:</p>
+            <p>Tipología de datos tratados:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Acceso:</strong> conocer qué datos tenemos sobre ti.</li>
-              <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
-              <li><strong>Supresión:</strong> solicitar la eliminación de tus datos.</li>
-              <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado.</li>
-              <li><strong>Oposición:</strong> oponerte al tratamiento basado en interés legítimo.</li>
+              <li>Nombre y apellidos.</li>
+              <li>Correo electrónico.</li>
+              <li>Teléfono.</li>
+              <li>Dirección Postal.</li>
+              <li>Datos bancarios.</li>
+              <li>Datos relacionados con el anuncio o perfiles (preferencias, descripciones, etc.).</li>
+            </ul>
+          </>
+        )}
+      </Section>
+
+      <Section title={ca ? 'Drets' : 'Derechos'}>
+        {ca ? (
+          <>
+            <p>Té dret a:</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Revocar el consentiment atorgat.</li>
+              <li>Accedir a les dades personals.</li>
+              <li>Rectificar les dades personals.</li>
+              <li>Suprimir les dades personals.</li>
+              <li>Presentar una reclamació davant l&apos;Agència Andorrana de Protecció de Dades.</li>
+              <li>Ser informat de qualsevol incidència de seguretat.</li>
+              <li>Limitació del tractament.</li>
+              <li>Portabilitat de les dades.</li>
+            </ul>
+            <p>Per exercir aquests drets, escriviu-nos a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a>.</p>
+          </>
+        ) : (
+          <>
+            <p>Tiene derecho a:</p>
+            <ul className="list-disc pl-5 flex flex-col gap-1">
+              <li>Revocar el consentimiento otorgado.</li>
+              <li>Acceder a los datos personales.</li>
+              <li>Rectificar los datos personales.</li>
+              <li>Suprimir los datos personales.</li>
+              <li>Presentar una reclamación ante la Agencia Andorrana de Protección de Datos.</li>
+              <li>Ser informado de cualquier incidencia de seguridad.</li>
+              <li>Limitación del tratamiento.</li>
+              <li>Portabilidad de los datos.</li>
             </ul>
             <p>Para ejercer estos derechos, escríbenos a <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a>.</p>
           </>
         )}
       </Section>
 
-      <Section title={ca ? '8. Seguretat' : '8. Seguridad'}>
+      <Section title={ca ? 'Seguretat' : 'Seguridad'}>
         <p>
           {ca
-            ? "Apliquem mesures tècniques i organitzatives per protegir les teves dades: xifratge en trànsit (HTTPS), autenticació segura, control d'accés i còpies de seguretat periòdiques."
-            : "Aplicamos medidas técnicas y organizativas para proteger tus datos: cifrado en tránsito (HTTPS), autenticación segura, control de acceso y copias de seguridad periódicas."}
-        </p>
-      </Section>
-
-      <Section title={ca ? '9. Canvis en aquesta política' : '9. Cambios en esta política'}>
-        <p>
-          {ca
-            ? "Podem actualitzar aquesta política periòdicament. T'informarem de canvis significatius per correu electrònic o mitjançant un avís a la plataforma."
-            : "Podemos actualizar esta política periódicamente. Te notificaremos de cambios significativos por correo electrónico o mediante un aviso en la plataforma."}
+            ? "Apliquem mesures tècniques i organitzatives per protegir les seves dades: xifratge en trànsit (HTTPS), autenticació segura, control d'accés i còpies de seguretat periòdiques."
+            : "Aplicamos medidas técnicas y organizativas para proteger sus datos: cifrado en tránsito (HTTPS), autenticación segura, control de acceso y copias de seguridad periódicas."}
         </p>
       </Section>
 
