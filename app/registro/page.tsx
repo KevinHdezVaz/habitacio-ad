@@ -51,6 +51,12 @@ export default function RegistroPage() {
         <p className="text-[#6b7280] text-sm mt-2">{t('registerSubtitle')}</p>
       </div>
 
+      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center flex flex-col gap-2 mb-4">
+        <p className="text-sm font-semibold text-amber-800">Registro temporalmente deshabilitado</p>
+        <p className="text-xs text-amber-700">Habitacio.ad todavía no está habilitada hasta el lanzamiento oficial. Vuelve pronto.</p>
+      </div>
+
+      <div className="opacity-40 pointer-events-none select-none">
       <BotonGoogle next="/" />
 
       <div className="flex items-center gap-3 my-5">
@@ -129,6 +135,7 @@ export default function RegistroPage() {
           {loading ? t('creatingAccount') : t('createAccount')}
         </Button>
       </form>
+      </div>{/* end disabled wrapper */}
 
       <div className="mt-8 pt-6 border-t border-gray-100 text-center">
         <p className="text-sm text-[#6b7280]">

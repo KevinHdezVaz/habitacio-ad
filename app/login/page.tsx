@@ -105,9 +105,16 @@ export default function LoginPage() {
         <p className="text-[#6b7280] text-sm mt-2">{t('loginSubtitle')}</p>
       </div>
 
-      <Suspense fallback={null}>
-        <LoginForm />
-      </Suspense>
+      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center flex flex-col gap-2 mb-4">
+        <p className="text-sm font-semibold text-amber-800">Acceso temporalmente deshabilitado</p>
+        <p className="text-xs text-amber-700">Habitacio.ad todavía no está habilitada hasta el lanzamiento oficial. Vuelve pronto.</p>
+      </div>
+
+      <div className="opacity-40 pointer-events-none select-none">
+        <Suspense fallback={null}>
+          <LoginForm />
+        </Suspense>
+      </div>
 
       <div className="mt-8 pt-6 border-t border-gray-100 text-center">
         <p className="text-sm text-[#6b7280]">

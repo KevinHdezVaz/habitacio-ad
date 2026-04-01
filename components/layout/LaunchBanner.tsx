@@ -14,24 +14,20 @@ export default function LaunchBanner({ locale = 'es' }: { locale?: string }) {
   const isCA = locale === 'ca'
 
   const texto = isCA
-    ? 'Estem ultimant els detalls per al llançament oficial a Andorra.'
-    : 'Estamos ultimando los detalles para el lanzamiento oficial en Andorra.'
-  const textoCort = isCA ? 'Molt aviat!' : '¡Muy pronto!'
-  const textoLarg = isCA ? 'Molt aviat disponible.' : 'Muy pronto disponible.'
+    ? 'encara no està habilitada fins al llançament oficial.'
+    : 'todavía no está habilitada hasta el lanzamiento oficial.'
 
   return (
-    <div className="w-full bg-gradient-to-r from-[#1a3c5e] to-[#2d5a8e] text-white py-2.5 px-4">
+    <div className="w-full bg-[#b91c1c] text-white py-2.5 px-4">
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 flex-shrink-0 opacity-90">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 flex-shrink-0">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
           <p className="text-xs sm:text-sm font-medium leading-snug">
             <span className="font-bold">Habitacio.ad</span>
-            {' '}— {texto}{' '}
-            <span className="opacity-80 hidden sm:inline">{textoLarg}</span>
+            {' '}{texto}
           </p>
-          <p className="text-xs sm:text-sm font-medium leading-snug sm:hidden opacity-80">{textoCort}</p>
         </div>
         <button
           onClick={dismiss}
