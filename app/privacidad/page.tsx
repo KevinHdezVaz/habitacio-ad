@@ -48,9 +48,7 @@ export default async function PrivacidadPage() {
               </td>
               <td className="border border-gray-300 p-2">
                 <div className="flex flex-col gap-1">
-                  <span><strong>{ca ? 'Identitat' : 'Identidad'}:</strong> ALBERT ALFOCEA URBANO</span>
-                  <span><strong>{ca ? 'Adreça postal' : 'Dir. Postal'}:</strong> Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</span>
-                  <span><strong>{ca ? 'Telèfon' : 'Tfno'}:</strong> +376 378 606</span>
+                  <span><strong>{ca ? 'Plataforma' : 'Plataforma'}:</strong> Habitacio.ad</span>
                   <span><strong>Email:</strong> <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a></span>
                 </div>
               </td>

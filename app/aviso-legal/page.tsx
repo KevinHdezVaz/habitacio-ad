@@ -36,10 +36,7 @@ export default async function AvisoLegalPage() {
           <>
             <p>En compliment de l&apos;article 6 de la Llei 20/2014, de 16 d&apos;octubre, reguladora de la contractació electrònica i dels operadors que desenvolupen la seva activitat econòmica en un espai digital, s&apos;informa que el titular d&apos;aquest lloc web és:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Titular:</strong> ALBERT ALFOCEA URBANO</li>
               <li><strong>Plataforma:</strong> Habitacio.ad</li>
-              <li><strong>Adreça:</strong> Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</li>
-              <li><strong>Telèfon:</strong> +376 378 606</li>
               <li><strong>Correu de contacte:</strong> hola@habitacio.ad</li>
             </ul>
           </>
@@ -47,10 +44,7 @@ export default async function AvisoLegalPage() {
           <>
             <p>En cumplimiento del artículo 6 de la Ley 20/2014, de 16 de octubre, reguladora de la contratación electrónica y de los operadores que desarrollan su actividad económica en un espacio digital, se informa que el titular de este sitio web es:</p>
             <ul className="list-disc pl-5 flex flex-col gap-1">
-              <li><strong>Titular:</strong> ALBERT ALFOCEA URBANO</li>
               <li><strong>Plataforma:</strong> Habitacio.ad</li>
-              <li><strong>Dirección:</strong> Urbanització Hort de Godí, Edif. Turó de Vila II 4t 6a, AD200 Encamp</li>
-              <li><strong>Teléfono:</strong> +376 378 606</li>
               <li><strong>Correo de contacto:</strong> hola@habitacio.ad</li>
             </ul>
           </>

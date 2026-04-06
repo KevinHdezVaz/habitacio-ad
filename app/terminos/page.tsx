@@ -36,8 +36,8 @@ export default async function TerminosPage() {
 
       <p className="text-sm text-[#374151] leading-relaxed">
         {ca
-          ? "El present document estableix els Termes i Condicions Generals d'Ús (d'ara endavant, \"TCG\") que regulen l'accés i la utilització de la plataforma web https://www.habitacio.ad/ (d'ara endavant, \"la Web\" o \"HABITACIO.AD\"), titularitat d'ALBERT ALFOCEA URBANO (d'ara endavant, el \"Prestador del Servei\"). L'ús de la plataforma per part de qualsevol usuari, ja sigui Anunciant o Hoste, implica l'acceptació plena d'aquests TCG."
-          : "El presente documento establece los Términos y Condiciones Generales de Uso (en adelante, \"TCG\") que regulan el acceso y utilización de la plataforma web https://www.habitacio.ad/ (en adelante, \"la Web\" o \"HABITACIO.AD\"), titularidad de ALBERT ALFOCEA URBANO (en adelante, el \"Prestador del Servicio\"). El uso de la plataforma por parte de cualquier usuario, ya sea Anunciante o Huésped, implica la aceptación plena de estos TCG."}
+          ? "El present document estableix els Termes i Condicions Generals d'Ús (d'ara endavant, \"TCG\") que regulen l'accés i la utilització de la plataforma web https://www.habitacio.ad/ (d'ara endavant, \"la Web\" o \"HABITACIO.AD\"), titularitat d'Habitacio.ad (d'ara endavant, el \"Prestador del Servei\"). L'ús de la plataforma per part de qualsevol usuari, ja sigui Anunciant o Hoste, implica l'acceptació plena d'aquests TCG."
+          : "El presente documento establece los Términos y Condiciones Generales de Uso (en adelante, \"TCG\") que regulan el acceso y utilización de la plataforma web https://www.habitacio.ad/ (en adelante, \"la Web\" o \"HABITACIO.AD\"), titularidad de Habitacio.ad (en adelante, el \"Prestador del Servicio\"). El uso de la plataforma por parte de cualquier usuario, ya sea Anunciante o Huésped, implica la aceptación plena de estos TCG."}
       </p>
 
       <Section title={ca ? '1. Objecte del Servei' : '1. Objeto del Servicio'}>
