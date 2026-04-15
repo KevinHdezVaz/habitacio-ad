@@ -256,7 +256,11 @@
     "photoCount": "{n}/8 fotos · La primera imagen es la portada del anuncio",
     "readyTitle": "¿Todo listo?",
     "readyDesc": "Tu anuncio se revisará antes de publicarse · Normalmente en menos de 24 h",
-    "submitBtn": "Enviar anuncio"
+    "submitBtn": "Enviar anuncio",
+    "acceptTerms": "He leído y acepto los",
+    "termsLink": "Términos y condiciones",
+    "acceptPrivacy": "He leído y acepto la",
+    "privacyLink": "Política de privacidad"
   },
   "auth": {
     "loginTitle": "Bienvenido de nuevo",
@@ -433,6 +437,10 @@
     "confirmTitle": "¿Todo correcto?",
     "profileVisibleDesc": "Tu perfil será visible para propietarios con habitaciones disponibles",
     "publishBtn": "Publicar perfil",
+    "acceptTerms": "He leído y acepto los",
+    "termsLink": "Términos y condiciones",
+    "acceptPrivacy": "He leído y acepto la",
+    "privacyLink": "Política de privacidad",
     "backBtn": "← Atrás",
     "continueBtn": "Continuar",
     "viewProfileBtn": "Ver mi perfil →",

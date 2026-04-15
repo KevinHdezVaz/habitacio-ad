@@ -265,7 +265,11 @@
     "photoCount": "{n}/8 fotos · La primera imatge és la portada de l'anunci",
     "readyTitle": "Tot a punt?",
     "readyDesc": "El teu anunci es revisarà abans de publicar-se · Normalment en menys de 24 h",
-    "submitBtn": "Enviar anunci"
+    "submitBtn": "Enviar anunci",
+    "acceptTerms": "He llegit i accepto els",
+    "termsLink": "Termes i condicions",
+    "acceptPrivacy": "He llegit i accepto la",
+    "privacyLink": "Política de privadesa"
   },
   "auth": {
     "loginTitle": "Benvingut de nou",
@@ -442,6 +446,10 @@
     "confirmTitle": "Tot correcte?",
     "profileVisibleDesc": "El teu perfil serà visible per a propietaris amb habitacions disponibles",
     "publishBtn": "Publicar perfil",
+    "acceptTerms": "He llegit i accepto els",
+    "termsLink": "Termes i condicions",
+    "acceptPrivacy": "He llegit i accepto la",
+    "privacyLink": "Política de privadesa",
     "backBtn": "← Enrere",
     "continueBtn": "Continuar",
     "viewProfileBtn": "Veure el meu perfil →",

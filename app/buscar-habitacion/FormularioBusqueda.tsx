@@ -225,6 +225,8 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
   const [data, setData]       = useState<FormState>(INITIAL)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
+  const [termsOk, setTermsOk]     = useState(false)
+  const [privacyOk, setPrivacyOk] = useState(false)
 
   const topRef = useRef<HTMLDivElement>(null)
 
@@ -330,6 +332,36 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
             </div>
           )}
 
+          {/* Checkboxes legales */}
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                id="terms-busqueda"
+                className="mt-0.5 accent-[#1a3c5e] w-4 h-4 flex-shrink-0"
+                onChange={e => setTermsOk(e.target.checked)}
+              />
+              <span className="text-xs text-[#6b7280] leading-normal">
+                {t('acceptTerms')}{' '}
+                <a href="/terminos" target="_blank" className="text-[#0ea5a0] font-semibold hover:underline">{t('termsLink')}</a>
+              </span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                id="privacy-busqueda"
+                className="mt-0.5 accent-[#1a3c5e] w-4 h-4 flex-shrink-0"
+                onChange={e => setPrivacyOk(e.target.checked)}
+              />
+              <span className="text-xs text-[#6b7280] leading-normal">
+                {t('acceptPrivacy')}{' '}
+                <a href="/privacidad" target="_blank" className="text-[#0ea5a0] font-semibold hover:underline">{t('privacyLink')}</a>
+              </span>
+            </label>
+          </div>
+
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <p className="font-bold text-[#1a3c5e] text-sm">{t('confirmTitle')}</p>
@@ -339,7 +371,7 @@ export default function FormularioBusqueda({ avatarUrl }: { avatarUrl?: string |
             </div>
             <button
               onClick={handlePublicar}
-              disabled={loading}
+              disabled={loading || !termsOk || !privacyOk}
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#0ea5a0] to-[#0c8e8a] text-white font-bold px-8 py-4 rounded-2xl hover:from-[#0c8e8a] hover:to-[#0a7a76] transition-all shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-sm"
             >
               {t('publishBtn')}

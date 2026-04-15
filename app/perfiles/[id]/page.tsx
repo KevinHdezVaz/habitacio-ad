@@ -51,10 +51,11 @@ export default async function PerfilInquilinoPage({
   // Obtener avatar del profile del usuario
   const { data: profileData } = await supabase
     .from('profiles')
-    .select('avatar_url')
+    .select('avatar_url, telefono')
     .eq('id', p.user_id)
     .single()
-  const avatarUrl = profileData?.avatar_url ?? null
+  const avatarUrl  = profileData?.avatar_url ?? null
+  const telefono   = profileData?.telefono ?? null
 
   const dateLocale = locale === 'ca' ? 'ca-ES' : 'es-ES'
   const fechaEntrada = p.fecha_entrada
@@ -148,50 +149,26 @@ export default async function PerfilInquilinoPage({
             </div>
           ) : (
             <div className="bg-[#f8fafc] border border-gray-200 rounded-2xl p-5 flex flex-col gap-4">
-              {/* Info bloqueada */}
-              <div className="flex flex-col gap-2">
-                <p className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">{t('contactTitle')}</p>
-                <div className="flex flex-col gap-2">
-                  {[
-                    { label: t('phone'), valor: '••• ••• •••' },
-                    { label: t('email'), valor: '••••••@••••.com' },
-                    { label: t('directChat'), valor: t('locked') },
-                  ].map(({ label, valor }) => (
-                    <div key={label} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-gray-100">
-                      <span className="text-xs text-[#9ca3af] font-medium">{label}</span>
-                      <span className="text-xs text-gray-300 font-semibold blur-sm select-none">{valor}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <p className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">{t('contactTitle')}</p>
 
-              {/* CTA desbloqueo */}
               {user ? (
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-start gap-3 bg-[#1a3c5e]/5 rounded-xl p-3">
-                    <span className="text-lg">🔒</span>
-                    <div>
-                      <p className="text-sm font-bold text-[#1a3c5e]">{t('unlockContact')}</p>
-                      <p className="text-xs text-[#6b7280] mt-0.5">{t('unlockDesc')}</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      disabled
-                      className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#1a3c5e] text-white text-center opacity-70 cursor-not-allowed"
+                  {telefono && (
+                    <a
+                      href={`tel:${telefono}`}
+                      className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-[#0ea5a0] transition-colors"
                     >
-                      <span className="text-sm font-bold">6,90€</span>
-                      <span className="text-[10px] opacity-80">{t('thisProfile')}</span>
-                    </button>
-                    <button
-                      disabled
-                      className="flex flex-col items-center py-3 px-2 rounded-xl bg-[#0ea5a0] text-white text-center opacity-70 cursor-not-allowed"
-                    >
-                      <span className="text-sm font-bold">19,90€</span>
-                      <span className="text-[10px] opacity-80">{t('allProfiles')}</span>
-                    </button>
-                  </div>
-                  <p className="text-[10px] text-center text-[#9ca3af]">{t('comingSoon')}</p>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#0ea5a0] flex-shrink-0"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.18 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                      <span className="text-sm font-semibold text-[#1a3c5e]">{telefono}</span>
+                    </a>
+                  )}
+                  <Link
+                    href={`/chat?usuario=${p.user_id}`}
+                    className="flex items-center justify-center gap-2 bg-[#1a3c5e] text-white rounded-xl px-4 py-3 text-sm font-bold hover:bg-[#0ea5a0] transition-colors"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    {t('directChat')}
+                  </Link>
                 </div>
               ) : (
                 <Link

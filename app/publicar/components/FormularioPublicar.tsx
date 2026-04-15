@@ -660,6 +660,24 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
             </div>
           )}
 
+          {/* ── Checkboxes legales ── */}
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" required className="mt-0.5 accent-[#1a3c5e] w-4 h-4 flex-shrink-0" />
+              <span className="text-xs text-[#6b7280] leading-normal">
+                {t('acceptTerms')}{' '}
+                <a href="/terminos" target="_blank" className="text-[#0ea5a0] font-semibold hover:underline">{t('termsLink')}</a>
+              </span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" required className="mt-0.5 accent-[#1a3c5e] w-4 h-4 flex-shrink-0" />
+              <span className="text-xs text-[#6b7280] leading-normal">
+                {t('acceptPrivacy')}{' '}
+                <a href="/privacidad" target="_blank" className="text-[#0ea5a0] font-semibold hover:underline">{t('privacyLink')}</a>
+              </span>
+            </label>
+          </div>
+
           {/* ── Botón de envío ── */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
