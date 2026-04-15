@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'     // ← Asegúrate de que esté exactamente así
+
 
 export const metadata: Metadata = {
   title: 'Cuánto cuesta una habitación en Andorra en 2026 | habitacio.ad',
@@ -15,8 +17,15 @@ export default function ArticlePage() {
       </div>
 
       {/* Image placeholder */}
-      <div className="w-full h-52 bg-gradient-to-br from-[#e8f0f7] to-[#d1e3f0] rounded-2xl flex items-center justify-center">
-        <p className="text-xs text-[#9ca3af] text-center px-4">Foto de habitación ordenada y moderna</p>
+      <div className="relative w-full aspect-[16/9] md:aspect-[16/10] rounded-2xl overflow-hidden bg-gradient-to-br from-[#e8f0f7] to-[#d1e3f0]">
+        <Image
+          src="/blog/cuanto-cuesta-una-habitacion-en-andorra.jpeg"
+          alt="Habitación luminosa y moderna en Andorra para alquilar"
+          fill
+          className="object-cover"
+          priority
+          sizes="(max-width: 768px) 100vw, 700px"
+        />
       </div>
 
       <div className="flex flex-col gap-6 text-[#374151] text-sm leading-relaxed">

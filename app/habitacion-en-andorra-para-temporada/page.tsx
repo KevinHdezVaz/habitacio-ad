@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'     // ← Asegúrate de que esté exactamente así
 
 export const metadata: Metadata = {
   title: 'Habitación en Andorra para temporada: qué mirar antes de alquilar | habitacio.ad',
@@ -15,10 +16,16 @@ export default function ArticlePage() {
       </div>
 
       {/* Image placeholder */}
-      <div className="w-full h-52 bg-gradient-to-br from-[#e8f0f7] to-[#d1e3f0] rounded-2xl flex items-center justify-center">
-        <p className="text-xs text-[#9ca3af] text-center px-4">Foto de habitación acogedora o escena de temporada en Andorra</p>
+      <div className="relative w-full aspect-[16/9] md:aspect-[16/10] rounded-2xl overflow-hidden bg-gradient-to-br from-[#e8f0f7] to-[#d1e3f0]">
+        <Image
+          src="/blog/mejores-zonas-de-andorra-para-buscar-habitacion.jpeg"
+          alt="Habitación luminosa y moderna en Andorra para alquilar"
+          fill
+          className="object-cover"
+          priority
+          sizes="(max-width: 768px) 100vw, 700px"
+        />
       </div>
-
       <div className="flex flex-col gap-6 text-[#374151] text-sm leading-relaxed">
         <p>
           Buscar una habitación en Andorra para temporada no es lo mismo que buscarla para todo el año. Normalmente todo va más rápido, hay más presión por cerrar algo pronto y muchas personas compiten por las mismas opciones. Por eso conviene mirar bien ciertos puntos antes de decidir.
