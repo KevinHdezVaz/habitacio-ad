@@ -6,6 +6,39 @@ import { redirect } from 'next/navigation'
 import { after } from 'next/server'
 import { emailNuevoMensaje } from '@/lib/email'
 
+export async function iniciarChatDirecto(otroUserId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) redirect(`/login?next=/chat`)
+
+  // Buscar conversación existente entre los dos usuarios (cualquier anuncio)
+  const { data: existing } = await supabase
+    .from('conversaciones')
+    .select('id')
+    .or(
+      `and(inquilino_id.eq.${user.id},arrendador_id.eq.${otroUserId}),` +
+      `and(inquilino_id.eq.${otroUserId},arrendador_id.eq.${user.id})`
+    )
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (existing) redirect(`/chat/${existing.id}`)
+
+  // Crear nueva conversación directa (sin anuncio asociado)
+  // NOTA: requiere que anuncio_id sea nullable en la DB
+  const { data: nueva, error } = await supabase
+    .from('conversaciones')
+    .insert({ inquilino_id: user.id, arrendador_id: otroUserId, anuncio_id: null })
+    .select('id')
+    .single()
+
+  if (error || !nueva) redirect(`/chat`)
+
+  redirect(`/chat/${nueva.id}`)
+}
+
 export async function crearOAbrirConversacion(anuncioId: string, arrendadorId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

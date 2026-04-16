@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { createAdminClient } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import BotonEliminarUsuario from '@/components/admin/BotonEliminarUsuario'
 
 export default async function AdminUsuarioDetallePage({
   params,
@@ -182,7 +183,7 @@ export default async function AdminUsuarioDetallePage({
       )}
 
       {/* Acciones */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2 items-center">
         <Link
           href="/admin/usuarios"
           className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-[#374151] hover:border-[#1a3c5e] transition-colors"
@@ -195,6 +196,7 @@ export default async function AdminUsuarioDetallePage({
         >
           Enviar email
         </a>
+        <BotonEliminarUsuario userId={id} nombre={perfil.nombre ?? 'este usuario'} />
       </div>
 
     </div>

@@ -138,3 +138,52 @@ export async function eliminarAnuncio(id: string) {
   revalidatePath('/admin')
   return { ok: true }
 }
+
+export async function eliminarUsuario(userId: string) {
+  await verificarAdmin()
+  const adminClient = createAdminClient()
+
+  // 1. Obtener IDs de conversaciones del usuario
+  const { data: convs } = await adminClient
+    .from('conversaciones')
+    .select('id')
+    .or(`inquilino_id.eq.${userId},arrendador_id.eq.${userId}`)
+
+  const convIds = (convs ?? []).map((c: { id: string }) => c.id)
+
+  // 2. Eliminar mensajes de esas conversaciones
+  if (convIds.length > 0) {
+    await adminClient.from('mensajes').delete().in('conversacion_id', convIds)
+  }
+
+  // 3. Eliminar conversaciones
+  await adminClient.from('conversaciones').delete()
+    .or(`inquilino_id.eq.${userId},arrendador_id.eq.${userId}`)
+
+  // 4. Eliminar imágenes de los anuncios del usuario
+  const { data: anunciosUser } = await adminClient
+    .from('anuncios')
+    .select('id')
+    .eq('user_id', userId)
+
+  const anuncioIds = (anunciosUser ?? []).map((a: { id: string }) => a.id)
+  if (anuncioIds.length > 0) {
+    await adminClient.from('imagenes_anuncio').delete().in('anuncio_id', anuncioIds)
+  }
+
+  // 5. Eliminar anuncios
+  await adminClient.from('anuncios').delete().eq('user_id', userId)
+
+  // 6. Eliminar perfil de búsqueda de inquilino
+  await adminClient.from('perfiles_inquilino').delete().eq('user_id', userId)
+
+  // 7. Eliminar perfil
+  await adminClient.from('profiles').delete().eq('id', userId)
+
+  // 8. Eliminar usuario de auth
+  const { error } = await adminClient.auth.admin.deleteUser(userId)
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin/usuarios')
+  redirect('/admin/usuarios')
+}
