@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import type { PerfilInquilino } from '@/types'
 import { getTranslations, getLocale } from 'next-intl/server'
-import { iniciarChatDirecto } from '@/app/actions/chat'
+import BotonChatDirecto from '@/components/perfiles/BotonChatDirecto'
 
 export default async function PerfilInquilinoPage({
   params,
@@ -163,15 +163,7 @@ export default async function PerfilInquilinoPage({
                       <span className="text-sm font-semibold text-[#1a3c5e]">{telefono}</span>
                     </a>
                   )}
-                  <form action={iniciarChatDirecto.bind(null, p.user_id)}>
-                    <button
-                      type="submit"
-                      className="flex items-center justify-center gap-2 bg-[#1a3c5e] text-white rounded-xl px-4 py-3 text-sm font-bold hover:bg-[#0ea5a0] transition-colors w-full"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                      {t('directChat')}
-                    </button>
-                  </form>
+                  <BotonChatDirecto userId={p.user_id} label={t('directChat')} />
                 </div>
               ) : (
                 <Link
