@@ -497,7 +497,10 @@
     "featured": "Destacado",
     "typeAnnual": "Todo el año",
     "typeSeasonal": "Temporero",
-    "typeBoth": "Anual / Temporero"
+    "typeBoth": "Anual / Temporero",
+    "privateRoom": "Habitación privada",
+    "roommate": "compañero de piso",
+    "roommates": "compañeros de piso"
   },
   "contact": {
     "myAd": "Este es tu anuncio",

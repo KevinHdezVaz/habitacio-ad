@@ -41,6 +41,11 @@ export default function TarjetaHabitacion({ anuncio }: Props) {
         </div>
       </div>
       <div className="p-3 flex flex-col gap-1">
+        {anuncio.num_personas != null && anuncio.num_personas > 0 && (
+          <p className="text-[10px] font-bold text-[#9ca3af] uppercase tracking-wider">
+            {t('privateRoom')} · {anuncio.num_personas} {anuncio.num_personas === 1 ? t('roommate') : t('roommates')}
+          </p>
+        )}
         <p className="font-bold text-[#1a3c5e] text-sm leading-tight line-clamp-1">
           {anuncio.titulo}
         </p>

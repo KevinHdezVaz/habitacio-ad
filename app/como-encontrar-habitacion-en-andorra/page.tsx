@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'     // ← Asegúrate de que esté exactamente así
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Cómo encontrar habitación en Andorra sin perder tiempo | habitacio.ad',

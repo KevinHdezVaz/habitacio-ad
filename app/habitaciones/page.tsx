@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { supabase } from '@/lib/supabase'
 import { Anuncio } from '@/types'
@@ -18,20 +19,21 @@ const PARROQUIAS = [
 
 export default function HabitacionesPage() {
   const t = useTranslations('rooms')
+  const searchParams = useSearchParams()
   const [anuncios, setAnuncios] = useState<Anuncio[]>([])
   const [cargando, setCargando] = useState(true)
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [filtros, setFiltros] = useState({
-    parroquia: '',
-    precioMin: '',
-    precioMax: '',
-    tipoEstancia: '',
-    fianza: '',
-    gastosIncluidos: '',
-    admitePareja: '',
+    parroquia:      searchParams.get('parroquia')      ?? '',
+    precioMin:      searchParams.get('precio_min')     ?? '',
+    precioMax:      searchParams.get('precio_max')     ?? '',
+    tipoEstancia:   searchParams.get('tipo_estancia')  ?? '',
+    fianza:         '',
+    gastosIncluidos:'',
+    admitePareja:   '',
     admiteMascotas: '',
-    fumadores: '',
-    orden: 'recientes',
+    fumadores:      '',
+    orden:          'recientes',
   })
 
   useEffect(() => {

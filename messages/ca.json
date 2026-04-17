@@ -506,7 +506,10 @@
     "featured": "Destacat",
     "typeAnnual": "Tot l'any",
     "typeSeasonal": "Temporal",
-    "typeBoth": "Anual / Temporal"
+    "typeBoth": "Anual / Temporal",
+    "privateRoom": "Habitació privada",
+    "roommate": "company de pis",
+    "roommates": "companys de pis"
   },
   "contact": {
     "myAd": "Aquest és el teu anunci",
