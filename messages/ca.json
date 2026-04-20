@@ -895,5 +895,17 @@
     "typeInquilino": "Llogatari",
     "typeArrendador": "Propietari",
     "typeAdmin": "Admin"
+  },
+  "welcome": {
+    "close": "Tancar",
+    "title": "Estàs buscant habitació?",
+    "description1": "Crea el teu perfil d'llogater i que els propietaris et contactin.",
+    "description2": "Una vegada creat, també podràs veure totes les habitacions disponibles.",
+    "benefit1": "Gratuït i sense compromís",
+    "benefit2": "Els propietaris et troben a tu",
+    "benefit3": "Accés a totes les habitacions",
+    "ctaProfile": "Crear perfil d'llogater",
+    "ctaRooms": "Veure habitacions",
+    "notNow": "Ara no"
   }
 }

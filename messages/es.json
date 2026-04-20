@@ -886,5 +886,17 @@
     "typeInquilino": "Inquilino",
     "typeArrendador": "Propietario",
     "typeAdmin": "Admin"
+  },
+  "welcome": {
+    "close": "Cerrar",
+    "title": "¿Estás buscando habitación?",
+    "description1": "Crea tu perfil de inquilino y deja que los propietarios te contacten directamente.",
+    "description2": "Una vez creado, también podrás ver todas las habitaciones disponibles.",
+    "benefit1": "Gratis y sin compromiso",
+    "benefit2": "Los propietarios te encuentran a ti",
+    "benefit3": "Acceso a todas las habitaciones",
+    "ctaProfile": "Crear perfil de inquilino",
+    "ctaRooms": "Ver habitaciones",
+    "notNow": "Ahora no"
   }
 }

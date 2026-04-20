@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 const STORAGE_KEY = 'habitacio_welcome_seen'
 
 export default function PopupBienvenida() {
+  const t = useTranslations('welcome')
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function PopupBienvenida() {
           <div className="bg-[#1a3c5e] px-6 pt-6 pb-5 relative">
             <button
               onClick={cerrar}
-              aria-label="Tancar / Cerrar"
+              aria-label={t('close')}
               className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -58,10 +60,7 @@ export default function PopupBienvenida() {
 
             {/* Título */}
             <p className="text-white font-bold text-lg leading-snug">
-              Estàs buscant habitació?
-            </p>
-            <p className="text-blue-200 text-sm mt-1">
-              ¿Estás buscando habitación?
+              {t('title')}
             </p>
           </div>
 
@@ -69,27 +68,26 @@ export default function PopupBienvenida() {
           <div className="px-6 py-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <p className="text-[#1a3c5e] font-semibold text-sm">
-                Crea el teu perfil d&apos;llogater i que els propietaris et contactin.
+                {t('description1')}
               </p>
               <p className="text-[#6b7280] text-xs leading-relaxed">
-                Crea tu perfil de inquilino y deja que los propietarios te contacten directamente.
-                Una vez creado, también podrás ver todas las habitaciones disponibles.
+                {t('description2')}
               </p>
             </div>
 
             {/* Beneficios */}
             <ul className="flex flex-col gap-2">
               {[
-                { ca: 'Gratuït i sense compromís', es: 'Gratis y sin compromiso' },
-                { ca: 'Els propietaris et troben a tu', es: 'Los propietarios te encuentran a ti' },
-                { ca: 'Accés a totes les habitacions', es: 'Acceso a todas las habitaciones' },
-              ].map((item) => (
-                <li key={item.ca} className="flex items-start gap-2 text-xs text-[#374151]">
+                t('benefit1'),
+                t('benefit2'),
+                t('benefit3'),
+              ].map((benefit) => (
+                <li key={benefit} className="flex items-start gap-2 text-xs text-[#374151]">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5a0" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 mt-0.5">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                   <span>
-                    <span className="font-medium">{item.ca}</span> · {item.es}
+                    <span className="font-medium">{benefit}</span>
                   </span>
                 </li>
               ))}
@@ -102,7 +100,7 @@ export default function PopupBienvenida() {
                 onClick={cerrar}
                 className="w-full bg-[#1a3c5e] text-white text-sm font-bold py-3 rounded-xl text-center hover:bg-[#0ea5a0] transition-colors"
               >
-                Crear perfil d&apos;llogater · Crear perfil de inquilino
+                {t('ctaProfile')}
               </Link>
 
               <Link
@@ -110,14 +108,14 @@ export default function PopupBienvenida() {
                 onClick={cerrar}
                 className="w-full border border-[#e5e7eb] text-[#1a3c5e] text-sm font-semibold py-3 rounded-xl text-center hover:border-[#1a3c5e] transition-colors"
               >
-                Veure habitacions · Ver habitaciones
+                {t('ctaRooms')}
               </Link>
 
               <button
                 onClick={cerrar}
                 className="text-xs text-[#9ca3af] hover:text-[#6b7280] transition-colors py-1"
               >
-                Ara no · Mes tard
+                {t('notNow')}
               </button>
             </div>
           </div>
