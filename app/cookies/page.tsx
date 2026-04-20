@@ -18,39 +18,39 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function CookieCategoryTable({ ca }: { ca: boolean }) {
   const rows = ca
     ? [
-        {
-          categoria: 'Cookies Tècniques o Necessàries',
-          descripcion: 'Són imprescindibles per al correcte funcionament de la web, permeten la navegació i l\'ús de les diferents opcions o serveis, com identificar la sessió, gestionar la seguretat o accedir a àrees restringides de la plataforma.',
-          base: 'Interès legítim (són fonamentals per a l\'execució del servei i el funcionament de la web).',
-        },
-        {
-          categoria: 'Cookies Analítiques o de Mesurament',
-          descripcion: 'Permeten quantificar el nombre d\'usuaris, mesurar l\'audiència, analitzar la navegació i l\'activitat dels usuaris a la Web (p. ex., seccions més visitades, temps de permanència). La seva finalitat és realitzar el mesurament i l\'anàlisi estadística del servei per introduir millores basades en l\'anàlisi de les dades d\'ús.',
-          base: 'Consentiment exprés de l\'usuari.',
-        },
-        {
-          categoria: 'Cookies de Màrqueting o Publicitat',
-          descripcion: 'Permeten la gestió dels espais publicitaris i la creació d\'un perfil de navegació amb l\'objectiu de mostrar publicitat personalitzada. Inclouen les cookies de tercers (com el píxel de Meta) utilitzades per mesurar l\'eficàcia de les campanyes i realitzar accions de retargeting o segmentació d\'usuaris.',
-          base: 'Consentiment exprés de l\'usuari.',
-        },
-      ]
+      {
+        categoria: 'Cookies Tècniques o Necessàries',
+        descripcion: 'Són imprescindibles per al correcte funcionament de la web, permeten la navegació i l\'ús de les diferents opcions o serveis, com identificar la sessió, gestionar la seguretat o accedir a àrees restringides de la plataforma.',
+        base: 'Interès legítim (són fonamentals per a l\'execució del servei i el funcionament de la web).',
+      },
+      {
+        categoria: 'Cookies Analítiques o de Mesurament',
+        descripcion: 'Permeten quantificar el nombre d\'usuaris, mesurar l\'audiència, analitzar la navegació i l\'activitat dels usuaris a la Web (p. ex., seccions més visitades, temps de permanència). La seva finalitat és realitzar el mesurament i l\'anàlisi estadística del servei per introduir millores basades en l\'anàlisi de les dades d\'ús.',
+        base: 'Consentiment exprés de l\'usuari.',
+      },
+      {
+        categoria: 'Cookies de Màrqueting o Publicitat',
+        descripcion: 'Permeten la gestió dels espais publicitaris i la creació d\'un perfil de navegació amb l\'objectiu de mostrar publicitat personalitzada. Inclouen les cookies de tercers (com el píxel de Meta) utilitzades per mesurar l\'eficàcia de les campanyes i realitzar accions de retargeting o segmentació d\'usuaris.',
+        base: 'Consentiment exprés de l\'usuari.',
+      },
+    ]
     : [
-        {
-          categoria: 'Cookies Técnicas o Necesarias',
-          descripcion: 'Son aquellas imprescindibles para el correcto funcionamiento de la web, permitiendo al usuario la navegación y el uso de las diferentes opciones o servicios que existen, como identificar la sesión, gestionar la seguridad o acceder a áreas restringidas de la plataforma.',
-          base: 'Interés legítimo (son fundamentales para la ejecución del servicio y el funcionamiento de la web).',
-        },
-        {
-          categoria: 'Cookies Analíticas o de Medición',
-          descripcion: 'Permiten cuantificar el número de usuarios, medir la audiencia, analizar la navegación y la actividad de los usuarios en la Web (p. ej., secciones más visitadas, tiempo de permanencia). Su finalidad es realizar la medición y el análisis estadístico del servicio para introducir mejoras basadas en el análisis de los datos de uso.',
-          base: 'Consentimiento expreso del usuario.',
-        },
-        {
-          categoria: 'Cookies de Marketing o Publicidad',
-          descripcion: 'Permiten la gestión de los espacios publicitarios y la creación de un perfil de navegación con el objetivo de mostrar publicidad personalizada. Incluyen las cookies de terceros (como el píxel de Meta) utilizadas para medir la eficacia de las campañas y realizar acciones de retargeting o segmentación de usuarios.',
-          base: 'Consentimiento expreso del usuario.',
-        },
-      ]
+      {
+        categoria: 'Cookies Técnicas o Necesarias',
+        descripcion: 'Son aquellas imprescindibles para el correcto funcionamiento de la web, permitiendo al usuario la navegación y el uso de las diferentes opciones o servicios que existen, como identificar la sesión, gestionar la seguridad o acceder a áreas restringidas de la plataforma.',
+        base: 'Interés legítimo (son fundamentales para la ejecución del servicio y el funcionamiento de la web).',
+      },
+      {
+        categoria: 'Cookies Analíticas o de Medición',
+        descripcion: 'Permiten cuantificar el número de usuarios, medir la audiencia, analizar la navegación y la actividad de los usuarios en la Web (p. ej., secciones más visitadas, tiempo de permanencia). Su finalidad es realizar la medición y el análisis estadístico del servicio para introducir mejoras basadas en el análisis de los datos de uso.',
+        base: 'Consentimiento expreso del usuario.',
+      },
+      {
+        categoria: 'Cookies de Marketing o Publicidad',
+        descripcion: 'Permiten la gestión de los espacios publicitarios y la creación de un perfil de navegación con el objetivo de mostrar publicidad personalizada. Incluyen las cookies de terceros (como el píxel de Meta) utilizadas para medir la eficacia de las campañas y realizar acciones de retargeting o segmentación de usuarios.',
+        base: 'Consentimiento expreso del usuario.',
+      },
+    ]
 
   const headers = ca
     ? ['Categoria', 'Descripció i Finalitat', 'Base Legal']
@@ -112,8 +112,8 @@ export default async function CookiesPage() {
       <Section title={ca ? '2. Identitat i Legislació Aplicable' : '2. Identidad y Legislación Aplicable'}>
         <p>
           {ca
-            ? 'El responsable del tractament de les dades obtingudes mitjançant les cookies de la Web és ALBERT ALFOCEA URBANO (HABITACIO.AD).'
-            : 'El responsable del tratamiento de los datos obtenidos mediante las cookies de la Web es ALBERT ALFOCEA URBANO (HABITACIO.AD).'}
+            ? 'El responsable del tractament de les dades obtingudes mitjançant les cookies de la Web és (HABITACIO.AD).'
+            : 'El responsable del tratamiento de los datos obtenidos mediante las cookies de la Web es (HABITACIO.AD).'}
         </p>
         <p>
           {ca
