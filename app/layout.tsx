@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase-server'
 import NextTopLoader from 'nextjs-toploader'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import PopupBienvenida from '@/components/ui/PopupBienvenida'
 
 export const metadata: Metadata = {
   title: {
@@ -133,6 +134,7 @@ export default async function RootLayout({
           </main>
           <Footer />
           <CookieBanner />
+          <PopupBienvenida />
         </NextIntlClientProvider>
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-9M4HGJ6F6P" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9M4HGJ6F6P');`}</Script>
