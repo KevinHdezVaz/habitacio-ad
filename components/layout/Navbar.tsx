@@ -59,7 +59,7 @@ export default function Navbar({
   function handleLang(l: string) {
     startLangTransition(async () => {
       await setLocale(l)
-      router.refresh()
+      window.location.reload()
     })
   }
 
