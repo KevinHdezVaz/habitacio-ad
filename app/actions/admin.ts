@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { after } from 'next/server'
 import { emailAnuncioAprobado, emailAnuncioRechazado } from '@/lib/email'
+import { notificarGoogleIndexing } from '@/lib/google-indexing'
 
 async function verificarAdmin() {
   const supabase = await createClient()
@@ -57,6 +58,9 @@ export async function aprobarAnuncio(id: string) {
           tituloAnuncio: anuncio.titulo,
           anuncioId: id,
         })
+
+        // Notificar a Google para indexación inmediata
+        await notificarGoogleIndexing(`https://habitacio.ad/habitaciones/${id}`)
       } catch { /* silent */ }
     })
   } catch { /* after() no disponible */ }
@@ -136,6 +140,10 @@ export async function eliminarAnuncio(id: string) {
   const { error } = await supabase.from('anuncios').delete().eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin')
+
+  // Notificar a Google que elimine la URL del índice
+  notificarGoogleIndexing(`https://habitacio.ad/habitaciones/${id}`, 'URL_DELETED').catch(() => {})
+
   return { ok: true }
 }
 
