@@ -9,6 +9,27 @@ import { createClient } from '@/lib/supabase-browser'
 import { publicarAnuncio } from '@/app/actions/anuncios'
 import Link from 'next/link'
 
+// ─── Compresión de imagen ──────────────────────────────────────────────────
+async function compressImage(file: File, maxWidth = 1600, quality = 0.82): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new window.Image()
+    img.onload = () => {
+      const scale  = Math.min(1, maxWidth / img.width)
+      const canvas = document.createElement('canvas')
+      canvas.width  = Math.round(img.width  * scale)
+      canvas.height = Math.round(img.height * scale)
+      canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
+      canvas.toBlob(
+        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
+        'image/jpeg',
+        quality
+      )
+    }
+    img.onerror = () => resolve(file)
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 const PARROQUIAS = [
   'Andorra la Vella', 'Escaldes-Engordany', 'Encamp',
   'Sant Julià de Lòria', 'La Massana', 'Ordino', 'Canillo',
@@ -158,11 +179,11 @@ export default function FormularioPublicar({ hasPhone }: { hasPhone: boolean }) 
 
       const imageUrls: string[] = []
       for (const { file } of imagePreviews) {
-        const ext = file.name.split('.').pop()
-        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const compressed = await compressImage(file)
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`
         const { data, error: uploadError } = await supabase.storage
           .from('habitaciones')
-          .upload(path, file, { contentType: file.type, upsert: false })
+          .upload(path, compressed, { contentType: 'image/jpeg', upsert: false })
         if (data) {
           const { data: urlData } = supabase.storage.from('habitaciones').getPublicUrl(data.path)
           imageUrls.push(urlData.publicUrl)

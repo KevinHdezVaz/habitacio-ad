@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { supabaseImg } from '@/lib/supabase-image'
 
 interface Props {
   imagenes: { url: string }[]
@@ -26,7 +27,8 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
   const lightboxRef   = useRef<HTMLDivElement>(null)
 
   const total        = imagenes.length
-  const imgPrincipal = imagenes[0]?.url ?? 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'
+  const imgPrincipal = supabaseImg(imagenes[0]?.url, { width: 1200, quality: 80 })
+    ?? 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'
   const imgSecundarias = imagenes.slice(1, 5)
 
   // ── Navigation ─────────────────────────────────────────────────────────────
@@ -199,7 +201,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
           <div className="grid grid-cols-2 gap-2 aspect-[16/9]">
             {imagenes.slice(0, 2).map((img, i) => (
               <button key={i} onClick={() => abrirLightbox(i)} className="overflow-hidden group h-full">
-                <img src={img.url} alt={`Foto ${i + 1}`} className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200" />
+                <img src={supabaseImg(img.url, { width: 800, quality: 78 })} alt={`Foto ${i + 1}`} className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200" />
               </button>
             ))}
           </div>
@@ -213,7 +215,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
               const mostrarBadge = esUltima && total > 5
               return (
                 <button key={i} onClick={() => abrirLightbox(i + 1)} className="overflow-hidden group relative" aria-label={`Ver foto ${i + 2}`}>
-                  <img src={img.url} alt={`Foto ${i + 2}`} className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200" />
+                  <img src={supabaseImg(img.url, { width: 400, quality: 72 })} alt={`Foto ${i + 2}`} className="w-full h-full object-cover group-hover:brightness-90 transition-all duration-200" />
                   {mostrarBadge && (
                     <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
                       <span className="bg-white text-[#1a3c5e] text-xs font-bold px-3 py-1.5 rounded-xl shadow">+{total - 5} fotos</span>
@@ -346,7 +348,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
 
             <img
               key={indiceActual}
-              src={imagenes[indiceActual]?.url}
+              src={supabaseImg(imagenes[indiceActual]?.url, { width: 1600, quality: 85 })}
               alt={`${titulo} — foto ${indiceActual + 1}`}
               className="block"
               style={{
@@ -400,7 +402,7 @@ export default function GaleriaImagenes({ imagenes, titulo }: Props) {
                     }`}
                     aria-label={`Foto ${i + 1}`}
                   >
-                    <img src={img.url} alt="" className="w-full h-full object-cover" />
+                    <img src={supabaseImg(img.url, { width: 96, quality: 60 })} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

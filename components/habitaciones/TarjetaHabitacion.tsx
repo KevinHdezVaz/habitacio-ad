@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { Anuncio } from '@/types'
+import { supabaseImg } from '@/lib/supabase-image'
 
 type AnuncioCard = Pick<Anuncio, 'id' | 'titulo' | 'precio' | 'parroquia'> &
   Partial<Pick<Anuncio, 'tipo_estancia' | 'gastos_incluidos' | 'bano_privado' | 'num_personas' | 'metros_habitacion' | 'fianza' | 'destacado' | 'imagenes_anuncio'>>
@@ -12,7 +13,8 @@ interface Props {
 
 export default function TarjetaHabitacion({ anuncio }: Props) {
   const t = useTranslations('card')
-  const imagen = anuncio.imagenes_anuncio?.[0]?.url || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400'
+  const imagen = supabaseImg(anuncio.imagenes_anuncio?.[0]?.url, { width: 400, quality: 70 })
+    || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400'
 
   const etiquetaTipo: Record<string, string> = {
     anual: t('typeAnnual'),
