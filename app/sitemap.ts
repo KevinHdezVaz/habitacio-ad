@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next'
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-admin'
 
 const BASE_URL = 'https://habitacio.ad'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   // Obtener todos los anuncios activos
   const { data: anuncios } = await supabase

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import ContactarButton from '@/components/habitaciones/ContactarButton'
@@ -38,6 +39,20 @@ function formatTelefono(tel: string): string {
   return `376${digits}`
 }
 
+// ── Pre-render all active listings at build time ─────────────────────────────
+export async function generateStaticParams() {
+  const supabase = createAdminClient()
+  const { data: anuncios } = await supabase
+    .from('anuncios')
+    .select('id')
+    .eq('estado', 'activo')
+
+  const parroquiaSlugs = Object.keys(PARROQUIA_SLUGS).map((slug) => ({ id: slug }))
+  const fichaParams    = (anuncios ?? []).map((a) => ({ id: a.id }))
+
+  return [...parroquiaSlugs, ...fichaParams]
+}
+
 // ── Meta tags dinámicos ───────────────────────────────────────────────────────
 export async function generateMetadata({
   params,
@@ -68,7 +83,7 @@ export async function generateMetadata({
   }
 
   // Si es UUID de anuncio
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data: anuncio } = await supabase
     .from('anuncios')
     .select('titulo, descripcion, precio, parroquia, imagenes_anuncio(url, orden)')

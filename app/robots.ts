@@ -7,15 +7,16 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          '/admin/',
-          '/perfil/',
-          '/chat/',
-          '/publicar/',
-          '/auth/',
           '/api/',
+          '/admin/',
+          '/panel/',
+          '/mi-perfil/',
+          '/mensajes/',
+          '/chat/',
         ],
       },
     ],
     sitemap: 'https://habitacio.ad/sitemap.xml',
+    host: 'https://habitacio.ad',
   }
 }

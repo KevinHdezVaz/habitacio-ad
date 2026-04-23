@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'     // ← Asegúrate de que esté exactamente así
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Mejores zonas de Andorra para buscar habitación | habitacio.ad',
@@ -18,7 +18,7 @@ export default function ArticlePage() {
       {/* Image placeholder */}
       <div className="relative w-full aspect-[16/9] md:aspect-[16/10] rounded-2xl overflow-hidden bg-gradient-to-br from-[#e8f0f7] to-[#d1e3f0]">
         <Image
-          src="/blog/como-encontrar-habitacion-en-andorra.jpeg"
+          src="/blog/mejores-zonas-de-andorra-para-buscar-habitacion.jpeg"
           alt="Habitación luminosa y moderna en Andorra para alquilar"
           fill
           className="object-cover"
