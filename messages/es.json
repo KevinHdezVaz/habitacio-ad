@@ -887,6 +887,11 @@
     "typeArrendador": "Propietario",
     "typeAdmin": "Admin"
   },
+  "maintenance": {
+    "title": "Estamos mejorando para ti",
+    "subtitle": "La web está en mantenimiento temporal. Volvemos muy pronto con novedades.",
+    "contact": "Contacto"
+  },
   "welcome": {
     "close": "Cerrar",
     "title": "¿Estás buscando habitación?",

@@ -12,6 +12,7 @@ import NextTopLoader from 'nextjs-toploader'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import PopupBienvenida from '@/components/ui/PopupBienvenida'
+import Shell from '@/components/layout/Shell'
 
 export const metadata: Metadata = {
   title: {
@@ -128,14 +129,15 @@ export default async function RootLayout({
             showSpinner={false}
             shadow="0 0 10px #0ea5a0,0 0 5px #0ea5a0"
           />
-          <LaunchBanner locale={locale} />
-          <Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} avatarUrl={avatarUrl} userName={userName} />
-          <main className="max-w-5xl mx-auto px-4 py-6">
+          <Shell
+            navbar={<Navbar user={user} isAdmin={isAdmin} unreadCount={unreadCount} locale={locale} avatarUrl={avatarUrl} userName={userName} />}
+            footer={<Footer />}
+            launchBanner={<LaunchBanner locale={locale} />}
+            cookieBanner={<CookieBanner />}
+            popup={<PopupBienvenida />}
+          >
             <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
-          <CookieBanner />
-          <PopupBienvenida />
+          </Shell>
         </NextIntlClientProvider>
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-9M4HGJ6F6P" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9M4HGJ6F6P');`}</Script>

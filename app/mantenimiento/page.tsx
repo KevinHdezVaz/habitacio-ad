@@ -1,32 +1,43 @@
-export default function MantenimientoPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f4f8]">
-      <div className="max-w-md w-full mx-4 text-center flex flex-col items-center gap-6">
+import { getTranslations } from 'next-intl/server'
 
-        <div className="w-20 h-20 rounded-2xl bg-[#1a3c5e] flex items-center justify-center shadow-lg">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <path d="M8 30V22C8 14.268 14.268 8 22 8h0c7.732 0 14 6.268 14 14v8" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-            <rect x="4" y="28" width="8" height="6" rx="2" fill="white"/>
-            <rect x="28" y="28" width="8" height="6" rx="2" fill="white"/>
+export default async function MantenimientoPage() {
+  const t = await getTranslations('maintenance')
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2744] via-[#1a3c5e] to-[#0e7490] px-4">
+      <div className="max-w-sm w-full text-center flex flex-col items-center gap-8">
+
+        {/* Icono genérico */}
+        <div className="w-20 h-20 rounded-3xl bg-white/10 backdrop-blur flex items-center justify-center shadow-xl">
+          <svg viewBox="0 0 40 40" fill="none" className="w-10 h-10">
+            <path d="M6 32V18L20 6l14 12v14a2 2 0 01-2 2H8a2 2 0 01-2-2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M15 38V24h10v14" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
 
+        {/* Texto */}
         <div className="flex flex-col gap-3">
-          <h1 className="text-2xl font-bold text-[#1a3c5e]">
-            Habitacio.ad — Próximamente
+          <h1 className="text-white text-2xl font-bold leading-snug">
+            {t('title')}
           </h1>
-          <p className="text-[#374151] text-sm leading-relaxed">
-            Estamos ultimando los últimos detalles para ofrecerte la mejor plataforma de habitaciones en alquiler de Andorra. ¡Volvemos muy pronto!
-          </p>
-          <p className="text-[#9ca3af] text-xs">
-            Habitació.ad — Aviat disponible
+          <p className="text-white/70 text-sm leading-relaxed">
+            {t('subtitle')}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-[#374151]">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5A6.5 6.5 0 1 0 8 14.5A6.5 6.5 0 0 0 8 1.5ZM8 4.5v4l2.5 2.5" stroke="#1a3c5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          Contacto: <a href="mailto:hola@habitacio.ad" className="text-[#1a3c5e] underline">hola@habitacio.ad</a>
-        </div>
+        {/* Separador */}
+        <div className="w-12 h-px bg-white/20" />
+
+        {/* Contacto discreto */}
+        <p className="text-white/40 text-xs">
+          {t('contact')} ·{' '}
+          <a
+            href="mailto:hola@habitacio.ad"
+            className="underline underline-offset-2 hover:text-white/60 transition-colors"
+          >
+            hola@habitacio.ad
+          </a>
+        </p>
 
       </div>
     </div>

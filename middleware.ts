@@ -29,6 +29,20 @@ export async function middleware(request: NextRequest) {
   // siempre vea la sesión actualizada
   const { data: { user } } = await supabase.auth.getUser()
 
+  // ── MODO MANTENIMIENTO ──────────────────────────────────────────────────
+  // Redirige todo a /mantenimiento excepto el admin y los assets
+  const pathname = request.nextUrl.pathname
+  const isMaintenancePage = pathname === '/mantenimiento'
+  const isAdminRoute      = pathname.startsWith('/admin')
+  const isAuthCallback    = pathname.startsWith('/auth')
+
+  if (!isMaintenancePage && !isAdminRoute && !isAuthCallback) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/mantenimiento'
+    return NextResponse.redirect(url)
+  }
+  // ────────────────────────────────────────────────────────────────────────
+
   // Rutas protegidas — redirige a login si no hay sesión
   const protectedPaths = ['/perfil', '/publicar', '/chat', '/admin']
   const isProtected = protectedPaths.some((p) =>

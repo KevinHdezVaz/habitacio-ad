@@ -896,6 +896,11 @@
     "typeArrendador": "Propietari",
     "typeAdmin": "Admin"
   },
+  "maintenance": {
+    "title": "Estem millorant per a tu",
+    "subtitle": "La web es troba en manteniment temporal. Tornem molt aviat amb novetats.",
+    "contact": "Contacte"
+  },
   "welcome": {
     "close": "Tancar",
     "title": "Estàs buscant habitació?",
