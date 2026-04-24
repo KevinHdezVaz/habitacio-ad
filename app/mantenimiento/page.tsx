@@ -25,19 +25,6 @@ export default async function MantenimientoPage() {
           </p>
         </div>
 
-        {/* Separador */}
-        <div className="w-12 h-px bg-white/20" />
-
-        {/* Contacto discreto */}
-        <p className="text-white/40 text-xs">
-          {t('contact')} ·{' '}
-          <a
-            href="mailto:hola@habitacio.ad"
-            className="underline underline-offset-2 hover:text-white/60 transition-colors"
-          >
-            hola@habitacio.ad
-          </a>
-        </p>
 
       </div>
     </div>
